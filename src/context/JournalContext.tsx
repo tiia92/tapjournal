@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 // Entry types
 export type JournalEntry = {
@@ -15,6 +16,9 @@ export type JournalEntry = {
   exercises: string[];
   selfCareActivities: string[];
   notes: string;
+  audioNotes?: string; // For premium voice journaling
+  images?: string[]; // For premium image journaling
+  customMetrics?: Record<string, any>; // For premium custom tracking
 };
 
 type JournalContextType = {
@@ -49,30 +53,42 @@ const JournalContext = createContext<JournalContextType | undefined>(undefined);
 export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | undefined>();
+  const { user } = useAuth();
 
-  // Load entries from localStorage on mount
+  // Load entries from localStorage on mount or when user changes
   useEffect(() => {
-    const storedEntries = localStorage.getItem('journalEntries');
-    if (storedEntries) {
-      const parsedEntries = JSON.parse(storedEntries);
-      setEntries(parsedEntries);
+    if (user) {
+      const storageKey = `journalEntries_${user.id}`;
+      const storedEntries = localStorage.getItem(storageKey);
       
-      // Find today's entry
-      const today = formatDate(new Date());
-      const todayEntryFromStorage = parsedEntries.find((entry: JournalEntry) => entry.date === today);
-      
-      if (todayEntryFromStorage) {
-        setTodayEntry(todayEntryFromStorage);
+      if (storedEntries) {
+        const parsedEntries = JSON.parse(storedEntries);
+        setEntries(parsedEntries);
+        
+        // Find today's entry
+        const today = formatDate(new Date());
+        const todayEntryFromStorage = parsedEntries.find((entry: JournalEntry) => entry.date === today);
+        
+        if (todayEntryFromStorage) {
+          setTodayEntry(todayEntryFromStorage);
+        } else {
+          setTodayEntry(undefined);
+        }
+      } else {
+        // Reset entries if no stored entries for this user
+        setEntries([]);
+        setTodayEntry(undefined);
       }
     }
-  }, []);
+  }, [user]);
 
   // Save entries to localStorage whenever they change
   useEffect(() => {
-    if (entries.length > 0) {
-      localStorage.setItem('journalEntries', JSON.stringify(entries));
+    if (user && entries.length > 0) {
+      const storageKey = `journalEntries_${user.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(entries));
     }
-  }, [entries]);
+  }, [entries, user]);
 
   const checkIfTodayEntryExists = (): boolean => {
     const today = formatDate(new Date());

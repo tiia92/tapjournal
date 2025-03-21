@@ -1,80 +1,51 @@
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 20% 10%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
-
+    --background: 0 0% 100%;
+    --foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
-
-    --primary: 205 85% 50%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --primary: 222.1 83.2% 9.8%;
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 250 20% 95%;
-    --secondary-foreground: 220 20% 10%;
-
-    --muted: 210 20% 92%;
-    --muted-foreground: 220 10% 45%;
-
-    --accent: 265 85% 60%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 70% 60%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 220 20% 88%;
-    --input: 220 20% 88%;
-    --ring: 220 20% 65%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 220 20% 10%;
+    --background: 222.2 47.4% 11.2%;
     --foreground: 210 40% 98%;
-
-    --card: 220 20% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 220 20% 12%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --popover: 222.2 47.4% 11.2%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 205 85% 50%;
+    --card: 222.2 47.4% 11.2%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --primary: 212.1 67.2% 47.8%;
     --primary-foreground: 210 40% 98%;
-
-    --secondary: 215 20% 20%;
+    --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
-    --muted: 215 20% 20%;
-    --muted-foreground: 210 40% 70%;
-
-    --accent: 265 85% 60%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 70% 60%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 215 20% 25%;
-    --input: 215 20% 25%;
-    --ring: 215 20% 55%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
   }
 }
 
@@ -82,64 +53,37 @@
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
   }
 }
 
 @layer components {
   .tap-card {
-    @apply bg-background/80 backdrop-blur-md border border-border/50 rounded-2xl p-5 shadow-glass transition-all duration-300;
-  }
-
-  .tap-card:hover {
-    @apply shadow-lg border-primary/20;
+    @apply rounded-lg border bg-card p-4 shadow-sm animate-fade-in;
   }
 
   .tap-button {
-    @apply relative overflow-hidden rounded-xl flex items-center justify-center transition-all duration-300 
-    bg-secondary border border-border hover:border-primary/30 active:scale-95;
-  }
-
-  .tap-button::after {
-    content: '';
-    @apply absolute w-full h-full top-0 left-0 bg-primary/5 scale-0 rounded-xl transition-transform duration-500;
-  }
-
-  .tap-button:active::after {
-    @apply scale-100;
-  }
-
-  .glass-panel {
-    @apply bg-background/70 backdrop-blur-md border border-border/50 rounded-3xl shadow-glass;
-  }
-
-  .neo-button {
-    @apply bg-background rounded-xl py-2 px-4 shadow-neo transition-all duration-300 active:shadow-none active:translate-x-1 active:translate-y-1;
+    @apply rounded-md border bg-background hover:bg-accent transition-colors;
   }
 
   .tap-count-bubble {
-    @apply bg-primary/10 text-primary rounded-full py-1 px-3 text-sm font-medium;
+    @apply px-2 py-0.5 rounded-full text-xs font-semibold;
   }
 
   .emoji-selector {
-    @apply grid grid-cols-4 gap-2 p-2;
+    @apply grid grid-cols-4 gap-2;
   }
 
   .emoji-item {
-    @apply text-2xl bg-secondary/50 hover:bg-secondary rounded-xl p-3 flex items-center justify-center cursor-pointer transition-all;
+    @apply flex items-center justify-center w-12 h-12 text-2xl rounded-lg border bg-background hover:bg-accent transition-colors;
   }
 
   .emoji-item.selected {
-    @apply bg-primary/10 ring-2 ring-primary/30;
+    @apply bg-primary/10 border-primary text-primary;
   }
 
-  .page-transition-enter {
-    @apply animate-fade-in;
-  }
-
-  .page-transition-exit {
-    @apply animate-fade-out;
+  .nav-button {
+    @apply flex flex-col items-center justify-center gap-1 p-2 hover:text-foreground transition-colors;
   }
 }

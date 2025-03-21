@@ -2,12 +2,15 @@
 import React, { useState } from 'react';
 import Layout from '@/components/Layout';
 import AnimatedButton from '@/components/AnimatedButton';
-import { useJournal, JournalEntry } from '@/context/JournalContext';
+import { useJournal } from '@/context/JournalContext';
+import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { Trash2, Download, Info, Bell, BellOff, Save } from 'lucide-react';
+import { Trash2, Download, Info, Bell, BellOff, Save, Crown } from 'lucide-react';
+import PremiumUpgrade from '@/components/PremiumUpgrade';
 
 const Settings = () => {
   const { entries } = useJournal();
+  const { user } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     localStorage.getItem('notificationsEnabled') === 'true'
   );
@@ -77,6 +80,45 @@ const Settings = () => {
       </div>
       
       <div className="space-y-6">
+        {/* Premium Upgrade */}
+        {!user?.isPremium && (
+          <div className="mb-6">
+            <PremiumUpgrade />
+          </div>
+        )}
+
+        {/* Account Info */}
+        {user && (
+          <div className="tap-card">
+            <h3 className="text-lg font-medium mb-4">Account</h3>
+            
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-secondary/50 rounded-lg">
+                <div>
+                  <div className="font-medium">Account Type</div>
+                  <div className="text-sm text-muted-foreground">
+                    Your current subscription
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  {user.isPremium ? (
+                    <span className="flex items-center gap-1 text-sm bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-2 py-1 rounded-full">
+                      <Crown size={14} />
+                      Premium
+                    </span>
+                  ) : (
+                    <span className="text-sm bg-secondary text-muted-foreground px-2 py-1 rounded-full">
+                      Free
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Notification settings */}
         <div className="tap-card">
           <h3 className="text-lg font-medium mb-4">Notifications</h3>
           
@@ -113,6 +155,7 @@ const Settings = () => {
           </div>
         </div>
         
+        {/* Data Management */}
         <div className="tap-card">
           <h3 className="text-lg font-medium mb-4">Data Management</h3>
           
@@ -139,6 +182,7 @@ const Settings = () => {
           </div>
         </div>
         
+        {/* About */}
         <div className="tap-card">
           <h3 className="text-lg font-medium mb-2">About TapJournal</h3>
           <p className="text-muted-foreground text-sm mb-3">

@@ -1,50 +1,80 @@
 
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Calendar, Settings } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Home, Calendar, Book, Settings } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import UserProfileHeader from './UserProfileHeader';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
   const location = useLocation();
-  
-  const navItems = [
-    { icon: <Home size={20} />, label: 'Today', path: '/' },
-    { icon: <BookOpen size={20} />, label: 'Journal', path: '/journal' },
-    { icon: <Calendar size={20} />, label: 'Calendar', path: '/calendar' },
-    { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
-  ];
+  const { isAuthenticated } = useAuth();
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    navigate('/login');
+    return null;
+  }
 
   return (
-    <div className="min-h-screen px-4 pt-6 pb-20 sm:pb-6 sm:px-6 md:px-8 mx-auto max-w-md transition-all">
-      <header className="mb-6 relative">
-        <h1 className="text-3xl font-display font-semibold text-center transition-all">
-          <span className="text-primary">Tap</span>Journal
-        </h1>
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="border-b border-border shadow-sm bg-card">
+        <div className="container mx-auto px-4 flex items-center justify-between h-14">
+          <h1 
+            className="text-xl font-bold cursor-pointer"
+            onClick={() => navigate('/')}
+          >
+            TapJournal
+          </h1>
+          <UserProfileHeader />
+        </div>
       </header>
       
-      <main className="mb-16 sm:mb-6">{children}</main>
+      <main className="flex-1 container mx-auto px-4 py-6 mb-16 md:mb-6">
+        {children}
+      </main>
       
-      <nav className="fixed bottom-0 left-0 right-0 sm:relative bg-background/80 backdrop-blur-lg border-t sm:border sm:rounded-xl sm:mt-6 pt-2 pb-4 px-4 sm:py-3 shadow-lg sm:shadow-glass z-50">
-        <div className="flex justify-around items-center max-w-md mx-auto">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition-all ${
-                  isActive
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`
-              }
-            >
-              {item.icon}
-              <span className="text-xs font-medium">{item.label}</span>
-            </NavLink>
-          ))}
+      <nav className="fixed bottom-0 w-full border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)] bg-card md:pb-0 pb-5">
+        <div className="container mx-auto px-4 flex items-center justify-between h-14">
+          <button 
+            onClick={() => navigate('/')}
+            className={`nav-button ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
+            aria-label="Home"
+          >
+            <Home size={20} />
+            <span className="text-xs">Today</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/journal')}
+            className={`nav-button ${location.pathname === '/journal' ? 'text-primary' : 'text-muted-foreground'}`}
+            aria-label="Journal"
+          >
+            <Book size={20} />
+            <span className="text-xs">Journal</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/calendar')}
+            className={`nav-button ${location.pathname === '/calendar' ? 'text-primary' : 'text-muted-foreground'}`}
+            aria-label="Calendar"
+          >
+            <Calendar size={20} />
+            <span className="text-xs">Calendar</span>
+          </button>
+          
+          <button 
+            onClick={() => navigate('/settings')}
+            className={`nav-button ${location.pathname === '/settings' ? 'text-primary' : 'text-muted-foreground'}`}
+            aria-label="Settings"
+          >
+            <Settings size={20} />
+            <span className="text-xs">Settings</span>
+          </button>
         </div>
       </nav>
     </div>
