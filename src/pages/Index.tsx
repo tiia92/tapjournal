@@ -7,9 +7,11 @@ import TapCounter from '@/components/TapCounter';
 import YesNoTap from '@/components/YesNoTap';
 import EmojiSelector from '@/components/EmojiSelector';
 import AnimatedButton from '@/components/AnimatedButton';
-import { useJournal, JournalEntry } from '@/context/JournalContext';
+import SymptomTracker from '@/components/SymptomTracker';
+import MedicationTracker from '@/components/MedicationTracker';
+import { useJournal, JournalEntry, Medication } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
-import { Droplets, Moon, Home, Briefcase, Carrot, Pill, Dumbbell, Smile, Heart, Plus, Save, Edit, BookOpen } from 'lucide-react';
+import { Droplets, Moon, Home, Briefcase, Carrot, Plus, Save, Edit, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -19,13 +21,15 @@ const Index = () => {
     createTodayEntry, 
     updateEntry, 
     checkIfTodayEntryExists, 
-    getEntryByDate 
+    getEntryByDate,
+    getAllMedicationNames
   } = useJournal();
   
   const [currentDate, setCurrentDate] = useState(getTodayDate());
   const [entry, setEntry] = useState<JournalEntry | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [notes, setNotes] = useState('');
+  const [allMedicationNames, setAllMedicationNames] = useState<string[]>([]);
   
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
@@ -38,9 +42,12 @@ const Index = () => {
       setNotes('');
     }
     
+    // Get all medication names
+    setAllMedicationNames(getAllMedicationNames());
+    
     // Reset editing state when changing dates
     setIsEditing(false);
-  }, [currentDate, getEntryByDate]);
+  }, [currentDate, getEntryByDate, getAllMedicationNames]);
   
   const handleCreateEntry = () => {
     if (currentDate === getTodayDate()) {
@@ -57,11 +64,17 @@ const Index = () => {
         choresCompleted: false,
         workGoalsCompleted: false,
         veggieCount: 0,
-        medicationCount: 0,
+        medications: [],
         mood: '',
         exercises: [],
         selfCareActivities: [],
         notes: '',
+        painLevel: 0,
+        energyLevel: 5,
+        hasFever: false,
+        hasCoughSneezing: false,
+        hasNausea: false,
+        otherSymptoms: '',
       };
       
       updateEntry(newEntry);
@@ -75,6 +88,18 @@ const Index = () => {
     field: K,
     value: JournalEntry[K]
   ) => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      [field]: value,
+    };
+    
+    setEntry(updatedEntry);
+    updateEntry(updatedEntry);
+  };
+
+  const handleUpdateSymptom = (field: string, value: any) => {
     if (!entry) return;
     
     const updatedEntry = {
@@ -180,7 +205,7 @@ const Index = () => {
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <TapCounter
             count={entry.veggieCount}
             onChange={(count) => handleUpdateField('veggieCount', count)}
@@ -188,15 +213,25 @@ const Index = () => {
             label="Veggies & Fruits"
             color="bg-green-100 text-green-700"
           />
-          
-          <TapCounter
-            count={entry.medicationCount}
-            onChange={(count) => handleUpdateField('medicationCount', count)}
-            icon={<Pill className="text-red-500" />}
-            label="Medications"
-            color="bg-red-100 text-red-700"
-          />
         </div>
+
+        {/* Symptom Tracker */}
+        <SymptomTracker 
+          painLevel={entry.painLevel}
+          energyLevel={entry.energyLevel}
+          hasFever={entry.hasFever}
+          hasCoughSneezing={entry.hasCoughSneezing}
+          hasNausea={entry.hasNausea}
+          otherSymptoms={entry.otherSymptoms}
+          onChange={handleUpdateSymptom}
+        />
+
+        {/* Medication Tracker */}
+        <MedicationTracker 
+          medications={entry.medications}
+          previousMedications={allMedicationNames}
+          onChange={(medications) => handleUpdateField('medications', medications)}
+        />
         
         <div className="space-y-4">
           <EmojiSelector

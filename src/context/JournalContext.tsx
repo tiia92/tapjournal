@@ -2,6 +2,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
+// Medication type
+export type Medication = {
+  id: string;
+  name: string;
+  taken: boolean;
+};
+
 // Entry types
 export type JournalEntry = {
   id: string;
@@ -11,7 +18,7 @@ export type JournalEntry = {
   choresCompleted: boolean;
   workGoalsCompleted: boolean;
   veggieCount: number;
-  medicationCount: number;
+  medications: Medication[];
   mood: string;
   exercises: string[];
   selfCareActivities: string[];
@@ -19,6 +26,13 @@ export type JournalEntry = {
   audioNotes?: string; // For premium voice journaling
   images?: string[]; // For premium image journaling
   customMetrics?: Record<string, any>; // For premium custom tracking
+  // Symptoms
+  painLevel: number;
+  energyLevel: number;
+  hasFever: boolean;
+  hasCoughSneezing: boolean;
+  hasNausea: boolean;
+  otherSymptoms: string;
 };
 
 type JournalContextType = {
@@ -29,6 +43,7 @@ type JournalContextType = {
   getEntryByDate: (date: string) => JournalEntry | undefined;
   checkIfTodayEntryExists: () => boolean;
   createTodayEntry: () => JournalEntry;
+  getAllMedicationNames: () => string[];
 };
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
@@ -37,11 +52,18 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   choresCompleted: false,
   workGoalsCompleted: false,
   veggieCount: 0,
-  medicationCount: 0,
+  medications: [],
   mood: '',
   exercises: [],
   selfCareActivities: [],
   notes: '',
+  // Default symptom values
+  painLevel: 0,
+  energyLevel: 5,
+  hasFever: false,
+  hasCoughSneezing: false,
+  hasNausea: false,
+  otherSymptoms: '',
 };
 
 const formatDate = (date: Date): string => {
@@ -136,6 +158,19 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return entries.find(entry => entry.date === date);
   };
 
+  const getAllMedicationNames = (): string[] => {
+    // Extract unique medication names from all entries
+    const allMedNames = new Set<string>();
+    
+    entries.forEach(entry => {
+      entry.medications?.forEach(med => {
+        allMedNames.add(med.name);
+      });
+    });
+    
+    return Array.from(allMedNames);
+  };
+
   return (
     <JournalContext.Provider
       value={{
@@ -146,6 +181,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getEntryByDate,
         checkIfTodayEntryExists,
         createTodayEntry,
+        getAllMedicationNames,
       }}
     >
       {children}

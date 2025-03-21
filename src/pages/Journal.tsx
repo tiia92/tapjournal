@@ -47,6 +47,18 @@ const Journal = () => {
           description="Understand patterns in your emotional wellbeing"
           color="#10B981"
         />
+        
+        <InsightsChart 
+          title="Symptom Tracking" 
+          description="Monitor how your symptoms change over time"
+          color="#F97316"
+        />
+        
+        <InsightsChart 
+          title="Medication Adherence" 
+          description="Track how consistently you take your medications"
+          color="#EC4899"
+        />
 
         <JournalPrompts />
         
