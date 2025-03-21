@@ -9,7 +9,7 @@ import EmojiSelector from '@/components/EmojiSelector';
 import AnimatedButton from '@/components/AnimatedButton';
 import { useJournal, JournalEntry } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
-import { Droplets, Moon, Home, Briefcase, Carrot, Pill, Dumbbell, Smile, Heart, Plus, Save, Edit } from 'lucide-react';
+import { Droplets, Moon, Home, Briefcase, Carrot, Pill, Dumbbell, Smile, Heart, Plus, Save, Edit, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
