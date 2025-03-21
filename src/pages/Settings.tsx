@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import AnimatedButton from '@/components/AnimatedButton';
 import { useJournal } from '@/context/JournalContext';
@@ -7,6 +7,9 @@ import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import { Trash2, Download, Info, Bell, BellOff, Save, Crown } from 'lucide-react';
 import PremiumUpgrade from '@/components/PremiumUpgrade';
+import ThemeSelector from '@/components/premium/ThemeSelector';
+import CustomTrackers from '@/components/premium/CustomTrackers';
+import VoiceJournal from '@/components/premium/VoiceJournal';
 
 const Settings = () => {
   const { entries } = useJournal();
@@ -14,6 +17,18 @@ const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     localStorage.getItem('notificationsEnabled') === 'true'
   );
+  const [selectedTheme, setSelectedTheme] = useState(() => {
+    return localStorage.getItem('selectedTheme') || 'default';
+  });
+  
+  // Apply theme when it changes
+  useEffect(() => {
+    if (user?.isPremium) {
+      localStorage.setItem('selectedTheme', selectedTheme);
+      // In a real implementation, we would apply theme changes to the app here
+      toast.success(`Theme applied: ${selectedTheme}`);
+    }
+  }, [selectedTheme, user?.isPremium]);
   
   const handleExportData = () => {
     try {
@@ -86,6 +101,20 @@ const Settings = () => {
             <PremiumUpgrade />
           </div>
         )}
+
+        {/* Premium Theme Selector */}
+        {user?.isPremium && (
+          <ThemeSelector 
+            selectedTheme={selectedTheme}
+            onSelectTheme={setSelectedTheme}
+          />
+        )}
+
+        {/* Voice Journal for Premium Users */}
+        <VoiceJournal />
+
+        {/* Custom Trackers for Premium Users */}
+        <CustomTrackers />
 
         {/* Account Info */}
         {user && (

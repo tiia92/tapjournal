@@ -35,7 +35,7 @@ const PremiumUpgrade: React.FC = () => {
       icon: <ChartLine className="h-5 w-5 text-primary" />,
     },
     {
-      title: 'Customizable Emojis & Themes',
+      title: 'Customizable Themes',
       description: 'Personalize your tracking with different colors and themes',
       icon: <Palette className="h-5 w-5 text-primary" />,
     },
