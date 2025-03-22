@@ -2,6 +2,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
+// Task type
+export type Task = {
+  id: string;
+  name: string;
+  completed: boolean;
+};
+
 // Medication type
 export type Medication = {
   id: string;
@@ -15,9 +22,8 @@ export type JournalEntry = {
   date: string;
   waterCount: number;
   sleepHours: number;
-  choresCompleted: boolean;
-  workGoalsCompleted: boolean;
-  veggieCount: number;
+  chores: Task[];
+  workTasks: Task[];
   medications: Medication[];
   mood: string;
   exercises: string[];
@@ -44,14 +50,15 @@ type JournalContextType = {
   checkIfTodayEntryExists: () => boolean;
   createTodayEntry: () => JournalEntry;
   getAllMedicationNames: () => string[];
+  getAllChoreNames: () => string[];
+  getAllWorkTaskNames: () => string[];
 };
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   waterCount: 0,
   sleepHours: 0,
-  choresCompleted: false,
-  workGoalsCompleted: false,
-  veggieCount: 0,
+  chores: [],
+  workTasks: [],
   medications: [],
   mood: '',
   exercises: [],
@@ -85,11 +92,31 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       
       if (storedEntries) {
         const parsedEntries = JSON.parse(storedEntries);
-        setEntries(parsedEntries);
+        
+        // Handle migration from old format to new format
+        const migratedEntries = parsedEntries.map((entry: any) => {
+          // If entry already has the new format, return it as is
+          if (entry.chores && Array.isArray(entry.chores)) {
+            return entry;
+          }
+          
+          // Migrate from old boolean format to new array format
+          return {
+            ...entry,
+            chores: entry.choresCompleted 
+              ? [{ id: crypto.randomUUID(), name: "Default Chore", completed: true }] 
+              : [],
+            workTasks: entry.workGoalsCompleted 
+              ? [{ id: crypto.randomUUID(), name: "Default Work Task", completed: true }] 
+              : [],
+          };
+        });
+        
+        setEntries(migratedEntries);
         
         // Find today's entry
         const today = formatDate(new Date());
-        const todayEntryFromStorage = parsedEntries.find((entry: JournalEntry) => entry.date === today);
+        const todayEntryFromStorage = migratedEntries.find((entry: JournalEntry) => entry.date === today);
         
         if (todayEntryFromStorage) {
           setTodayEntry(todayEntryFromStorage);
@@ -171,6 +198,32 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return Array.from(allMedNames);
   };
 
+  const getAllChoreNames = (): string[] => {
+    // Extract unique chore names from all entries
+    const allChoreNames = new Set<string>();
+    
+    entries.forEach(entry => {
+      entry.chores?.forEach(chore => {
+        allChoreNames.add(chore.name);
+      });
+    });
+    
+    return Array.from(allChoreNames);
+  };
+
+  const getAllWorkTaskNames = (): string[] => {
+    // Extract unique work task names from all entries
+    const allWorkTaskNames = new Set<string>();
+    
+    entries.forEach(entry => {
+      entry.workTasks?.forEach(task => {
+        allWorkTaskNames.add(task.name);
+      });
+    });
+    
+    return Array.from(allWorkTaskNames);
+  };
+
   return (
     <JournalContext.Provider
       value={{
@@ -182,6 +235,8 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         checkIfTodayEntryExists,
         createTodayEntry,
         getAllMedicationNames,
+        getAllChoreNames,
+        getAllWorkTaskNames,
       }}
     >
       {children}

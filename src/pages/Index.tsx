@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import DateNavigation from '@/components/DateNavigation';
 import TapCounter from '@/components/TapCounter';
-import YesNoTap from '@/components/YesNoTap';
+import TaskTracker from '@/components/TaskTracker';
 import EmojiSelector from '@/components/EmojiSelector';
 import AnimatedButton from '@/components/AnimatedButton';
 import SymptomTracker from '@/components/SymptomTracker';
 import MedicationTracker from '@/components/MedicationTracker';
-import { useJournal, JournalEntry, Medication } from '@/context/JournalContext';
+import { useJournal, JournalEntry, Medication, Task } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
-import { Droplets, Moon, Home, Briefcase, Carrot, Plus, Save, Edit, BookOpen } from 'lucide-react';
+import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Index = () => {
@@ -22,7 +22,9 @@ const Index = () => {
     updateEntry, 
     checkIfTodayEntryExists, 
     getEntryByDate,
-    getAllMedicationNames
+    getAllMedicationNames,
+    getAllChoreNames,
+    getAllWorkTaskNames
   } = useJournal();
   
   const [currentDate, setCurrentDate] = useState(getTodayDate());
@@ -30,6 +32,8 @@ const Index = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [notes, setNotes] = useState('');
   const [allMedicationNames, setAllMedicationNames] = useState<string[]>([]);
+  const [allChoreNames, setAllChoreNames] = useState<string[]>([]);
+  const [allWorkTaskNames, setAllWorkTaskNames] = useState<string[]>([]);
   
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
@@ -42,12 +46,14 @@ const Index = () => {
       setNotes('');
     }
     
-    // Get all medication names
+    // Get all task and medication names
     setAllMedicationNames(getAllMedicationNames());
+    setAllChoreNames(getAllChoreNames());
+    setAllWorkTaskNames(getAllWorkTaskNames());
     
     // Reset editing state when changing dates
     setIsEditing(false);
-  }, [currentDate, getEntryByDate, getAllMedicationNames]);
+  }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames]);
   
   const handleCreateEntry = () => {
     if (currentDate === getTodayDate()) {
@@ -61,9 +67,8 @@ const Index = () => {
         date: currentDate,
         waterCount: 0,
         sleepHours: 0,
-        choresCompleted: false,
-        workGoalsCompleted: false,
-        veggieCount: 0,
+        chores: [],
+        workTasks: [],
         medications: [],
         mood: '',
         exercises: [],
@@ -189,29 +194,23 @@ const Index = () => {
           />
         </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <YesNoTap
-            value={entry.choresCompleted}
-            onChange={(value) => handleUpdateField('choresCompleted', value)}
+        <div className="grid grid-cols-1 gap-4">
+          <TaskTracker
+            tasks={entry.chores || []}
+            previousTasks={allChoreNames}
+            onChange={(tasks) => handleUpdateField('chores', tasks)}
             icon={<Home className="text-orange-500" />}
-            label="Chores Done"
-          />
-          
-          <YesNoTap
-            value={entry.workGoalsCompleted}
-            onChange={(value) => handleUpdateField('workGoalsCompleted', value)}
-            icon={<Briefcase className="text-slate-500" />}
-            label="Work Goals"
+            label="Chores"
           />
         </div>
         
         <div className="grid grid-cols-1 gap-4">
-          <TapCounter
-            count={entry.veggieCount}
-            onChange={(count) => handleUpdateField('veggieCount', count)}
-            icon={<Carrot className="text-green-500" />}
-            label="Veggies & Fruits"
-            color="bg-green-100 text-green-700"
+          <TaskTracker
+            tasks={entry.workTasks || []}
+            previousTasks={allWorkTaskNames}
+            onChange={(tasks) => handleUpdateField('workTasks', tasks)}
+            icon={<Briefcase className="text-slate-500" />}
+            label="Work Tasks"
           />
         </div>
 

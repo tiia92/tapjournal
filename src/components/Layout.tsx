@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 flex items-center justify-between h-14">
           <div 
             className="flex items-center cursor-pointer"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/dashboard')}
           >
             <Logo />
             <h1 className="text-xl font-bold ml-1">TapJournal</h1>
@@ -43,9 +43,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="fixed bottom-0 w-full border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)] bg-card md:pb-0 pb-5">
         <div className="container mx-auto px-4 flex items-center justify-between h-14">
           <button 
-            onClick={() => navigate('/')}
-            className={`nav-button ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
-            aria-label="Home"
+            onClick={() => navigate('/dashboard')}
+            className={`nav-button ${location.pathname === '/dashboard' ? 'text-primary' : 'text-muted-foreground'}`}
+            aria-label="Dashboard"
           >
             <Home size={20} />
             <span className="text-xs">Today</span>
