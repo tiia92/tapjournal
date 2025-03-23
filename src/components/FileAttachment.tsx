@@ -1,6 +1,5 @@
-
 import React, { useRef, useState } from 'react';
-import { PaperClip, X, File, Image, Video, FileText } from 'lucide-react';
+import { Paperclip, X, File, Image, Video, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
@@ -78,7 +77,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
           disabled={isUploading}
           className="text-xs"
         >
-          <PaperClip size={14} className="mr-1" />
+          <Paperclip size={14} className="mr-1" />
           {isUploading ? 'Uploading...' : 'Attach File'}
         </Button>
       </div>
