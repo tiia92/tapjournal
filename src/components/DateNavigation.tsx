@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ChevronLeft, ChevronRight, CalendarIcon } from 'lucide-react';
-import { formatDateDisplay } from '@/utils/trackerUtils';
+import { formatDateDisplay, getTodayDate } from '@/utils/trackerUtils';
 
 interface DateNavigationProps {
   currentDate: string;
@@ -29,12 +29,12 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
   };
 
   const isToday = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayDate();
     return currentDate === today;
   };
 
   const handleToday = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = getTodayDate();
     onDateChange(today);
   };
 

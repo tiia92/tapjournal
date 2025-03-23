@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Paperclip, X, File, Image, Video, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +11,7 @@ interface FileAttachmentProps {
 }
 
 const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = [] }) => {
-  const { saveAttachmentToEntry } = useJournal();
+  const { saveAttachmentToEntry, removeAttachmentFromEntry } = useJournal();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +36,11 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
         fileInputRef.current.value = '';
       }
     }, 800);
+  };
+
+  const handleRemoveAttachment = (url: string) => {
+    removeAttachmentFromEntry(entryId, url);
+    toast.success('File removed');
   };
 
   const getFileIcon = (url: string) => {
@@ -100,7 +106,10 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
                   {getFileName(url)}
                 </a>
               </div>
-              <button className="text-muted-foreground hover:text-destructive">
+              <button 
+                className="text-muted-foreground hover:text-destructive"
+                onClick={() => handleRemoveAttachment(url)}
+              >
                 <X size={14} />
               </button>
             </div>

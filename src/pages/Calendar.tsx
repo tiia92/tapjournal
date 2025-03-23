@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useJournal } from '@/context/JournalContext';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, parseISO } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Image } from 'lucide-react';
 import { moodOptions } from '@/utils/trackerUtils';
 
 const Calendar = () => {
@@ -79,6 +79,12 @@ const Calendar = () => {
     const mood = moodOptions.find(m => m.id === entry.mood);
     return mood ? mood.emoji : null;
   };
+
+  // Check if an entry has attachments
+  const hasAttachments = (date: Date) => {
+    const entry = getEntryForDate(date);
+    return entry?.attachments && entry.attachments.length > 0;
+  };
   
   // Function to generate the days of the week
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -135,6 +141,7 @@ const Calendar = () => {
             const formattedDate = format(day, 'yyyy-MM-dd');
             const entry = getEntryForDate(day);
             const moodEmoji = getMoodEmojiForDate(day);
+            const hasAttachment = hasAttachments(day);
             const isFutureDate = day > new Date();
             
             return (
@@ -156,7 +163,13 @@ const Calendar = () => {
                   <span className="text-base mt-1">{moodEmoji}</span>
                 )}
                 
-                {entry && !moodEmoji && (
+                {hasAttachment && (
+                  <div className="flex items-center justify-center mt-1">
+                    <Image size={14} className="text-blue-500" />
+                  </div>
+                )}
+                
+                {entry && !moodEmoji && !hasAttachment && (
                   <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1"></div>
                 )}
               </div>

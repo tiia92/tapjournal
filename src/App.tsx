@@ -41,14 +41,17 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
-  
   return (
     <Routes>
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LandingPage />} />
+      {/* Landing page available to everyone */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutUs />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+      
+      {/* Login/signup routes */}
+      <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+      <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+      
+      {/* Protected routes */}
       <Route 
         path="/dashboard" 
         element={

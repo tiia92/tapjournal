@@ -2,31 +2,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, User, Clock } from 'lucide-react';
+import { LogOut, Settings, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import TimeZoneSelector from './TimeZoneSelector';
 
 const UserProfileHeader: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const [showTimezoneSelector, setShowTimezoneSelector] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  const handleTimezoneChange = (timezone: string) => {
-    // Update timezone in localStorage
-    localStorage.setItem('userTimezone', timezone);
-    setShowTimezoneSelector(false);
-    // Reload the page to apply timezone changes
-    window.location.reload();
-  };
-
-  const getCurrentTimezone = () => {
-    return localStorage.getItem('userTimezone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
   };
 
   if (!user) return null;
@@ -62,16 +48,6 @@ const UserProfileHeader: React.FC = () => {
           <div className="p-1">
             <button
               onClick={() => {
-                setShowTimezoneSelector(!showTimezoneSelector);
-                setShowMenu(false);
-              }}
-              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-secondary rounded-sm"
-            >
-              <Clock size={14} />
-              Change Timezone
-            </button>
-            <button
-              onClick={() => {
                 setShowMenu(false);
                 navigate('/settings');
               }}
@@ -87,26 +63,6 @@ const UserProfileHeader: React.FC = () => {
               <LogOut size={14} />
               Sign out
             </button>
-          </div>
-        </div>
-      )}
-
-      {showTimezoneSelector && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background p-4 rounded-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Select Your Timezone</h2>
-            <TimeZoneSelector 
-              onChange={handleTimezoneChange}
-              currentTimezone={getCurrentTimezone()}
-            />
-            <div className="flex justify-end mt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowTimezoneSelector(false)}
-              >
-                Cancel
-              </Button>
-            </div>
           </div>
         </div>
       )}

@@ -1,12 +1,29 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+  const [activeWord, setActiveWord] = useState(0);
+  
+  const words = [
+    { text: 'day', color: 'from-orange-400 to-pink-500' },
+    { text: 'wellness', color: 'from-blue-500 to-purple-600' },
+    { text: 'growth', color: 'from-green-400 to-emerald-500' }
+  ];
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveWord(prev => (prev + 1) % words.length);
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -18,8 +35,14 @@ const LandingPage = () => {
           </div>
           <div className="space-x-4">
             <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
-            <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
-            <Button onClick={() => navigate('/signup')}>Sign Up</Button>
+            {isAuthenticated ? (
+              <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
+                <Button onClick={() => navigate('/signup')}>Sign Up</Button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -29,26 +52,41 @@ const LandingPage = () => {
         <div className="flex flex-col md:flex-row items-center justify-between py-16 md:py-24">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Track your day, your wellness, and your growth, one tap at a time
+              Track your{' '}
+              <span className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-all duration-500`}>
+                {words[activeWord].text}
+              </span>
+              , one tap at a time
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
               TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
             <div className="space-x-4">
-              <Button size="lg" onClick={() => navigate('/signup')}>
-                Get Started
-                <ArrowRight className="ml-2" size={18} />
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
-                Log In
-              </Button>
+              {isAuthenticated ? (
+                <Button size="lg" onClick={() => navigate('/dashboard')}>
+                  Go to Journal
+                  <ArrowRight className="ml-2" size={18} />
+                </Button>
+              ) : (
+                <>
+                  <Button size="lg" onClick={() => navigate('/signup')}>
+                    Get Started
+                    <ArrowRight className="ml-2" size={18} />
+                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
+                    Log In
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center">
-            <div className="relative">
-              <Logo size="large" />
-              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl"></div>
+            <div className="rounded-lg overflow-hidden shadow-lg">
+              <img 
+                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
+                alt="Productivity" 
+                className="w-full h-auto object-cover"
+              />
             </div>
           </div>
         </div>
@@ -121,10 +159,17 @@ const LandingPage = () => {
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join thousands of users who are taking control of their health one day at a time.
           </p>
-          <Button size="lg" onClick={() => navigate('/signup')}>
-            Sign Up for Free
-            <ArrowRight className="ml-2" size={18} />
-          </Button>
+          {isAuthenticated ? (
+            <Button size="lg" onClick={() => navigate('/dashboard')}>
+              Go to Journal
+              <ArrowRight className="ml-2" size={18} />
+            </Button>
+          ) : (
+            <Button size="lg" onClick={() => navigate('/signup')}>
+              Sign Up for Free
+              <ArrowRight className="ml-2" size={18} />
+            </Button>
+          )}
         </div>
       </main>
 
