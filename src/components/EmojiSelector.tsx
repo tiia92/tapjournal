@@ -13,6 +13,7 @@ interface EmojiSelectorProps {
   onChange: (selectedIds: string[]) => void;
   label: string;
   multiSelect?: boolean;
+  labelOnly?: boolean;
 }
 
 const EmojiSelector: React.FC<EmojiSelectorProps> = ({ 
@@ -20,64 +21,84 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   selectedIds, 
   onChange, 
   label,
-  multiSelect = true 
+  multiSelect = true,
+  labelOnly = false
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const handleEmojiClick = (id: string) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
+  
+  const toggleEmoji = (id: string) => {
     if (multiSelect) {
-      if (selectedIds.includes(id)) {
-        onChange(selectedIds.filter(selectedId => selectedId !== id));
-      } else {
-        onChange([...selectedIds, id]);
-      }
+      const newSelectedIds = selectedIds.includes(id)
+        ? selectedIds.filter(selectedId => selectedId !== id)
+        : [...selectedIds, id];
+      onChange(newSelectedIds);
     } else {
       onChange([id]);
     }
   };
-
-  const selectedEmojis = options
-    .filter(option => selectedIds.includes(option.id))
-    .map(option => option.emoji)
-    .join(' ');
-
+  
   return (
-    <div className="tap-card animate-fade-in">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {isExpanded ? 'Hide' : 'Select'}
-        </button>
+    <div className="tap-card">
+      <div 
+        className="flex items-center justify-between cursor-pointer"
+        onClick={toggleExpanded}
+      >
+        <span className="text-sm font-medium">{label}</span>
+        {!labelOnly && (
+          <span className="text-xs text-muted-foreground">
+            {expanded ? 'Hide' : 'Select'}
+          </span>
+        )}
       </div>
       
-      {selectedEmojis ? (
-        <div className="flex flex-wrap gap-2 mb-3 min-h-12 items-center">
-          <div className="text-2xl">{selectedEmojis}</div>
-        </div>
-      ) : (
-        <div className="bg-muted/30 rounded-xl py-3 mb-3 text-center text-muted-foreground text-sm">
-          Tap to select
+      {!expanded && selectedIds.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {selectedIds.map(id => {
+            const option = options.find(opt => opt.id === id);
+            return option ? (
+              <div 
+                key={option.id}
+                className="flex items-center gap-1 px-2 py-1 rounded-full bg-secondary text-sm"
+              >
+                <span>{option.emoji}</span>
+                <span>{option.label}</span>
+              </div>
+            ) : null;
+          })}
         </div>
       )}
       
-      {isExpanded && (
-        <div className="emoji-selector animate-scale-in mt-2">
+      {expanded && (
+        <div className="mt-3 grid grid-cols-4 gap-2">
           {options.map(option => (
             <button
               key={option.id}
-              onClick={() => handleEmojiClick(option.id)}
-              className={`emoji-item ${selectedIds.includes(option.id) ? 'selected' : ''}`}
-              title={option.label}
-              aria-label={option.label}
+              onClick={() => toggleEmoji(option.id)}
+              className={`flex flex-col items-center justify-center p-2 rounded-lg ${
+                selectedIds.includes(option.id) ? 'bg-primary/10 border border-primary' : 'bg-secondary hover:bg-secondary/90'
+              }`}
+              aria-pressed={selectedIds.includes(option.id)}
             >
-              {option.emoji}
+              <span className="text-2xl" role="img" aria-label={option.label}>
+                {option.emoji}
+              </span>
+              <span className="text-xs mt-1">{option.label}</span>
             </button>
           ))}
         </div>
+      )}
+      
+      {!expanded && (
+        <button 
+          onClick={toggleExpanded}
+          className="w-full mt-3 text-sm py-1.5 text-center rounded-md bg-secondary hover:bg-secondary/80 transition-colors"
+        >
+          Tap to select
+        </button>
       )}
     </div>
   );

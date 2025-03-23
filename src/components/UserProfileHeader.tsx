@@ -2,13 +2,21 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, User } from 'lucide-react';
+import { LogOut, Settings, User, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import TimezoneSelector from './TimezoneSelector';
 
 const UserProfileHeader: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
+  const [showTimezoneDialog, setShowTimezoneDialog] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -48,6 +56,16 @@ const UserProfileHeader: React.FC = () => {
           <div className="p-1">
             <button
               onClick={() => {
+                setShowTimezoneDialog(true);
+                setShowMenu(false);
+              }}
+              className="flex items-center gap-2 w-full text-left px-3 py-2 text-sm hover:bg-secondary rounded-sm"
+            >
+              <Clock size={14} />
+              Time Zone Settings
+            </button>
+            <button
+              onClick={() => {
                 setShowMenu(false);
                 navigate('/settings');
               }}
@@ -66,6 +84,15 @@ const UserProfileHeader: React.FC = () => {
           </div>
         </div>
       )}
+
+      <Dialog open={showTimezoneDialog} onOpenChange={setShowTimezoneDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Time Zone Settings</DialogTitle>
+          </DialogHeader>
+          <TimezoneSelector />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,103 +1,70 @@
 
-import { format, parseISO, addDays, subDays } from 'date-fns';
-
-export const formatDateDisplay = (dateString: string): string => {
-  const date = parseISO(dateString);
-  return format(date, 'EEEE, MMMM d, yyyy');
-};
-
-export const getYesterdayDate = (): string => {
-  const yesterday = subDays(new Date(), 1);
-  return yesterday.toISOString().split('T')[0];
-};
-
-export const getTomorrowDate = (): string => {
-  const tomorrow = addDays(new Date(), 1);
-  return tomorrow.toISOString().split('T')[0];
-};
-
+// Get today's date in YYYY-MM-DD format based on user's timezone
 export const getTodayDate = (): string => {
-  return new Date().toISOString().split('T')[0];
+  const userTimezone = localStorage.getItem('userTimezone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const options: Intl.DateTimeFormatOptions = { 
+    timeZone: userTimezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  };
+  const formatter = new Intl.DateTimeFormat('en-CA', options); // en-CA uses YYYY-MM-DD format
+  return formatter.format(new Date()).replace(/\//g, '-');
 };
 
-export const getLastNDays = (n: number): string[] => {
-  const dates: string[] = [];
-  const today = new Date();
-  
-  for (let i = 0; i < n; i++) {
-    const date = subDays(today, i);
-    dates.push(date.toISOString().split('T')[0]);
-  }
-  
-  return dates;
-};
+// Mood options
+export const moodOptions = [
+  { id: 'happy', emoji: '😊', label: 'Happy' },
+  { id: 'sad', emoji: '😢', label: 'Sad' },
+  { id: 'angry', emoji: '😡', label: 'Angry' },
+  { id: 'anxious', emoji: '😰', label: 'Anxious' },
+  { id: 'tired', emoji: '😴', label: 'Tired' },
+  { id: 'calm', emoji: '😌', label: 'Calm' },
+  { id: 'sick', emoji: '🤒', label: 'Sick' },
+  { id: 'energetic', emoji: '⚡', label: 'Energetic' }
+];
 
-// Exercise options with emojis
+// Exercise options
 export const exerciseOptions = [
   { id: 'walking', emoji: '🚶', label: 'Walking' },
   { id: 'running', emoji: '🏃', label: 'Running' },
-  { id: 'swimming', emoji: '🏊', label: 'Swimming' },
   { id: 'cycling', emoji: '🚴', label: 'Cycling' },
+  { id: 'swimming', emoji: '🏊', label: 'Swimming' },
   { id: 'yoga', emoji: '🧘', label: 'Yoga' },
-  { id: 'weightlifting', emoji: '🏋️', label: 'Weightlifting' },
-  { id: 'dancing', emoji: '💃', label: 'Dancing' },
-  { id: 'hiking', emoji: '🥾', label: 'Hiking' },
-  { id: 'tennis', emoji: '🎾', label: 'Tennis' },
-  { id: 'basketball', emoji: '🏀', label: 'Basketball' },
-  { id: 'soccer', emoji: '⚽', label: 'Soccer' },
-  { id: 'climbing', emoji: '🧗', label: 'Climbing' }
+  { id: 'weights', emoji: '🏋️', label: 'Weights' },
+  { id: 'sports', emoji: '⚽', label: 'Sports' },
+  { id: 'dance', emoji: '💃', label: 'Dance' }
 ];
 
-// Self-care activity options with emojis
+// Self-care options
 export const selfCareOptions = [
-  { id: 'reading', emoji: '📚', label: 'Reading' },
   { id: 'meditation', emoji: '🧠', label: 'Meditation' },
-  { id: 'bath', emoji: '🛁', label: 'Bath' },
+  { id: 'reading', emoji: '📚', label: 'Reading' },
+  { id: 'bath', emoji: '🛁', label: 'Bath/Spa' },
+  { id: 'nature', emoji: '🌳', label: 'Nature' },
   { id: 'music', emoji: '🎵', label: 'Music' },
-  { id: 'art', emoji: '🎨', label: 'Art' },
-  { id: 'writing', emoji: '✍️', label: 'Writing' },
-  { id: 'nature', emoji: '🌳', label: 'Nature Walk' },
-  { id: 'cooking', emoji: '👨‍🍳', label: 'Cooking' },
-  { id: 'gardening', emoji: '🌱', label: 'Gardening' },
-  { id: 'tv', emoji: '📺', label: 'TV/Movies' },
-  { id: 'gaming', emoji: '🎮', label: 'Gaming' },
-  { id: 'massage', emoji: '💆', label: 'Massage' }
+  { id: 'cooking', emoji: '🍳', label: 'Cooking' },
+  { id: 'art', emoji: '🎨', label: 'Art/Craft' },
+  { id: 'social', emoji: '👥', label: 'Social Time' }
 ];
 
-// Mood options with emojis
-export const moodOptions = [
-  { id: 'amazing', emoji: '😁', label: 'Amazing' },
-  { id: 'happy', emoji: '😊', label: 'Happy' },
-  { id: 'good', emoji: '🙂', label: 'Good' },
-  { id: 'meh', emoji: '😐', label: 'Meh' },
-  { id: 'tired', emoji: '😴', label: 'Tired' },
-  { id: 'sad', emoji: '😔', label: 'Sad' },
-  { id: 'angry', emoji: '😠', label: 'Angry' },
-  { id: 'anxious', emoji: '😰', label: 'Anxious' }
-];
+// Function to format dates for display
+export const formatDateForDisplay = (dateString: string): string => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    timeZone: localStorage.getItem('userTimezone') || undefined
+  }).format(date);
+};
 
-export const getStreakCount = (dates: string[]): number => {
-  // Sort dates in descending order
-  const sortedDates = [...dates].sort((a, b) => 
-    new Date(b).getTime() - new Date(a).getTime()
-  );
-  
-  if (sortedDates.length === 0) return 0;
-  
-  let streak = 1;
-  let currentDate = parseISO(sortedDates[0]);
-  
-  for (let i = 1; i < sortedDates.length; i++) {
-    const expectedDate = subDays(currentDate, 1);
-    const nextDate = parseISO(sortedDates[i]);
-    
-    if (format(expectedDate, 'yyyy-MM-dd') === format(nextDate, 'yyyy-MM-dd')) {
-      streak++;
-      currentDate = nextDate;
-    } else {
-      break;
-    }
-  }
-  
-  return streak;
+// Function to format time
+export const formatTime = (date: Date): string => {
+  return new Intl.DateTimeFormat('en-US', { 
+    hour: 'numeric', 
+    minute: 'numeric',
+    timeZone: localStorage.getItem('userTimezone') || undefined
+  }).format(date);
 };

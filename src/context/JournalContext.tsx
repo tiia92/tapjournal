@@ -26,8 +26,11 @@ export type JournalEntry = {
   workTasks: Task[];
   medications: Medication[];
   mood: string;
+  moodNote?: string;
   exercises: string[];
+  exerciseNote?: string;
   selfCareActivities: string[];
+  selfCareNote?: string;
   notes: string;
   audioNotes?: string; // For premium voice journaling
   images?: string[]; // For premium image journaling
@@ -61,20 +64,32 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   workTasks: [],
   medications: [],
   mood: '',
+  moodNote: '',
   exercises: [],
+  exerciseNote: '',
   selfCareActivities: [],
+  selfCareNote: '',
   notes: '',
   // Default symptom values
   painLevel: 0,
-  energyLevel: 5,
+  energyLevel: 0, // Changed from 5 to 0 as requested
   hasFever: false,
   hasCoughSneezing: false,
   hasNausea: false,
   otherSymptoms: '',
 };
 
-const formatDate = (date: Date): string => {
-  return date.toISOString().split('T')[0];
+// Function to get today's date based on user's timezone
+const getTodayDateInUserTimezone = () => {
+  const userTimezone = localStorage.getItem('userTimezone') || Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const options: Intl.DateTimeFormatOptions = { 
+    timeZone: userTimezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  };
+  const formatter = new Intl.DateTimeFormat('en-CA', options); // en-CA uses YYYY-MM-DD format
+  return formatter.format(new Date()).replace(/\//g, '-');
 };
 
 const JournalContext = createContext<JournalContextType | undefined>(undefined);
@@ -115,7 +130,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setEntries(migratedEntries);
         
         // Find today's entry
-        const today = formatDate(new Date());
+        const today = getTodayDateInUserTimezone();
         const todayEntryFromStorage = migratedEntries.find((entry: JournalEntry) => entry.date === today);
         
         if (todayEntryFromStorage) {
@@ -140,12 +155,12 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [entries, user]);
 
   const checkIfTodayEntryExists = (): boolean => {
-    const today = formatDate(new Date());
+    const today = getTodayDateInUserTimezone();
     return entries.some(entry => entry.date === today);
   };
 
   const createTodayEntry = (): JournalEntry => {
-    const today = formatDate(new Date());
+    const today = getTodayDateInUserTimezone();
     const newEntry: JournalEntry = {
       ...defaultEntry,
       id: crypto.randomUUID(),
@@ -161,7 +176,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setEntries(prev => [...prev, entry]);
     
     // Update today's entry if the new entry is for today
-    const today = formatDate(new Date());
+    const today = getTodayDateInUserTimezone();
     if (entry.date === today) {
       setTodayEntry(entry);
     }
@@ -175,7 +190,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
     
     // Update today's entry if needed
-    const today = formatDate(new Date());
+    const today = getTodayDateInUserTimezone();
     if (updatedEntry.date === today) {
       setTodayEntry(updatedEntry);
     }

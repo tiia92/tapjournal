@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Home, Calendar, Book, Settings } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import UserProfileHeader from './UserProfileHeader';
@@ -25,13 +25,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-background">
       <header className="border-b border-border shadow-sm bg-card">
         <div className="container mx-auto px-4 flex items-center justify-between h-14">
-          <div 
-            className="flex items-center cursor-pointer"
-            onClick={() => navigate('/')}
-          >
+          <Link to="/" className="flex items-center">
             <Logo />
             <h1 className="text-xl font-bold ml-1">TapJournal</h1>
-          </div>
+          </Link>
           <UserProfileHeader />
         </div>
       </header>
