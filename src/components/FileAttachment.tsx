@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import { Paperclip, X, File, Image, Video, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -65,10 +64,16 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
     return parts[parts.length - 1].substring(0, 15) + '...';
   };
 
+  const isImageFile = (url: string) => {
+    const extension = url.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <h4 className="text-sm font-medium">Attachments</h4>
+        <h4 className="text-sm font-medium text-muted-foreground">Attachments</h4>
+        
         <input
           type="file"
           ref={fileInputRef}
@@ -88,11 +93,38 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
         </Button>
       </div>
       
-      {attachments.length > 0 && (
+      {/* Display images in proper dimensions */}
+      {attachments.filter(url => isImageFile(url)).length > 0 && (
+        <div className="space-y-3">
+          <h5 className="text-sm font-medium">Images</h5>
+          <div className="grid grid-cols-1 gap-3">
+            {attachments.filter(url => isImageFile(url)).map((url, index) => (
+              <div key={`img-${index}`} className="relative">
+                <img 
+                  src={url} 
+                  alt={`Attachment ${index + 1}`}
+                  className="rounded-md max-w-full max-h-[500px] object-contain"
+                  style={{ maxWidth: '500px' }}
+                />
+                <button 
+                  className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
+                  onClick={() => handleRemoveAttachment(url)}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Other file types */}
+      {attachments.filter(url => !isImageFile(url)).length > 0 && (
         <div className="space-y-2">
-          {attachments.map((url, index) => (
+          <h5 className="text-sm font-medium">Files</h5>
+          {attachments.filter(url => !isImageFile(url)).map((url, index) => (
             <div 
-              key={index} 
+              key={`file-${index}`} 
               className="flex items-center justify-between bg-muted/30 p-2 rounded-md"
             >
               <div className="flex items-center gap-2">
@@ -115,6 +147,10 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
             </div>
           ))}
         </div>
+      )}
+      
+      {attachments.length === 0 && (
+        <p className="text-sm text-muted-foreground italic">No files attached yet.</p>
       )}
     </div>
   );

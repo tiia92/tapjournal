@@ -1,15 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight } from 'lucide-react';
+import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight, LogOut } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [activeWord, setActiveWord] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   const words = [
     { text: 'day', color: 'from-orange-400 to-pink-500' },
@@ -18,12 +20,23 @@ const LandingPage = () => {
   ];
   
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveWord(prev => (prev + 1) % words.length);
-    }, 3000);
+    // Set up word rotation every 1.5 seconds with fade transition
+    const wordInterval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActiveWord(prev => (prev + 1) % words.length);
+        setIsTransitioning(false);
+      }, 300); // Wait for fade out before changing word
+    }, 1500);
     
-    return () => clearInterval(interval);
+    return () => clearInterval(wordInterval);
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Signed out successfully');
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,7 +49,13 @@ const LandingPage = () => {
           <div className="space-x-4">
             <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
             {isAuthenticated ? (
-              <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
+              <div className="flex items-center gap-3">
+                <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
+                <Button variant="outline" onClick={handleLogout}>
+                  <LogOut size={18} className="mr-2" />
+                  Sign Out
+                </Button>
+              </div>
             ) : (
               <>
                 <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
@@ -51,13 +70,17 @@ const LandingPage = () => {
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center justify-between py-16 md:py-24">
           <div className="md:w-1/2 mb-10 md:mb-0">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-2">
               Track your{' '}
-              <span className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-all duration-500`}>
+              <span 
+                className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+              >
                 {words[activeWord].text}
               </span>
-              , one tap at a time
             </h2>
+            <p className="text-4xl md:text-5xl font-bold mb-6">
+              one tap at a time
+            </p>
             <p className="text-xl text-muted-foreground mb-8">
               TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
@@ -83,8 +106,8 @@ const LandingPage = () => {
           <div className="md:w-1/2 flex justify-center">
             <div className="rounded-lg overflow-hidden shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b" 
-                alt="Productivity" 
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" 
+                alt="Young woman journaling on her phone" 
                 className="w-full h-auto object-cover"
               />
             </div>
