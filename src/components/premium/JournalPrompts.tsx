@@ -28,7 +28,11 @@ const journalPrompts = [
   "How have you grown or changed in the past year?",
 ];
 
-const JournalPrompts: React.FC = () => {
+interface JournalPromptsProps {
+  inJournalPage?: boolean;
+}
+
+const JournalPrompts: React.FC<JournalPromptsProps> = ({ inJournalPage = false }) => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
   const [currentPrompt, setCurrentPrompt] = useState(() => {
@@ -59,6 +63,29 @@ const JournalPrompts: React.FC = () => {
     );
   }
 
+  // Simplified version for journal notes section
+  if (inJournalPage) {
+    return (
+      <div>
+        <div className="bg-secondary/50 p-4 rounded-lg mb-3 flex flex-col gap-2">
+          <p className="text-sm font-medium flex items-center gap-1">
+            <BookOpen size={14} className="text-primary" />
+            Journal Prompt
+          </p>
+          <p className="text-sm italic">"{currentPrompt}"</p>
+        </div>
+        
+        <button 
+          onClick={getRandomPrompt}
+          className="text-xs text-muted-foreground hover:text-primary flex items-center transition-colors"
+        >
+          <RefreshCw size={12} className="mr-1" /> Get new prompt
+        </button>
+      </div>
+    );
+  }
+
+  // Full version for journal page
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">Journal Prompts</h3>

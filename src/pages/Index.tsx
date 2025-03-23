@@ -9,13 +9,22 @@ import EmojiSelector from '@/components/EmojiSelector';
 import AnimatedButton from '@/components/AnimatedButton';
 import SymptomTracker from '@/components/SymptomTracker';
 import MedicationTracker from '@/components/MedicationTracker';
-import { useJournal, JournalEntry, Medication, Task } from '@/context/JournalContext';
+import VoiceJournal from '@/components/premium/VoiceJournal';
+import JournalPrompts from '@/components/premium/JournalPrompts';
+import CustomTrackers from '@/components/premium/CustomTrackers';
+import FileAttachment from '@/components/FileAttachment';
+import { useJournal, JournalEntry } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
-import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen } from 'lucide-react';
+import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext';
+import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isPremium = user?.isPremium || false;
+  
   const { 
     todayEntry, 
     createTodayEntry, 
@@ -35,15 +44,26 @@ const Index = () => {
   const [allChoreNames, setAllChoreNames] = useState<string[]>([]);
   const [allWorkTaskNames, setAllWorkTaskNames] = useState<string[]>([]);
   
+  // Category notes
+  const [moodNote, setMoodNote] = useState('');
+  const [exercisesNote, setExercisesNote] = useState('');
+  const [selfCareNote, setSelfCareNote] = useState('');
+  
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
     
     if (existingEntry) {
       setEntry(existingEntry);
       setNotes(existingEntry.notes);
+      setMoodNote(existingEntry.moodNote || '');
+      setExercisesNote(existingEntry.exercisesNote || '');
+      setSelfCareNote(existingEntry.selfCareNote || '');
     } else {
       setEntry(null);
       setNotes('');
+      setMoodNote('');
+      setExercisesNote('');
+      setSelfCareNote('');
     }
     
     // Get all task and medication names
@@ -71,11 +91,14 @@ const Index = () => {
         workTasks: [],
         medications: [],
         mood: '',
+        moodNote: '',
         exercises: [],
+        exercisesNote: '',
         selfCareActivities: [],
+        selfCareNote: '',
         notes: '',
         painLevel: 0,
-        energyLevel: 5,
+        energyLevel: 0,
         hasFever: false,
         hasCoughSneezing: false,
         hasNausea: false,
@@ -126,11 +149,46 @@ const Index = () => {
     
     updateEntry(updatedEntry);
     setIsEditing(false);
-    toast.success('Journal entry saved');
+    toast.success('Journal notes saved');
+  };
+  
+  const handleSaveAll = () => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      notes,
+      moodNote,
+      exercisesNote,
+      selfCareNote
+    };
+    
+    updateEntry(updatedEntry);
+    toast.success('All changes saved successfully');
   };
   
   const handleViewJournal = () => {
     navigate('/journal');
+  };
+  
+  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote', value: string) => {
+    if (!entry) return;
+    
+    if (category === 'moodNote') {
+      setMoodNote(value);
+    } else if (category === 'exercisesNote') {
+      setExercisesNote(value);
+    } else if (category === 'selfCareNote') {
+      setSelfCareNote(value);
+    }
+    
+    const updatedEntry = {
+      ...entry,
+      [category]: value,
+    };
+    
+    setEntry(updatedEntry);
+    updateEntry(updatedEntry);
   };
   
   if (!entry) {
@@ -174,7 +232,38 @@ const Index = () => {
         onDateChange={setCurrentDate}
       />
       
-      <div className="mt-6 space-y-6">
+      <div className="mt-6 space-y-6 pb-20">
+        {/* Mood & Activities Section - Moved to top */}
+        <div className="space-y-4">
+          <EmojiSelector
+            options={moodOptions}
+            selectedIds={entry.mood ? [entry.mood] : []}
+            onChange={(ids) => handleUpdateField('mood', ids[0] || '')}
+            label="Today's Mood"
+            multiSelect={false}
+            onNoteChange={(note) => handleUpdateCategoryNote('moodNote', note)}
+            note={moodNote}
+          />
+          
+          <EmojiSelector
+            options={exerciseOptions}
+            selectedIds={entry.exercises}
+            onChange={(ids) => handleUpdateField('exercises', ids)}
+            label="Exercise Activities"
+            onNoteChange={(note) => handleUpdateCategoryNote('exercisesNote', note)}
+            note={exercisesNote}
+          />
+          
+          <EmojiSelector
+            options={selfCareOptions}
+            selectedIds={entry.selfCareActivities}
+            onChange={(ids) => handleUpdateField('selfCareActivities', ids)}
+            label="Self Care Activities"
+            onNoteChange={(note) => handleUpdateCategoryNote('selfCareNote', note)}
+            note={selfCareNote}
+          />
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <TapCounter
             count={entry.waterCount}
@@ -232,30 +321,12 @@ const Index = () => {
           onChange={(medications) => handleUpdateField('medications', medications)}
         />
         
-        <div className="space-y-4">
-          <EmojiSelector
-            options={moodOptions}
-            selectedIds={entry.mood ? [entry.mood] : []}
-            onChange={(ids) => handleUpdateField('mood', ids[0] || '')}
-            label="Today's Mood"
-            multiSelect={false}
-          />
-          
-          <EmojiSelector
-            options={exerciseOptions}
-            selectedIds={entry.exercises}
-            onChange={(ids) => handleUpdateField('exercises', ids)}
-            label="Exercise Activities"
-          />
-          
-          <EmojiSelector
-            options={selfCareOptions}
-            selectedIds={entry.selfCareActivities}
-            onChange={(ids) => handleUpdateField('selfCareActivities', ids)}
-            label="Self Care Activities"
-          />
-        </div>
+        {/* Custom Tracker for Premium Users - moved above Journal Notes */}
+        {isPremium && (
+          <CustomTrackers />
+        )}
         
+        {/* Journal Notes Section with Voice Journal and Journal Prompts for Premium */}
         <div className="tap-card">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-muted-foreground">Journal Notes</span>
@@ -271,12 +342,28 @@ const Index = () => {
             )}
           </div>
           
+          {isPremium && (
+            <div className="space-y-4 mb-4">
+              <VoiceJournal 
+                entryId={entry.id}
+                audioUrl={entry.audioNotes}
+                transcription={entry.audioTranscription}
+              />
+              <JournalPrompts />
+            </div>
+          )}
+          
+          <FileAttachment 
+            entryId={entry.id} 
+            attachments={entry.attachments} 
+          />
+          
           {isEditing ? (
             <>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-32 p-3 bg-secondary/50 rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm"
+                className="w-full h-32 p-3 bg-secondary/50 rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm mt-4"
                 placeholder="Write your thoughts for the day..."
               />
               
@@ -288,7 +375,7 @@ const Index = () => {
               </div>
             </>
           ) : (
-            <div className="bg-secondary/50 rounded-lg p-3 min-h-[80px] text-sm">
+            <div className="bg-secondary/50 rounded-lg p-3 min-h-[80px] text-sm mt-4">
               {entry.notes ? (
                 <p>{entry.notes}</p>
               ) : (
@@ -298,7 +385,15 @@ const Index = () => {
           )}
         </div>
         
-        <div className="pt-4">
+        <div className="flex flex-col gap-4">
+          <Button
+            onClick={handleSaveAll}
+            className="w-full flex items-center justify-center"
+          >
+            <Save size={18} className="mr-2" />
+            Save All Changes
+          </Button>
+          
           <AnimatedButton 
             onClick={handleViewJournal}
             variant="outline"

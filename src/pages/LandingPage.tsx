@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Droplets, Moon, BookText, Pill, Heart, ArrowRight } from 'lucide-react';
+import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight } from 'lucide-react';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 
@@ -29,11 +29,10 @@ const LandingPage = () => {
         <div className="flex flex-col md:flex-row items-center justify-between py-16 md:py-24">
           <div className="md:w-1/2 mb-10 md:mb-0">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Track your wellness journey, one tap at a time
+              Track your day, your wellness, and your growth, one tap at a time
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              TapJournal helps you monitor your daily habits, symptoms, medications, and mood 
-              to improve your overall wellness and health awareness.
+              TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
             <div className="space-x-4">
               <Button size="lg" onClick={() => navigate('/signup')}>
@@ -54,10 +53,22 @@ const LandingPage = () => {
           </div>
         </div>
 
-        {/* Features Section */}
+        {/* Features Section - Rearranged as requested */}
         <div className="py-16 border-t border-border">
           <h2 className="text-3xl font-bold mb-12 text-center">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Personal Journal */}
+            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
+                <BookText className="text-orange-500" size={24} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Personal Journal</h3>
+              <p className="text-muted-foreground">
+                Record your thoughts and reflections with our easy-to-use journaling tool with text, audio, images, emojis, and more.
+              </p>
+            </div>
+
+            {/* Habit Tracking */}
             <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <Droplets className="text-blue-500" size={24} />
@@ -69,6 +80,18 @@ const LandingPage = () => {
               </p>
             </div>
 
+            {/* Symptom Tracking */}
+            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                <Heart className="text-green-500" size={24} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Symptom Tracking</h3>
+              <p className="text-muted-foreground">
+                Record pain levels, energy, mood, and symptoms to understand patterns and share with healthcare providers.
+              </p>
+            </div>
+            
+            {/* Medication Management */}
             <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <Pill className="text-purple-500" size={24} />
@@ -78,37 +101,8 @@ const LandingPage = () => {
                 Track your medications with a personalized list that remembers your past prescriptions.
               </p>
             </div>
-
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <Heart className="text-green-500" size={24} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Symptom Tracking</h3>
-              <p className="text-muted-foreground">
-                Record pain levels, energy, and symptoms to understand patterns and share with healthcare providers.
-              </p>
-            </div>
             
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                <BookText className="text-orange-500" size={24} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Personal Journal</h3>
-              <p className="text-muted-foreground">
-                Record your thoughts and reflections with our easy-to-use journaling tool.
-              </p>
-            </div>
-            
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
-              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
-                <Moon className="text-indigo-500" size={24} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Sleep Monitoring</h3>
-              <p className="text-muted-foreground">
-                Track your sleep hours and establish better sleep patterns for improved wellness.
-              </p>
-            </div>
-            
+            {/* Wellness Insights */}
             <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="text-red-500" size={24} />

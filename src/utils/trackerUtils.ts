@@ -8,16 +8,33 @@ export const formatDateDisplay = (dateString: string): string => {
 
 export const getYesterdayDate = (): string => {
   const yesterday = subDays(new Date(), 1);
-  return yesterday.toISOString().split('T')[0];
+  return formatDateForTimezone(yesterday);
 };
 
 export const getTomorrowDate = (): string => {
   const tomorrow = addDays(new Date(), 1);
-  return tomorrow.toISOString().split('T')[0];
+  return formatDateForTimezone(tomorrow);
 };
 
 export const getTodayDate = (): string => {
-  return new Date().toISOString().split('T')[0];
+  return formatDateForTimezone(new Date());
+};
+
+// Format date according to user's timezone
+export const formatDateForTimezone = (date: Date): string => {
+  const userTimezone = localStorage.getItem('userTimezone') || 
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+  try {
+    // Convert the date to the user's timezone
+    const dateInUserTimezone = new Date(
+      date.toLocaleString('en-US', { timeZone: userTimezone })
+    );
+    return format(dateInUserTimezone, 'yyyy-MM-dd');
+  } catch (error) {
+    console.error('Error with timezone conversion:', error);
+    return format(date, 'yyyy-MM-dd');
+  }
 };
 
 export const getLastNDays = (n: number): string[] => {
@@ -26,7 +43,7 @@ export const getLastNDays = (n: number): string[] => {
   
   for (let i = 0; i < n; i++) {
     const date = subDays(today, i);
-    dates.push(date.toISOString().split('T')[0]);
+    dates.push(formatDateForTimezone(date));
   }
   
   return dates;

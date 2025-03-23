@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { formatDateForTimezone } from '@/utils/trackerUtils';
 
 // Task type
 export type Task = {
@@ -26,11 +27,16 @@ export type JournalEntry = {
   workTasks: Task[];
   medications: Medication[];
   mood: string;
+  moodNote?: string;
   exercises: string[];
+  exercisesNote?: string;
   selfCareActivities: string[];
+  selfCareNote?: string;
   notes: string;
   audioNotes?: string; // For premium voice journaling
+  audioTranscription?: string; // For premium voice transcription
   images?: string[]; // For premium image journaling
+  attachments?: string[]; // For file attachments
   customMetrics?: Record<string, any>; // For premium custom tracking
   // Symptoms
   painLevel: number;
@@ -52,6 +58,8 @@ type JournalContextType = {
   getAllMedicationNames: () => string[];
   getAllChoreNames: () => string[];
   getAllWorkTaskNames: () => string[];
+  saveAudioToEntry: (entryId: string, audioUrl: string, transcription?: string) => void;
+  saveAttachmentToEntry: (entryId: string, fileUrl: string) => void;
 };
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
@@ -61,20 +69,23 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   workTasks: [],
   medications: [],
   mood: '',
+  moodNote: '',
   exercises: [],
+  exercisesNote: '',
   selfCareActivities: [],
+  selfCareNote: '',
   notes: '',
+  audioNotes: '',
+  audioTranscription: '',
+  images: [],
+  attachments: [],
   // Default symptom values
   painLevel: 0,
-  energyLevel: 5,
+  energyLevel: 0, // Starting at 0 as requested
   hasFever: false,
   hasCoughSneezing: false,
   hasNausea: false,
   otherSymptoms: '',
-};
-
-const formatDate = (date: Date): string => {
-  return date.toISOString().split('T')[0];
 };
 
 const JournalContext = createContext<JournalContextType | undefined>(undefined);
@@ -83,6 +94,11 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | undefined>();
   const { user } = useAuth();
+
+  // Get today's date in the user's timezone
+  const getTodayInUserTimezone = (): string => {
+    return formatDateForTimezone(new Date());
+  };
 
   // Load entries from localStorage on mount or when user changes
   useEffect(() => {
@@ -95,27 +111,27 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         
         // Handle migration from old format to new format
         const migratedEntries = parsedEntries.map((entry: any) => {
-          // If entry already has the new format, return it as is
-          if (entry.chores && Array.isArray(entry.chores)) {
-            return entry;
-          }
-          
-          // Migrate from old boolean format to new array format
+          // Add new fields if they don't exist
           return {
             ...entry,
-            chores: entry.choresCompleted 
-              ? [{ id: crypto.randomUUID(), name: "Default Chore", completed: true }] 
-              : [],
-            workTasks: entry.workGoalsCompleted 
-              ? [{ id: crypto.randomUUID(), name: "Default Work Task", completed: true }] 
-              : [],
+            moodNote: entry.moodNote || '',
+            exercisesNote: entry.exercisesNote || '',
+            selfCareNote: entry.selfCareNote || '',
+            audioNotes: entry.audioNotes || '',
+            audioTranscription: entry.audioTranscription || '',
+            attachments: entry.attachments || [],
+            // Set energyLevel to 0 if it's 5 (the old default)
+            energyLevel: entry.energyLevel === 5 ? 0 : entry.energyLevel,
+            // Ensure chores and workTasks are arrays
+            chores: Array.isArray(entry.chores) ? entry.chores : [],
+            workTasks: Array.isArray(entry.workTasks) ? entry.workTasks : []
           };
         });
         
         setEntries(migratedEntries);
         
         // Find today's entry
-        const today = formatDate(new Date());
+        const today = getTodayInUserTimezone();
         const todayEntryFromStorage = migratedEntries.find((entry: JournalEntry) => entry.date === today);
         
         if (todayEntryFromStorage) {
@@ -140,12 +156,12 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [entries, user]);
 
   const checkIfTodayEntryExists = (): boolean => {
-    const today = formatDate(new Date());
+    const today = getTodayInUserTimezone();
     return entries.some(entry => entry.date === today);
   };
 
   const createTodayEntry = (): JournalEntry => {
-    const today = formatDate(new Date());
+    const today = getTodayInUserTimezone();
     const newEntry: JournalEntry = {
       ...defaultEntry,
       id: crypto.randomUUID(),
@@ -161,7 +177,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setEntries(prev => [...prev, entry]);
     
     // Update today's entry if the new entry is for today
-    const today = formatDate(new Date());
+    const today = getTodayInUserTimezone();
     if (entry.date === today) {
       setTodayEntry(entry);
     }
@@ -175,7 +191,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     );
     
     // Update today's entry if needed
-    const today = formatDate(new Date());
+    const today = getTodayInUserTimezone();
     if (updatedEntry.date === today) {
       setTodayEntry(updatedEntry);
     }
@@ -224,6 +240,54 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return Array.from(allWorkTaskNames);
   };
 
+  const saveAudioToEntry = (entryId: string, audioUrl: string, transcription?: string): void => {
+    setEntries(prev => 
+      prev.map(entry => {
+        if (entry.id === entryId) {
+          return {
+            ...entry,
+            audioNotes: audioUrl,
+            audioTranscription: transcription || entry.audioTranscription
+          };
+        }
+        return entry;
+      })
+    );
+    
+    // Update today's entry if needed
+    const entryToUpdate = entries.find(entry => entry.id === entryId);
+    if (entryToUpdate && entryToUpdate.date === getTodayInUserTimezone()) {
+      setTodayEntry({
+        ...entryToUpdate,
+        audioNotes: audioUrl,
+        audioTranscription: transcription || entryToUpdate.audioTranscription
+      });
+    }
+  };
+
+  const saveAttachmentToEntry = (entryId: string, fileUrl: string): void => {
+    setEntries(prev => 
+      prev.map(entry => {
+        if (entry.id === entryId) {
+          return {
+            ...entry,
+            attachments: [...(entry.attachments || []), fileUrl]
+          };
+        }
+        return entry;
+      })
+    );
+    
+    // Update today's entry if needed
+    const entryToUpdate = entries.find(entry => entry.id === entryId);
+    if (entryToUpdate && entryToUpdate.date === getTodayInUserTimezone()) {
+      setTodayEntry({
+        ...entryToUpdate,
+        attachments: [...(entryToUpdate.attachments || []), fileUrl]
+      });
+    }
+  };
+
   return (
     <JournalContext.Provider
       value={{
@@ -237,6 +301,8 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getAllMedicationNames,
         getAllChoreNames,
         getAllWorkTaskNames,
+        saveAudioToEntry,
+        saveAttachmentToEntry
       }}
     >
       {children}
