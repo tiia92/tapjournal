@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
+import AboutUs from "./pages/AboutUs";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <LandingPage />} />
+      <Route path="/about" element={<AboutUs />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route 

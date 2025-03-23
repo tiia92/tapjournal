@@ -17,6 +17,7 @@ const LandingPage = () => {
             <h1 className="text-2xl font-bold ml-2">TapJournal</h1>
           </div>
           <div className="space-x-4">
+            <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
             <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
             <Button onClick={() => navigate('/signup')}>Sign Up</Button>
           </div>
@@ -140,8 +141,13 @@ const LandingPage = () => {
               <Logo size="small" />
               <span className="text-lg font-bold ml-2">TapJournal</span>
             </div>
-            <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} TapJournal. All rights reserved.
+            <div className="flex gap-6">
+              <a href="/about" className="text-sm hover:text-primary transition-colors">
+                About Us
+              </a>
+              <span className="text-sm text-muted-foreground">
+                © {new Date().getFullYear()} TapJournal. All rights reserved.
+              </span>
             </div>
           </div>
         </div>

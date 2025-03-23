@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 flex items-center justify-between h-14">
           <div 
             className="flex items-center cursor-pointer"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/')}
           >
             <Logo />
             <h1 className="text-xl font-bold ml-1">TapJournal</h1>
