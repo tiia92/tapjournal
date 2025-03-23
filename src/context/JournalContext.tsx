@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { formatDateForTimezone } from '@/utils/trackerUtils';
@@ -60,6 +59,7 @@ type JournalContextType = {
   getAllWorkTaskNames: () => string[];
   saveAudioToEntry: (entryId: string, audioUrl: string, transcription?: string) => void;
   saveAttachmentToEntry: (entryId: string, fileUrl: string) => void;
+  removeAttachmentFromEntry: (entryId: string, fileUrl: string) => void;
 };
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
@@ -288,6 +288,29 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
+  const removeAttachmentFromEntry = (entryId: string, fileUrl: string): void => {
+    setEntries(prev => 
+      prev.map(entry => {
+        if (entry.id === entryId) {
+          return {
+            ...entry,
+            attachments: (entry.attachments || []).filter(url => url !== fileUrl)
+          };
+        }
+        return entry;
+      })
+    );
+    
+    // Update today's entry if needed
+    const entryToUpdate = entries.find(entry => entry.id === entryId);
+    if (entryToUpdate && entryToUpdate.date === getTodayInUserTimezone()) {
+      setTodayEntry({
+        ...entryToUpdate,
+        attachments: (entryToUpdate.attachments || []).filter(url => url !== fileUrl)
+      });
+    }
+  };
+
   return (
     <JournalContext.Provider
       value={{
@@ -302,7 +325,8 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getAllChoreNames,
         getAllWorkTaskNames,
         saveAudioToEntry,
-        saveAttachmentToEntry
+        saveAttachmentToEntry,
+        removeAttachmentFromEntry
       }}
     >
       {children}
