@@ -29,40 +29,6 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedTheme, onSelectTh
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
 
-  // Apply the theme colors whenever selectedTheme changes
-  useEffect(() => {
-    if (isPremium && selectedTheme) {
-      const theme = themes.find(t => t.id === selectedTheme);
-      if (theme) {
-        document.documentElement.style.setProperty('--color-primary', theme.primaryColor);
-        document.documentElement.style.setProperty('--color-secondary', theme.secondaryColor);
-        
-        // Set primary color as CSS variable
-        document.documentElement.style.setProperty('--primary', theme.primaryColor);
-        document.documentElement.style.setProperty('--primary-foreground', 
-          isLightColor(theme.primaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-        
-        // Set accent/secondary color
-        document.documentElement.style.setProperty('--secondary', theme.secondaryColor);
-        document.documentElement.style.setProperty('--secondary-foreground', 
-          isLightColor(theme.secondaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-        
-        // Persist the selection
-        localStorage.setItem('selectedTheme', selectedTheme);
-      }
-    }
-  }, [selectedTheme, isPremium]);
-
-  // Load theme from localStorage on first mount
-  useEffect(() => {
-    if (isPremium) {
-      const savedTheme = localStorage.getItem('selectedTheme');
-      if (savedTheme && savedTheme !== selectedTheme) {
-        onSelectTheme(savedTheme);
-      }
-    }
-  }, [isPremium]);
-
   // Helper to determine if a color is light or dark
   function isLightColor(color: string) {
     // Convert hex to RGB
@@ -87,6 +53,37 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedTheme, onSelectTh
     const brightness = (r * 299 + g * 587 + b * 114) / 1000;
     return brightness > 128; // If > 128, it's light
   }
+
+  // Apply the theme colors whenever selectedTheme changes
+  useEffect(() => {
+    if (isPremium && selectedTheme) {
+      const theme = themes.find(t => t.id === selectedTheme);
+      if (theme) {
+        // Apply primary color directly to CSS variables
+        document.documentElement.style.setProperty('--primary', theme.primaryColor);
+        document.documentElement.style.setProperty('--primary-foreground', 
+          isLightColor(theme.primaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
+        
+        // Apply secondary color
+        document.documentElement.style.setProperty('--secondary', theme.secondaryColor);
+        document.documentElement.style.setProperty('--secondary-foreground', 
+          isLightColor(theme.secondaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
+        
+        // Save selection to localStorage
+        localStorage.setItem('selectedTheme', selectedTheme);
+      }
+    }
+  }, [selectedTheme, isPremium]);
+
+  // Load theme from localStorage on first mount
+  useEffect(() => {
+    if (isPremium) {
+      const savedTheme = localStorage.getItem('selectedTheme');
+      if (savedTheme && savedTheme !== selectedTheme) {
+        onSelectTheme(savedTheme);
+      }
+    }
+  }, [isPremium, onSelectTheme, selectedTheme]);
 
   const handleSelectTheme = (themeId: string) => {
     onSelectTheme(themeId);
