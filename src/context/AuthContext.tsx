@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define user types
@@ -101,14 +100,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const upgradeAccount = () => {
     if (user) {
-      const upgradedUser = { ...user, isPremium: true };
+      const upgradedUser = { ...user, isPremium: !user.isPremium }; // Toggle premium status
       setUser(upgradedUser);
       localStorage.setItem('tapjournal_user', JSON.stringify(upgradedUser));
       
       // Update mock database
       const userIndex = MOCK_USERS.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
-        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: true };
+        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: upgradedUser.isPremium };
       }
     }
   };
