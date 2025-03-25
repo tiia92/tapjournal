@@ -11,34 +11,6 @@ interface SmartGoalTrackerProps {
   isInsightsPage?: boolean;
 }
 
-const genericGoals = [
-  {
-    id: 'generic-1',
-    text: 'Drink at least 8 glasses of water daily',
-    reason: 'Proper hydration is essential for overall health'
-  },
-  {
-    id: 'generic-2',
-    text: 'Practice meditation for 5 minutes each day',
-    reason: 'Regular meditation reduces stress and improves focus'
-  },
-  {
-    id: 'generic-3',
-    text: 'Take a 10-minute walk after meals',
-    reason: 'Light exercise after eating helps with digestion'
-  },
-  {
-    id: 'generic-4',
-    text: 'Get 7-8 hours of sleep each night',
-    reason: 'Quality sleep is crucial for physical and mental health'
-  },
-  {
-    id: 'generic-5',
-    text: "Write down 3 things you're grateful for daily",
-    reason: 'Gratitude practice improves mental well-being'
-  }
-];
-
 const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsightsPage = false }) => {
   const { user } = useAuth();
   const { goals, entries, addGoal, removeGoal, toggleGoalCompletion, todayEntry } = useJournal();
@@ -139,17 +111,7 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
     return suggestions.slice(0, 3);
   };
 
-  // If we don't have enough entries, use generic goals
-  const getGoalSuggestions = () => {
-    if (hasEnoughEntries) {
-      return generatePersonalizedSuggestions();
-    } else {
-      // Use 3 random generic goals
-      return genericGoals.slice(0, 3);
-    }
-  };
-
-  const goalSuggestions = getGoalSuggestions();
+  const personalizedSuggestions = hasEnoughEntries ? generatePersonalizedSuggestions() : [];
 
   // For entry page - show goals to check off
   if (entryId && todayEntry) {
@@ -206,17 +168,32 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
       );
     }
 
+    if (!hasEnoughEntries) {
+      return (
+        <div className="tap-card">
+          <h3 className="text-lg font-medium mb-2">Smart Goal Suggestions</h3>
+          <p className="text-sm text-muted-foreground mb-6">
+            Add at least 3 journal entries to get personalized goal suggestions based on your patterns.
+          </p>
+          <Button 
+            onClick={() => window.location.href = '/dashboard'}
+            className="w-full"
+          >
+            <Plus size={16} className="mr-2" /> Add an Entry
+          </Button>
+        </div>
+      );
+    }
+
     return (
       <div className="tap-card">
         <h3 className="text-lg font-medium mb-2">Smart Goal Suggestions</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          {hasEnoughEntries 
-            ? 'Personalized recommendations based on your journal data' 
-            : 'General wellness goals to get you started'}
+          Personalized recommendations based on your journal data
         </p>
         
         <div className="space-y-3">
-          {goalSuggestions.map(suggestion => (
+          {personalizedSuggestions.map(suggestion => (
             <div key={suggestion.id} className="border rounded-lg p-4">
               <p className="text-sm mb-1">{suggestion.text}</p>
               <p className="text-xs text-muted-foreground mb-3">{suggestion.reason}</p>
