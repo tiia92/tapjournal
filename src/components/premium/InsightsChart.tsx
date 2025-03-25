@@ -35,85 +35,97 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
   const { entries } = useJournal();
   const isPremium = user?.isPremium || false;
 
+  // Helper to get date from n days ago
+  const getDateNDaysAgo = (n: number) => {
+    const date = new Date();
+    date.setDate(date.getDate() - n);
+    return date;
+  };
+
+  // Format date to MM/DD format
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  // Generate dates for the last 7 days
+  const getLast7Days = () => {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = getDateNDaysAgo(i);
+      days.push({
+        date: formatDate(date),
+        fullDate: date.toISOString().split('T')[0],
+        value: 0 // Default value
+      });
+    }
+    return days;
+  };
+
   // Prepare data for the chart
   const getChartData = () => {
+    // Get the last 7 days
+    const last7Days = getLast7Days();
+    
     // Sort entries by date
     const sortedEntries = [...entries].sort((a, b) => 
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     
-    // Take last 7 days maximum (changed from 14)
-    const recentEntries = sortedEntries.slice(-7);
+    // Map data from entries to our day slots
+    last7Days.forEach(day => {
+      const matchingEntry = sortedEntries.find(entry => {
+        const entryDate = new Date(entry.date);
+        return formatDate(entryDate) === day.date;
+      });
+      
+      if (matchingEntry) {
+        switch (chartType) {
+          case 'water':
+            day.value = matchingEntry.waterCount;
+            break;
+          
+          case 'sleep':
+            day.value = matchingEntry.sleepHours;
+            break;
+          
+          case 'mood':
+            // Convert mood emoji to numeric value for the chart
+            const moodMap: Record<string, { value: number, emoji: string }> = {
+              'happy': { value: 5, emoji: '😊' },
+              'good': { value: 4, emoji: '🙂' },
+              'neutral': { value: 3, emoji: '😐' },
+              'sad': { value: 2, emoji: '😔' },
+              'angry': { value: 1, emoji: '😠' },
+              'anxious': { value: 1.5, emoji: '😰' },
+              'tired': { value: 2.5, emoji: '😴' },
+              'sick': { value: 1.8, emoji: '🤒' },
+              'grateful': { value: 4.5, emoji: '🙏' },
+              'loved': { value: 4.8, emoji: '❤️' },
+            };
+            
+            day.value = matchingEntry.mood ? (moodMap[matchingEntry.mood]?.value || 3) : 0;
+            day.emoji = matchingEntry.mood ? (moodMap[matchingEntry.mood]?.emoji || '😐') : '';
+            break;
+          
+          case 'pain':
+            day.value = matchingEntry.painLevel;
+            break;
+          
+          case 'energy':
+            day.value = matchingEntry.energyLevel;
+            break;
+          
+          case 'medication':
+            // Calculate medication adherence percentage
+            const total = matchingEntry.medications.length;
+            const taken = matchingEntry.medications.filter(med => med.taken).length;
+            day.value = total > 0 ? (taken / total) * 100 : 0;
+            break;
+        }
+      }
+    });
     
-    switch (chartType) {
-      case 'water':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.waterCount
-        }));
-      
-      case 'sleep':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.sleepHours
-        }));
-      
-      case 'mood':
-        return recentEntries.map(entry => {
-          // Convert mood emoji to numeric value for the chart
-          const moodMap: Record<string, { value: number, emoji: string }> = {
-            'happy': { value: 5, emoji: '😊' },
-            'good': { value: 4, emoji: '🙂' },
-            'neutral': { value: 3, emoji: '😐' },
-            'sad': { value: 2, emoji: '😔' },
-            'angry': { value: 1, emoji: '😠' },
-            'anxious': { value: 1.5, emoji: '😰' },
-            'tired': { value: 2.5, emoji: '😴' },
-            'sick': { value: 1.8, emoji: '🤒' },
-            'grateful': { value: 4.5, emoji: '🙏' },
-            'loved': { value: 4.8, emoji: '❤️' },
-          };
-          
-          return {
-            date: formatDate(entry.date),
-            value: entry.mood ? (moodMap[entry.mood]?.value || 3) : 0,
-            emoji: entry.mood ? (moodMap[entry.mood]?.emoji || '😐') : ''
-          };
-        });
-      
-      case 'pain':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.painLevel
-        }));
-      
-      case 'energy':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.energyLevel
-        }));
-      
-      case 'medication':
-        return recentEntries.map(entry => {
-          // Calculate medication adherence percentage
-          const total = entry.medications.length;
-          const taken = entry.medications.filter(med => med.taken).length;
-          const percentage = total > 0 ? (taken / total) * 100 : 0;
-          
-          return {
-            date: formatDate(entry.date),
-            value: percentage
-          };
-        });
-      
-      default:
-        return [];
-    }
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return last7Days;
   };
 
   const chartData = getChartData();
@@ -124,7 +136,7 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
       return (
         <div className="bg-background p-2 border border-border rounded-md shadow-md">
           <p className="font-medium">{label}</p>
-          {chartType === 'mood' ? (
+          {chartType === 'mood' && payload[0].payload.emoji ? (
             <div className="flex items-center">
               <span className="text-xl mr-2">{payload[0].payload.emoji || '😐'}</span>
               <span>Level: {payload[0].value.toFixed(1)}</span>
@@ -166,8 +178,8 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
   const getYAxisDomain = () => {
     switch (chartType) {
       case 'mood': return [1, 5];
-      case 'pain': return [0, 10]; // Changed from default
-      case 'energy': return [0, 10]; // Changed from default
+      case 'pain': return [0, 10]; 
+      case 'energy': return [0, 10]; 
       case 'medication': return [0, 100];
       default: 
         // For other types, find the max value or use a sensible default
@@ -299,24 +311,6 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
         </p>
         <div className="text-primary text-sm mt-4">
           Premium Feature
-        </div>
-      </div>
-    );
-  }
-
-  if (entries.length === 0) {
-    return (
-      <div className="tap-card">
-        <h3 className="text-lg font-medium mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground mb-6">{description}</p>
-        <div className="text-center p-8 bg-muted/20 rounded-lg">
-          <p className="text-muted-foreground mb-4">No data available yet</p>
-          <Button 
-            onClick={() => window.location.href = '/dashboard'}
-            variant="outline"
-          >
-            Add an Entry
-          </Button>
         </div>
       </div>
     );
