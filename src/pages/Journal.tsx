@@ -4,8 +4,7 @@ import Layout from '@/components/Layout';
 import InsightsChart from '@/components/premium/InsightsChart';
 import PremiumUpgrade from '@/components/PremiumUpgrade';
 import { useAuth } from '@/context/AuthContext';
-import JournalPrompts from '@/components/premium/JournalPrompts';
-import GoalSuggestions from '@/components/premium/GoalSuggestions';
+import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
 import WellnessPrograms from '@/components/premium/WellnessPrograms';
 
 const Journal = () => {
@@ -15,7 +14,7 @@ const Journal = () => {
   return (
     <Layout>
       <div className="mb-6">
-        <h2 className="text-2xl font-medium mb-2">Journal</h2>
+        <h2 className="text-2xl font-medium mb-2">Insights</h2>
         <p className="text-muted-foreground">
           Review your wellness journey
         </p>
@@ -33,36 +32,46 @@ const Journal = () => {
         <InsightsChart 
           title="Water Intake Trends" 
           description="Track your hydration habits over time"
+          chartType="water"
           color="#0EA5E9"
         />
         
         <InsightsChart 
           title="Sleep Patterns" 
           description="Analyze your sleep duration and consistency"
+          chartType="sleep"
           color="#8B5CF6"
         />
         
         <InsightsChart 
           title="Mood Analysis" 
           description="Understand patterns in your emotional wellbeing"
+          chartType="mood"
           color="#10B981"
         />
         
         <InsightsChart 
-          title="Symptom Tracking" 
-          description="Monitor how your symptoms change over time"
+          title="Pain Level Tracking" 
+          description="Monitor your pain levels over time"
+          chartType="pain"
           color="#F97316"
+        />
+        
+        <InsightsChart 
+          title="Energy Level Tracking" 
+          description="See changes in your energy levels"
+          chartType="energy"
+          color="#64748B"
         />
         
         <InsightsChart 
           title="Medication Adherence" 
           description="Track how consistently you take your medications"
+          chartType="medication"
           color="#EC4899"
         />
-
-        <JournalPrompts />
         
-        <GoalSuggestions />
+        <SmartGoalTracker isInsightsPage={true} />
         
         <WellnessPrograms />
       </div>
