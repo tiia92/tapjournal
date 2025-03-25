@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, PlusCircle, MinusCircle, CheckCircle, X, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomTracker {
   id: string;
@@ -24,6 +24,7 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
 }) => {
   const { user } = useAuth();
   const { todayEntry, updateEntry } = useJournal();
+  const navigate = useNavigate();
   const isPremium = user?.isPremium || false;
   const [trackers, setTrackers] = useState<CustomTracker[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -220,7 +221,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     );
   }
 
-  // Settings page - show tracker management
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">Custom Trackers</h3>

@@ -6,6 +6,41 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
 
+// Define SpeechRecognition interface for TypeScript
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number;
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  [index: number]: { transcript: string };
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: Event) => void) | null;
+}
+
+// Declare the global window interface extension
+declare global {
+  interface Window {
+    SpeechRecognition?: new () => SpeechRecognition;
+    webkitSpeechRecognition?: new () => SpeechRecognition;
+  }
+}
+
 interface VoiceJournalProps {
   entryId?: string;
   audioUrl?: string;
@@ -25,7 +60,7 @@ const VoiceJournal: React.FC<VoiceJournalProps> = ({ entryId, audioUrl: existing
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
-  const speechRecognitionRef = useRef<any>(null);
+  const speechRecognitionRef = useRef<SpeechRecognition | null>(null);
 
   useEffect(() => {
     // Create an audio element for controlling playback
@@ -42,31 +77,33 @@ const VoiceJournal: React.FC<VoiceJournalProps> = ({ entryId, audioUrl: existing
     }
     
     // Initialize speech recognition if available
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      speechRecognitionRef.current = new SpeechRecognition();
-      speechRecognitionRef.current.continuous = true;
-      speechRecognitionRef.current.interimResults = true;
-      
-      speechRecognitionRef.current.onresult = (event: any) => {
-        let interimTranscript = '';
-        let finalTranscript = '';
+    if (window.webkitSpeechRecognition || window.SpeechRecognition) {
+      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognitionConstructor) {
+        speechRecognitionRef.current = new SpeechRecognitionConstructor();
+        speechRecognitionRef.current.continuous = true;
+        speechRecognitionRef.current.interimResults = true;
         
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const transcript = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalTranscript += transcript + ' ';
-          } else {
-            interimTranscript += transcript;
+        speechRecognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+          let interimTranscript = '';
+          let finalTranscript = '';
+          
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript + ' ';
+            } else {
+              interimTranscript += transcript;
+            }
           }
-        }
+          
+          setTranscriptionText(finalTranscript || interimTranscript);
+        };
         
-        setTranscriptionText(finalTranscript || interimTranscript);
-      };
-      
-      speechRecognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error', event.error);
-      };
+        speechRecognitionRef.current.onerror = (event: Event) => {
+          console.error('Speech recognition error', event);
+        };
+      }
     }
     
     return () => {
