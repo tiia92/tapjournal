@@ -1,8 +1,7 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
 
 interface ThemeOption {
   id: string;
@@ -28,81 +27,6 @@ interface ThemeSelectorProps {
 const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedTheme, onSelectTheme }) => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
-
-  // Helper to determine if a color is light or dark
-  function isLightColor(color: string) {
-    // Convert hex to RGB
-    let r, g, b;
-    
-    if (color.startsWith('#')) {
-      // Handle hex format
-      const hex = color.replace('#', '');
-      r = parseInt(hex.substring(0, 2), 16);
-      g = parseInt(hex.substring(2, 4), 16);
-      b = parseInt(hex.substring(4, 6), 16);
-    } else if (color.startsWith('hsl')) {
-      // For HSL format, we'll approximate
-      // This is a simplified approach
-      return color.includes('96') || color.includes('98'); // Detect light HSL values
-    } else {
-      // Default to dark if format is unknown
-      return false;
-    }
-    
-    // Calculate perceived brightness using the formula: (R*299 + G*587 + B*114) / 1000
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-    return brightness > 128; // If > 128, it's light
-  }
-
-  // Apply the theme colors whenever selectedTheme changes
-  useEffect(() => {
-    if (isPremium && selectedTheme) {
-      const theme = themes.find(t => t.id === selectedTheme);
-      if (theme) {
-        // Apply primary color directly to CSS variables
-        document.documentElement.style.setProperty('--primary', theme.primaryColor);
-        document.documentElement.style.setProperty('--primary-foreground', 
-          isLightColor(theme.primaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-        
-        // Apply secondary color
-        document.documentElement.style.setProperty('--secondary', theme.secondaryColor);
-        document.documentElement.style.setProperty('--secondary-foreground', 
-          isLightColor(theme.secondaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-        
-        // Save selection to localStorage
-        localStorage.setItem('selectedTheme', selectedTheme);
-      }
-    }
-  }, [selectedTheme, isPremium]);
-
-  // Load theme from localStorage on first mount
-  useEffect(() => {
-    if (isPremium) {
-      const savedTheme = localStorage.getItem('selectedTheme');
-      if (savedTheme && savedTheme !== selectedTheme) {
-        onSelectTheme(savedTheme);
-      }
-    }
-  }, [isPremium, onSelectTheme, selectedTheme]);
-
-  const handleSelectTheme = (themeId: string) => {
-    // Make the actual DOM changes for theme
-    const theme = themes.find(t => t.id === themeId);
-    if (theme) {
-      // Apply primary color directly to CSS variables
-      document.documentElement.style.setProperty('--primary', theme.primaryColor);
-      document.documentElement.style.setProperty('--primary-foreground', 
-        isLightColor(theme.primaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-      
-      // Apply secondary color
-      document.documentElement.style.setProperty('--secondary', theme.secondaryColor);
-      document.documentElement.style.setProperty('--secondary-foreground', 
-        isLightColor(theme.secondaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
-    }
-    
-    onSelectTheme(themeId);
-    toast.success(`${themes.find(t => t.id === themeId)?.name || 'Theme'} applied`);
-  };
 
   if (!isPremium) {
     return (
@@ -147,7 +71,7 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedTheme, onSelectTh
               selectedTheme === theme.id ? 'ring-2 ring-primary' : ''
             }`}
             style={{ backgroundColor: theme.secondaryColor }}
-            onClick={() => handleSelectTheme(theme.id)}
+            onClick={() => onSelectTheme(theme.id)}
           >
             <div 
               className="absolute top-0 left-0 w-1/3 h-full"
