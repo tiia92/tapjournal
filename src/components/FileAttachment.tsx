@@ -1,9 +1,11 @@
 
 import React, { useRef, useState } from 'react';
-import { Paperclip, X, File, Image, Video, FileText } from 'lucide-react';
+import { Paperclip, X, File, Image, Video, FileText, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
+import { useAuth } from '@/context/AuthContext';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface FileAttachmentProps {
   entryId: string;
@@ -12,8 +14,11 @@ interface FileAttachmentProps {
 
 const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = [] }) => {
   const { saveAttachmentToEntry, removeAttachmentFromEntry } = useJournal();
+  const { user } = useAuth();
+  const isPremium = user?.isPremium || false;
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [openImageDialog, setOpenImageDialog] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -70,6 +75,21 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
     return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
   };
 
+  if (!isPremium) {
+    return (
+      <div className="tap-card flex flex-col items-center justify-center py-6 bg-muted/30">
+        <Lock className="w-8 h-8 text-muted-foreground mb-2" />
+        <h3 className="text-lg font-medium">File Attachments</h3>
+        <p className="text-sm text-muted-foreground text-center mt-1 max-w-sm">
+          Add images and documents to your journal entries
+        </p>
+        <div className="text-primary text-sm mt-4">
+          Premium Feature
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
@@ -106,6 +126,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
                   alt={`Attachment ${index + 1}`}
                   className="rounded-md object-contain max-h-[500px]"
                   style={{ maxWidth: '500px' }}
+                  onClick={() => setOpenImageDialog(url)}
                 />
                 <button 
                   className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
@@ -153,6 +174,27 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
       {attachments.length === 0 && (
         <p className="text-sm text-muted-foreground italic">No files attached yet.</p>
       )}
+
+      {/* Image Preview Dialog */}
+      <Dialog open={!!openImageDialog} onOpenChange={() => setOpenImageDialog(null)}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-background/95 backdrop-blur-sm">
+          {openImageDialog && (
+            <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center p-4">
+              <img 
+                src={openImageDialog} 
+                alt="Full size preview" 
+                className="max-w-full max-h-full object-contain"
+              />
+              <button 
+                onClick={() => setOpenImageDialog(null)}
+                className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
