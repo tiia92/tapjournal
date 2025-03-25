@@ -96,7 +96,7 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
         },
         {
           id: 'gratitude',
-          text: 'Write down 3 things you're grateful for each day',
+          text: "Write down 3 things you're grateful for each day",
           reason: 'Gratitude practice has been shown to improve mental wellbeing'
         }
       ];
