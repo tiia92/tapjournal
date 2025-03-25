@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { ChevronDown } from 'lucide-react';
 
 interface EmojiOption {
   id: string;
@@ -13,45 +12,114 @@ interface EmojiOption {
 interface EmojiSelectorProps {
   options: EmojiOption[];
   selectedIds: string[];
-  onChange: (ids: string[]) => void;
+  onChange: (selectedIds: string[]) => void;
   label: string;
   multiSelect?: boolean;
   onNoteChange?: (note: string) => void;
   note?: string;
 }
 
-// Full emoji categories
-const emojiCategories = {
-  smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😶‍🌫️', '😏', '😒', '🙄', '😬', '😮‍💨', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '😵‍💫', '🤯', '🤠', '🥳', '🥸', '😎', '🤓', '🧐', '😕', '😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '😈', '👿', '💀', '☠️'],
-  gestures: ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '💪', '🦾', '🦿', '🦵', '🦶', '👂', '🦻', '👃', '👀', '👁️', '👅', '👄', '💋', '🩸'],
-  activities: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊', '🥋', '🎽', '🛹', '🛼', '🛷', '⛸️', '🥌', '🎿', '⛷️', '🏂', '🪂', '🏋️', '🤼', '🤸', '⛹️', '🤺', '🤾', '🏌️', '🏇', '🧘', '🏄', '🏊', '🤽', '🚣', '🧗', '🚵', '🚴', '🏆', '🥇', '🥈', '🥉', '🏅', '🎖️', '🏵️', '🎗️', '🎫', '🎟️', '🎪', '🎭', '🎨', '🎬', '🎤', '🎧', '🎼', '🎹', '🪕', '🎸', '🎻', '🪘', '🥁', '🎲', '♟️', '🎯', '🎳', '🎮', '🎰', '🧩'],
-  travel: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🦯', '🦽', '🦼', '🛴', '🚲', '🛵', '🏍️', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚞', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '✈️', '🛫', '🛬', '🛩️', '💺', '🛰️', '🚀', '🛸', '🛶', '⛵', '🛥️', '🚤', '⛴️', '🛳️', '🚢', '⚓', '⛽', '🚧', '🚏', '🚦', '🚥', '🗺️', '🗿', '🗽', '🗼', '🏰', '🏯', '🏟️', '🎡', '🎢', '🎠', '⛲', '⛱️', '🏖️', '🏝️', '🏜️', '🌋', '⛰️', '🏔️', '🗻', '🏕️', '⛺', '🏠', '🏡', '🏘️', '🏚️', '🏗️', '🏢', '🏭', '🏬', '🏣', '🏤', '🏥', '🏦', '🏨', '🏪', '🏫', '🏩', '💒', '🏛️', '⛪', '🕌', '🕍', '🛕', '🕋', '⛩️', '🛤️', '🛣️', '🗾', '🎑', '🏞️', '🌅', '🌄', '🌠', '🎇', '🎆', '🌇', '🌆', '🏙️', '🌃', '🌌', '🌉', '🌁'],
-  objects: ['⌚', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '🕹️', '🗜️', '💽', '💾', '💿', '📀', '📼', '📷', '📸', '📹', '🎥', '📽️', '🎞️', '📞', '☎️', '📟', '📠', '📺', '📻', '🎙️', '🎚️', '🎛️', '🧭', '⏱️', '⏲️', '⏰', '🕰️', '⌛', '⏳', '📡', '🔋', '🔌', '💡', '🔦', '🕯️', '🪔', '🧯', '🛢️', '💸', '💵', '💴', '💶', '💷', '💰', '💳', '💎', '⚖️', '🧰', '🔧', '🔨', '⚒️', '🛠️', '⛏️', '🔩', '⚙️', '🧱', '⛓️', '🧲', '🔫', '💣', '🧨', '🪓', '🔪', '🗡️', '⚔️', '🛡️', '🚬', '⚰️', '⚱️', '🏺', '🔮', '📿', '🧿', '💈', '⚗️', '🔭', '🔬', '🕳️', '🩹', '🩺', '💊', '💉', '🩸', '🧬', '🦠', '🧫', '🧪', '🌡️', '🧹', '🧺', '🧻', '🚽', '🚰', '🚿', '🛁', '🛀', '🧼', '🪥', '🪒', '🧽', '🪣', '🧴', '🛎️', '🔑', '🗝️', '🚪', '🪑', '🛋️', '🛏️', '🛌', '🧸', '🪆', '🖼️', '🪞', '🪟', '🛍️', '🛒', '🎁', '🎈', '🎏', '🎀', '🪄', '🪅', '🎊', '🎉', '🎎', '🏮', '🎐', '🧧', '✉️', '📩', '📨', '📧', '💌', '📥', '📤', '📦', '🏷️', '📪', '📫', '📬', '📭', '📮', '📯', '📜', '📃', '📄', '📑', '🧾', '📊', '📈', '📉', '🗒️', '🗓️', '📆', '📅', '🗑️', '📇', '🗃️', '🗳️', '🗄️', '📋', '📁', '📂', '🗂️', '🗞️', '📰', '📓', '📔', '📒', '📕', '📗', '📘', '📙', '📚', '📖', '🔖', '🧷', '🔗', '📎', '🖇️', '📐', '📏', '🧮', '📌', '📍', '✂️', '🖊️', '🖋️', '✒️', '🖌️', '🖍️', '📝', '✏️', '🔍', '🔎', '🔏', '🔐', '🔒', '🔓'],
-  symbols: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '🆔', '⚛️', '🉑', '☢️', '☣️', '📴', '📳', '🈶', '🈚', '🈸', '🈺', '🈷️', '✴️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🆑', '🅾️', '🆘', '❌', '⭕', '🛑', '⛔', '📛', '🚫', '💯', '💢', '♨️', '🚷', '🚯', '🚳', '🚱', '🔞', '📵', '🚭', '❗', '❕', '❓', '❔', '‼️', '⁉️', '🔅', '🔆', '〽️', '⚠️', '🚸', '🔱', '⚜️', '🔰', '♻️', '✅', '🈯', '💹', '❇️', '✳️', '❎', '🌐', '💠', 'Ⓜ️', '🌀', '💤', '🏧', '🚾', '♿', '🅿️', '🛗', '🈳', '🈂️', '🛂', '🛃', '🛄', '🛅', '🚹', '🚺', '🚼', '⚧', '🚻', '🚮', '🎦', '📶', '🈁', '🔣', 'ℹ️', '🔤', '🔡', '🔠', '🆖', '🆗', '🆙', '🆒', '🆕', '🆓', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🔢', '#️⃣', '*️⃣', '⏏️', '▶️', '⏸️', '⏯️', '⏹️', '⏺️', '⏭️', '⏮️', '⏩', '⏪', '⏫', '⏬', '◀️', '🔼', '🔽', '➡️', '⬅️', '⬆️', '⬇️', '↗️', '↘️', '↙️', '↖️', '↕️', '↔️', '↪️', '↩️', '⤴️', '⤵️', '🔀', '🔁', '🔂', '🔄', '🔃', '🎵', '🎶', '➕', '➖', '➗', '✖️', '♾️', '💲', '💱', '™️', '©️', '®️', '〰️', '➰', '➿', '🔚', '🔙', '🔛', '🔝', '🔜', '✔️', '☑️', '🔘', '🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪', '🟤', '🔺', '🔻', '🔸', '🔹', '🔶', '🔷', '🔳', '🔲', '▪️', '▫️', '◾', '◽', '◼️', '◻️', '🟥', '🟧', '🟨', '🟩', '🟦', '🟪', '⬛', '⬜', '🟫', '🔈', '🔇', '🔉', '🔊', '🔔', '🔕', '📣', '📢', '💬', '💭', '🗯️', '♠️', '♣️', '♥️', '♦️', '🃏', '🎴', '🀄', '🕐', '🕑', '🕒', '🕓', '🕔', '🕕', '🕖', '🕗', '🕘', '🕙', '🕚', '🕛', '🕜', '🕝', '🕞', '🕟', '🕠', '🕡', '🕢', '🕣', '🕤', '🕥', '🕦', '🕧'],
-  foods: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🫓', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙', '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍩', '🍪', '🌰', '🥜', '🫘', '🍯', '🥛', '🍼', '🫖', '☕', '🍵', '🧃', '🥤', '🧋', '🍶', '🍺', '🍻', '🥂', '🍷', '🥃', '🍸', '🍹', '🧉', '🍾', '🧊', '🥄', '🍴', '🍽️', '🥣', '🥡', '🥢', '🧂'],
-  nature: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐻‍❄️', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🪱', '🐛', '🦋', '🐌', '🐞', '🐜', '🪰', '🪲', '🪳', '🦗', '🕷️', '🕸️', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦞', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🦣', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🦬', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🪶', '🐓', '🦃', '🦤', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐁', '🐀', '🐿️', '🦔', '🐾', '🐉', '🐲', '🌵', '🎄', '🌲', '🌳', '🌴', '🪵', '🌱', '🌿', '☘️', '🍀', '🎍', '🪴', '🎋', '🍃', '🍂', '🍁', '🍄', '🐚', '🪨', '🌾', '💐', '🌷', '🌹', '🥀', '🪷', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '🪐', '💫', '⭐', '🌟', '✨', '⚡', '☄️', '💥', '🔥', '🌪️', '🌈', '☀️', '🌤️', '⛅', '🌥️', '☁️', '🌦️', '🌧️', '⛈️', '🌩️', '🌨️', '❄️', '☃️', '⛄', '🌬️', '💨', '💧', '💦', '☔', '☂️', '🌊', '🌫️']
+// Additional emoji options for premium users
+const premiumEmojis: Record<string, EmojiOption[]> = {
+  mood: [
+    { id: 'ecstatic', emoji: '🤩', label: 'Ecstatic' },
+    { id: 'loved', emoji: '🥰', label: 'Loved' },
+    { id: 'proud', emoji: '😊', label: 'Proud' },
+    { id: 'relaxed', emoji: '😌', label: 'Relaxed' },
+    { id: 'thankful', emoji: '🙏', label: 'Thankful' },
+    { id: 'peaceful', emoji: '😇', label: 'Peaceful' },
+    { id: 'content', emoji: '🙂', label: 'Content' },
+    { id: 'optimistic', emoji: '😃', label: 'Optimistic' },
+    { id: 'excited', emoji: '😁', label: 'Excited' },
+    { id: 'focused', emoji: '🧐', label: 'Focused' },
+    { id: 'hopeful', emoji: '🤗', label: 'Hopeful' },
+    { id: 'amused', emoji: '😄', label: 'Amused' },
+    { id: 'curious', emoji: '🤔', label: 'Curious' },
+    { id: 'bored', emoji: '😒', label: 'Bored' },
+    { id: 'indifferent', emoji: '😐', label: 'Indifferent' },
+    { id: 'anxious', emoji: '😰', label: 'Anxious' },
+    { id: 'worried', emoji: '😟', label: 'Worried' },
+    { id: 'stressed', emoji: '😫', label: 'Stressed' },
+    { id: 'frustrated', emoji: '😤', label: 'Frustrated' },
+    { id: 'annoyed', emoji: '😠', label: 'Annoyed' },
+    { id: 'angry', emoji: '😡', label: 'Angry' },
+    { id: 'sad', emoji: '😢', label: 'Sad' },
+    { id: 'disappointed', emoji: '😞', label: 'Disappointed' },
+    { id: 'heartbroken', emoji: '💔', label: 'Heartbroken' },
+    { id: 'exhausted', emoji: '😩', label: 'Exhausted' },
+    { id: 'overwhelmed', emoji: '🥴', label: 'Overwhelmed' },
+    { id: 'jealous', emoji: '😒', label: 'Jealous' },
+    { id: 'confused', emoji: '😕', label: 'Confused' },
+  ],
+  exercise: [
+    { id: 'biking', emoji: '🚴‍♀️', label: 'Biking' },
+    { id: 'crossfit', emoji: '🏋️‍♀️', label: 'Crossfit' },
+    { id: 'dancing', emoji: '💃', label: 'Dancing' },
+    { id: 'hiking', emoji: '🥾', label: 'Hiking' },
+    { id: 'pilates', emoji: '🧘‍♀️', label: 'Pilates' },
+    { id: 'rockclimbing', emoji: '🧗‍♀️', label: 'Rock Climbing' },
+    { id: 'skating', emoji: '⛸️', label: 'Skating' },
+    { id: 'skiing', emoji: '⛷️', label: 'Skiing' },
+    { id: 'basketball', emoji: '🏀', label: 'Basketball' },
+    { id: 'football', emoji: '🏈', label: 'Football' },
+    { id: 'baseball', emoji: '⚾', label: 'Baseball' },
+    { id: 'tennis', emoji: '🎾', label: 'Tennis' },
+    { id: 'volleyball', emoji: '🏐', label: 'Volleyball' },
+    { id: 'golf', emoji: '⛳', label: 'Golf' },
+    { id: 'boxing', emoji: '🥊', label: 'Boxing' },
+    { id: 'rowing', emoji: '🚣‍♀️', label: 'Rowing' },
+    { id: 'karate', emoji: '🥋', label: 'Karate' },
+    { id: 'surfing', emoji: '🏄‍♀️', label: 'Surfing' },
+    { id: 'horseback', emoji: '🏇', label: 'Horseback Riding' },
+    { id: 'swimming', emoji: '🏊‍♀️', label: 'Swimming' },
+  ],
+  selfCare: [
+    { id: 'massage', emoji: '💆‍♀️', label: 'Massage' },
+    { id: 'sauna', emoji: '🧖‍♀️', label: 'Sauna' },
+    { id: 'facemask', emoji: '🧴', label: 'Face Mask' },
+    { id: 'musictherapy', emoji: '🎵', label: 'Music Therapy' },
+    { id: 'aromatherapy', emoji: '🕯️', label: 'Aromatherapy' },
+    { id: 'shopping', emoji: '🛍️', label: 'Shopping' },
+    { id: 'gardening', emoji: '🌱', label: 'Gardening' },
+    { id: 'cooking', emoji: '👨‍🍳', label: 'Cooking' },
+    { id: 'baking', emoji: '🧁', label: 'Baking' },
+    { id: 'painting', emoji: '🎨', label: 'Painting' },
+    { id: 'crafting', emoji: '✂️', label: 'Crafting' },
+    { id: 'photography', emoji: '📷', label: 'Photography' },
+    { id: 'beach', emoji: '🏖️', label: 'Beach Time' },
+    { id: 'nature', emoji: '🌲', label: 'Nature Time' },
+    { id: 'petsitting', emoji: '🐱', label: 'Pet Sitting' },
+    { id: 'volunteering', emoji: '🤝', label: 'Volunteering' },
+    { id: 'writing', emoji: '✏️', label: 'Writing' },
+    { id: 'decluttering', emoji: '🧹', label: 'Decluttering' },
+    { id: 'digitaldetox', emoji: '📵', label: 'Digital Detox' },
+    { id: 'hobbytime', emoji: '🧩', label: 'Hobby Time' },
+  ]
 };
 
-const EmojiSelector: React.FC<EmojiSelectorProps> = ({
-  options,
-  selectedIds,
-  onChange,
+const EmojiSelector: React.FC<EmojiSelectorProps> = ({ 
+  options, 
+  selectedIds, 
+  onChange, 
   label,
   multiSelect = true,
   onNoteChange,
-  note = ''
+  note = '' 
 }) => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showEmojiDialog, setShowEmojiDialog] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<keyof typeof emojiCategories>('smileys');
+  const [showMoreEmojis, setShowMoreEmojis] = useState(false);
 
-  const handleToggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  // Determine which premium emoji set to use based on label
+  const getPremiumEmojis = () => {
+    if (label === "Today's Mood") return premiumEmojis.mood;
+    if (label === "Exercise Activities") return premiumEmojis.exercise;
+    if (label === "Self Care Activities") return premiumEmojis.selfCare;
+    return [];
   };
 
-  const handleToggleEmoji = (id: string) => {
+  const handleEmojiClick = (id: string) => {
     if (multiSelect) {
       if (selectedIds.includes(id)) {
         onChange(selectedIds.filter(selectedId => selectedId !== id));
@@ -60,115 +128,97 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
       }
     } else {
       onChange([id]);
+      setIsExpanded(false);
     }
   };
 
-  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (onNoteChange) {
-      onNoteChange(e.target.value);
-    }
-  };
-
-  const handleSelectFullEmoji = (emoji: string) => {
-    // Create a custom ID for this emoji
-    const newId = `custom-${emoji}-${Date.now()}`;
-    
-    // For simplicity, we'll just add this emoji without proper tracking
-    // In a real app, you'd want to register this custom emoji properly
-    if (multiSelect) {
-      onChange([...selectedIds, emoji]);
-    } else {
-      onChange([emoji]);
-    }
-    
-    setShowEmojiDialog(false);
-  };
+  const selectedEmojis = options
+    .filter(option => selectedIds.includes(option.id))
+    .map(option => option.emoji)
+    .join(' ');
 
   return (
-    <div className="tap-card">
-      <div className="flex justify-between items-center mb-3">
+    <div className="tap-card animate-fade-in">
+      <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <button
-          onClick={handleToggleExpand}
-          className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+      </div>
+      
+      {selectedEmojis ? (
+        <div onClick={() => setIsExpanded(!isExpanded)} className="flex flex-wrap gap-2 mb-3 min-h-12 items-center cursor-pointer">
+          <div className="text-2xl">{selectedEmojis}</div>
+        </div>
+      ) : (
+        <div 
+          className="bg-muted/30 rounded-xl py-3 mb-3 text-center text-muted-foreground text-sm cursor-pointer"
+          onClick={() => setIsExpanded(true)}
         >
-          {isExpanded ? "Less" : "More"}
-        </button>
-      </div>
-
-      <div className="flex flex-wrap gap-2 mb-3">
-        {options.slice(0, isExpanded ? options.length : 6).map(option => (
-          <button
-            key={option.id}
-            onClick={() => handleToggleEmoji(option.id)}
-            className={`relative text-2xl p-2 rounded-lg hover:bg-muted/50 transition-colors ${
-              selectedIds.includes(option.id) ? 'bg-primary/10 border border-primary' : 'bg-muted/30'
-            }`}
-            title={option.label}
-          >
-            {option.emoji}
-            {selectedIds.includes(option.id) && (
-              <span className="absolute -top-1 -right-1 bg-primary text-[10px] text-primary-foreground w-5 h-5 flex items-center justify-center rounded-full">
-                ✓
-              </span>
-            )}
-          </button>
-        ))}
-        
-        {isPremium && (
-          <button 
-            onClick={() => setShowEmojiDialog(true)}
-            className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
-            title="More emojis"
-          >
-            +
-          </button>
-        )}
-      </div>
-
-      {selectedIds.length > 0 && onNoteChange && (
-        <div className="mt-2">
-          <textarea
-            value={note}
-            onChange={handleNoteChange}
-            placeholder={`Add a note about your ${label.toLowerCase()}...`}
-            className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
-          />
+          Tap to select
         </div>
       )}
-
-      {/* Full Emoji Dialog */}
-      {isPremium && (
-        <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
-          <DialogContent className="max-w-md">
-            <DialogTitle>Select an Emoji</DialogTitle>
-            
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-2">
-              {(Object.keys(emojiCategories) as Array<keyof typeof emojiCategories>).map(category => (
-                <Button 
-                  key={category}
-                  variant={category === selectedCategory ? "default" : "outline"} 
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </Button>
-              ))}
-            </div>
-            
-            <div className="grid grid-cols-8 gap-2 max-h-[300px] overflow-y-auto">
-              {emojiCategories[selectedCategory].map((emoji, index) => (
-                <button
-                  key={index}
-                  className="text-2xl p-2 hover:bg-muted rounded-md"
-                  onClick={() => handleSelectFullEmoji(emoji)}
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </DialogContent>
-        </Dialog>
+      
+      {onNoteChange !== undefined && (
+        <div className="mb-3">
+          <input
+            type="text"
+            value={note}
+            onChange={(e) => onNoteChange(e.target.value.slice(0, 100))}
+            placeholder="Add a note (100 characters max)"
+            className="w-full p-2 rounded-md bg-secondary/50 border border-border text-sm"
+            maxLength={100}
+          />
+          <div className="text-xs text-right text-muted-foreground mt-1">
+            {note.length}/100
+          </div>
+        </div>
+      )}
+      
+      {isExpanded && (
+        <div className="emoji-selector animate-scale-in mt-2">
+          {options.map(option => (
+            <button
+              key={option.id}
+              onClick={() => handleEmojiClick(option.id)}
+              className={`emoji-item ${selectedIds.includes(option.id) ? 'selected' : ''}`}
+              title={option.label}
+              aria-label={option.label}
+            >
+              {option.emoji}
+            </button>
+          ))}
+          
+          {isPremium && !showMoreEmojis && getPremiumEmojis().length > 0 && (
+            <button
+              onClick={() => setShowMoreEmojis(true)}
+              className="w-full text-xs px-3 py-2 mt-2 rounded-md bg-secondary/80 text-primary hover:bg-secondary transition-colors"
+            >
+              <ChevronDown size={14} className="inline mr-1" /> See More Emojis
+            </button>
+          )}
+          
+          {isPremium && showMoreEmojis && getPremiumEmojis().map(option => (
+            <button
+              key={option.id}
+              onClick={() => handleEmojiClick(option.id)}
+              className={`emoji-item ${selectedIds.includes(option.id) ? 'selected' : ''}`}
+              title={option.label}
+              aria-label={option.label}
+            >
+              {option.emoji}
+            </button>
+          ))}
+          
+          <div className="w-full text-center mt-2">
+            <button 
+              className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => {
+                setIsExpanded(false);
+                setShowMoreEmojis(false);
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

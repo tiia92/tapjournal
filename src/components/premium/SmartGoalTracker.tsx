@@ -179,7 +179,7 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
             onClick={() => window.location.href = '/dashboard'}
             className="w-full"
           >
-            <Plus size={16} className="mr-2" /> Add an Entry
+            <Plus size={16} className="mr-2" /> Add Your First Entry
           </Button>
         </div>
       );

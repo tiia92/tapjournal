@@ -75,15 +75,6 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
     return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
   };
 
-  const handleFileClick = (url: string) => {
-    if (isImageFile(url)) {
-      setOpenImageDialog(url);
-    } else {
-      // For non-image files, open in new tab
-      window.open(url, '_blank');
-    }
-  };
-
   if (!isPremium) {
     return (
       <div className="tap-card flex flex-col items-center justify-center py-6 bg-muted/30">
@@ -133,8 +124,8 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
                 <img 
                   src={url} 
                   alt={`Attachment ${index + 1}`}
-                  className="rounded-md object-contain max-h-[500px] cursor-pointer"
-                  style={{ maxWidth: '100%' }}
+                  className="rounded-md object-contain max-h-[500px]"
+                  style={{ maxWidth: '500px' }}
                   onClick={() => setOpenImageDialog(url)}
                 />
                 <button 
@@ -160,12 +151,14 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
             >
               <div className="flex items-center gap-2">
                 {getFileIcon(url)}
-                <button 
-                  onClick={() => handleFileClick(url)}
-                  className="text-sm hover:underline cursor-pointer"
+                <a 
+                  href={url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm hover:underline"
                 >
                   {getFileName(url)}
-                </button>
+                </a>
               </div>
               <button 
                 className="text-muted-foreground hover:text-destructive"
@@ -183,7 +176,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
       )}
 
       {/* Image Preview Dialog */}
-      <Dialog open={!!openImageDialog} onOpenChange={(open) => !open && setOpenImageDialog(null)}>
+      <Dialog open={!!openImageDialog} onOpenChange={() => setOpenImageDialog(null)}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden bg-background/95 backdrop-blur-sm">
           {openImageDialog && (
             <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center p-4">

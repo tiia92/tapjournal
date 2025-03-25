@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, PlusCircle, MinusCircle, CheckCircle, X, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -200,84 +199,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
           </div>
         )}
         
-        {/* New Form for adding trackers directly on entry page */}
-        {showForm ? (
-          <div className="space-y-3 border rounded-lg p-3 mb-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Tracker Name</label>
-              <Input 
-                value={newTracker.name} 
-                onChange={e => setNewTracker({...newTracker, name: e.target.value})} 
-                placeholder="E.g., Caffeine Intake"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">Emoji</label>
-              <div className="grid grid-cols-6 gap-2">
-                {commonEmojis.map(emoji => (
-                  <button
-                    key={emoji}
-                    onClick={() => setNewTracker({...newTracker, emoji})}
-                    className={`text-xl p-2 rounded-md ${
-                      newTracker.emoji === emoji ? 'bg-primary/10 border-primary text-primary' : 'bg-secondary'
-                    }`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-1">Tracker Type</label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => setNewTracker({...newTracker, type: 'counter'})}
-                  className={`p-2 text-sm rounded-md ${
-                    newTracker.type === 'counter' ? 'bg-primary/10 border-primary text-primary' : 'bg-secondary'
-                  }`}
-                >
-                  Counter
-                </button>
-                <button
-                  onClick={() => setNewTracker({...newTracker, type: 'yes-no'})}
-                  className={`p-2 text-sm rounded-md ${
-                    newTracker.type === 'yes-no' ? 'bg-primary/10 border-primary text-primary' : 'bg-secondary'
-                  }`}
-                >
-                  Yes/No
-                </button>
-                <button
-                  onClick={() => setNewTracker({...newTracker, type: 'scale'})}
-                  className={`p-2 text-sm rounded-md ${
-                    newTracker.type === 'scale' ? 'bg-primary/10 border-primary text-primary' : 'bg-secondary'
-                  }`}
-                >
-                  Scale (1-5)
-                </button>
-              </div>
-            </div>
-            
-            <div className="flex space-x-2 pt-2">
-              <Button variant="outline" onClick={() => setShowForm(false)} className="flex-1">
-                Cancel
-              </Button>
-              <Button onClick={handleAddTracker} className="flex-1">
-                Create Tracker
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <Button 
-            onClick={() => setShowForm(true)} 
-            variant="outline" 
-            className="w-full flex items-center justify-center mb-4"
-          >
-            <Plus size={16} className="mr-2" /> Add Custom Tracker
-          </Button>
-        )}
-        
         <Button
           variant="outline"
           onClick={() => navigate('/settings')}
@@ -289,7 +210,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     );
   }
 
-  // The settings page view for managing trackers
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">Custom Trackers</h3>
