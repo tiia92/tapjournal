@@ -2,245 +2,44 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Lock } from 'lucide-react';
-import { useJournal } from '@/context/JournalContext';
-import { Button } from '@/components/ui/button';
 import {
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line
+  ResponsiveContainer
 } from 'recharts';
 
 interface InsightsChartProps {
   title: string;
   description: string;
-  chartType: 'water' | 'sleep' | 'mood' | 'pain' | 'energy' | 'medication';
+  data?: any[];
+  dataKey?: string;
   color?: string;
 }
 
 const InsightsChart: React.FC<InsightsChartProps> = ({ 
   title, 
   description, 
-  chartType, 
+  data = [], 
+  dataKey = 'value',
   color = '#8884d8'
 }) => {
   const { user } = useAuth();
-  const { entries } = useJournal();
   const isPremium = user?.isPremium || false;
 
-  // Prepare data for the chart
-  const getChartData = () => {
-    // Sort entries by date
-    const sortedEntries = [...entries].sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-    
-    // Take last 14 days maximum
-    const recentEntries = sortedEntries.slice(-14);
-    
-    switch (chartType) {
-      case 'water':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.waterCount
-        }));
-      
-      case 'sleep':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.sleepHours
-        }));
-      
-      case 'mood':
-        return recentEntries.map(entry => {
-          // Convert mood emoji to numeric value for the chart
-          const moodMap: Record<string, { value: number, emoji: string }> = {
-            'happy': { value: 5, emoji: '😊' },
-            'good': { value: 4, emoji: '🙂' },
-            'neutral': { value: 3, emoji: '😐' },
-            'sad': { value: 2, emoji: '😔' },
-            'angry': { value: 1, emoji: '😠' },
-            'anxious': { value: 1.5, emoji: '😰' },
-            'tired': { value: 2.5, emoji: '😴' },
-            'sick': { value: 1.8, emoji: '🤒' },
-            'grateful': { value: 4.5, emoji: '🙏' },
-            'loved': { value: 4.8, emoji: '❤️' },
-          };
-          
-          return {
-            date: formatDate(entry.date),
-            value: entry.mood ? (moodMap[entry.mood]?.value || 3) : 0,
-            emoji: entry.mood ? (moodMap[entry.mood]?.emoji || '😐') : ''
-          };
-        });
-      
-      case 'pain':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.painLevel
-        }));
-      
-      case 'energy':
-        return recentEntries.map(entry => ({
-          date: formatDate(entry.date),
-          value: entry.energyLevel
-        }));
-      
-      case 'medication':
-        return recentEntries.map(entry => {
-          // Calculate medication adherence percentage
-          const total = entry.medications.length;
-          const taken = entry.medications.filter(med => med.taken).length;
-          const percentage = total > 0 ? (taken / total) * 100 : 0;
-          
-          return {
-            date: formatDate(entry.date),
-            value: percentage
-          };
-        });
-      
-      default:
-        return [];
-    }
-  };
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
-  const chartData = getChartData();
-
-  // Custom formatter for tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-background p-2 border border-border rounded-md shadow-md">
-          <p className="font-medium">{label}</p>
-          {chartType === 'mood' ? (
-            <div className="flex items-center">
-              <span className="text-xl mr-2">{payload[0].payload.emoji || '😐'}</span>
-              <span>Level: {payload[0].value.toFixed(1)}</span>
-            </div>
-          ) : chartType === 'medication' ? (
-            <p>{payload[0].value.toFixed(0)}% taken</p>
-          ) : (
-            <p>{payload[0].value} {getValueUnit()}</p>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  // Custom Y-axis tick formatter for mood chart
-  const renderMoodTick = (value: number) => {
-    const emojiMap: Record<number, string> = {
-      1: '😠',
-      2: '😔',
-      3: '😐',
-      4: '🙂',
-      5: '😊'
-    };
-    return emojiMap[value] || '';
-  };
-
-  // Get appropriate unit for Y-axis
-  const getValueUnit = () => {
-    switch (chartType) {
-      case 'water': return 'glasses';
-      case 'sleep': return 'hours';
-      case 'medication': return '%';
-      default: return '';
-    }
-  };
-
-  const renderChart = () => {
-    switch (chartType) {
-      case 'mood':
-        return (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={chartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="date" tickLine={false} />
-              <YAxis 
-                tickLine={false} 
-                axisLine={false} 
-                domain={[1, 5]}
-                ticks={[1, 2, 3, 4, 5]}
-                tickFormatter={renderMoodTick}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line 
-                type="monotone" 
-                dataKey="value" 
-                stroke={color} 
-                strokeWidth={2}
-                dot={{ fill: color, strokeWidth: 1, r: 4 }}
-                activeDot={{ r: 6, fill: color }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        );
-      
-      case 'medication':
-        return (
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="date" tickLine={false} />
-              <YAxis 
-                tickLine={false} 
-                axisLine={false} 
-                domain={[0, 100]}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="value" 
-                fill={color} 
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        );
-      
-      default:
-        return (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
-              data={chartData}
-              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-              <XAxis dataKey="date" tickLine={false} />
-              <YAxis tickLine={false} axisLine={false} />
-              <Tooltip content={<CustomTooltip />} />
-              <Area 
-                type="monotone" 
-                dataKey="value" 
-                stroke={color} 
-                fill={color} 
-                fillOpacity={0.2} 
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        );
-    }
-  };
+  // Generate sample data if none provided
+  const sampleData = data.length > 0 ? data : [
+    { name: 'Mon', value: 4 },
+    { name: 'Tue', value: 3 },
+    { name: 'Wed', value: 7 },
+    { name: 'Thu', value: 5 },
+    { name: 'Fri', value: 6 },
+    { name: 'Sat', value: 8 },
+    { name: 'Sun', value: 5 },
+  ];
 
   if (!isPremium) {
     return (
@@ -257,30 +56,29 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
     );
   }
 
-  if (entries.length === 0) {
-    return (
-      <div className="tap-card">
-        <h3 className="text-lg font-medium mb-2">{title}</h3>
-        <p className="text-sm text-muted-foreground mb-6">{description}</p>
-        <div className="text-center p-8 bg-muted/20 rounded-lg">
-          <p className="text-muted-foreground mb-4">No data available yet</p>
-          <Button 
-            onClick={() => window.location.href = '/dashboard'}
-            variant="outline"
-          >
-            Add Your First Entry
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">{title}</h3>
       <p className="text-sm text-muted-foreground mb-4">{description}</p>
       <div className="w-full h-[200px]">
-        {renderChart()}
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart
+            data={sampleData}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+            <XAxis dataKey="name" tickLine={false} />
+            <YAxis tickLine={false} axisLine={false} />
+            <Tooltip />
+            <Area 
+              type="monotone" 
+              dataKey={dataKey} 
+              stroke={color} 
+              fill={color} 
+              fillOpacity={0.2} 
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
