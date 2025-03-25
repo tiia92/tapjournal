@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, PlusCircle, MinusCircle, CheckCircle, X, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -6,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomTracker {
   id: string;
@@ -24,6 +24,7 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
 }) => {
   const { user } = useAuth();
   const { todayEntry, updateEntry } = useJournal();
+  const navigate = useNavigate();
   const isPremium = user?.isPremium || false;
   const [trackers, setTrackers] = useState<CustomTracker[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -33,7 +34,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     type: 'counter',
   });
 
-  // Load trackers from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('customTrackers');
     if (saved) {
@@ -41,13 +41,11 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     }
   }, []);
 
-  // Get current values for trackers in this entry
   const getTrackerValues = (): Record<string, any> => {
     if (!entryId || !todayEntry) return {};
     return todayEntry.customMetrics || {};
   };
 
-  // Common emojis that could be used for tracking
   const commonEmojis = ['📊', '🏃‍♂️', '🍽️', '🚰', '💧', '☕', '💊', '💤', '😊', '📚', '💰', '🧘‍♀️'];
 
   const handleAddTracker = () => {
@@ -79,21 +77,15 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
   const handleUpdateTrackerValue = (trackerId: string, value: number | boolean) => {
     if (!entryId || !todayEntry) return;
     
-    // Get current custom metrics or initialize empty object
     const currentMetrics = todayEntry.customMetrics || {};
-    
-    // Update the value for this tracker
     const updatedMetrics = {
       ...currentMetrics,
       [trackerId]: value
     };
-    
-    // Update the entry
     const updatedEntry = {
       ...todayEntry,
       customMetrics: updatedMetrics
     };
-    
     updateEntry(updatedEntry);
   };
 
@@ -175,12 +167,10 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     );
   }
 
-  // If this is in the settings page and we specifically want to hide it there
   if (inSettings) {
     return null;
   }
 
-  // Entry page - show trackers to track values
   if (entryId) {
     return (
       <div className="tap-card">
@@ -220,7 +210,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     );
   }
 
-  // Settings page - show tracker management
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">Custom Trackers</h3>
