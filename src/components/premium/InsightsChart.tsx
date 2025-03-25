@@ -67,9 +67,9 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
     const last7Days = getLast7Days();
     
     // Sort entries by date
-    const sortedEntries = [...entries].sort((a, b) => 
+    const sortedEntries = entries ? [...entries].sort((a, b) => 
       new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+    ) : [];
     
     // Map data from entries to our day slots
     last7Days.forEach(day => {
@@ -81,11 +81,11 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
       if (matchingEntry) {
         switch (chartType) {
           case 'water':
-            day.value = matchingEntry.waterCount;
+            day.value = matchingEntry.waterCount || 0;
             break;
           
           case 'sleep':
-            day.value = matchingEntry.sleepHours;
+            day.value = matchingEntry.sleepHours || 0;
             break;
           
           case 'mood':
@@ -108,17 +108,18 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
             break;
           
           case 'pain':
-            day.value = matchingEntry.painLevel;
+            day.value = matchingEntry.painLevel || 0;
             break;
           
           case 'energy':
-            day.value = matchingEntry.energyLevel;
+            day.value = matchingEntry.energyLevel || 0;
             break;
           
           case 'medication':
             // Calculate medication adherence percentage
-            const total = matchingEntry.medications.length;
-            const taken = matchingEntry.medications.filter(med => med.taken).length;
+            const medications = matchingEntry.medications || [];
+            const total = medications.length;
+            const taken = medications.filter(med => med.taken).length;
             day.value = total > 0 ? (taken / total) * 100 : 0;
             break;
         }
