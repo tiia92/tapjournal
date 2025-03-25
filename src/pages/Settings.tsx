@@ -89,7 +89,7 @@ const Settings = () => {
         />
         
         {/* Custom Trackers - Only show this in Settings for non-premium users */}
-        <CustomTrackers inSettings={true} />
+        {!isPremium && <CustomTrackers inSettings={true} />}
         
         {/* Logout Button */}
         <div className="tap-card">

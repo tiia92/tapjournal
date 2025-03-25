@@ -77,10 +77,10 @@ const VoiceJournal: React.FC<VoiceJournalProps> = ({ entryId, audioUrl: existing
     }
     
     // Initialize speech recognition if available
-    if (window.webkitSpeechRecognition || window.SpeechRecognition) {
-      const SpeechRecognitionConstructor = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognitionConstructor) {
-        speechRecognitionRef.current = new SpeechRecognitionConstructor();
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognitionAPI) {
+      speechRecognitionRef.current = new SpeechRecognitionAPI();
+      if (speechRecognitionRef.current) {
         speechRecognitionRef.current.continuous = true;
         speechRecognitionRef.current.interimResults = true;
         

@@ -34,7 +34,6 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     type: 'counter',
   });
 
-  // Load trackers from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('customTrackers');
     if (saved) {
@@ -42,13 +41,11 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     }
   }, []);
 
-  // Get current values for trackers in this entry
   const getTrackerValues = (): Record<string, any> => {
     if (!entryId || !todayEntry) return {};
     return todayEntry.customMetrics || {};
   };
 
-  // Common emojis that could be used for tracking
   const commonEmojis = ['📊', '🏃‍♂️', '🍽️', '🚰', '💧', '☕', '💊', '💤', '😊', '📚', '💰', '🧘‍♀️'];
 
   const handleAddTracker = () => {
@@ -80,21 +77,15 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
   const handleUpdateTrackerValue = (trackerId: string, value: number | boolean) => {
     if (!entryId || !todayEntry) return;
     
-    // Get current custom metrics or initialize empty object
     const currentMetrics = todayEntry.customMetrics || {};
-    
-    // Update the value for this tracker
     const updatedMetrics = {
       ...currentMetrics,
       [trackerId]: value
     };
-    
-    // Update the entry
     const updatedEntry = {
       ...todayEntry,
       customMetrics: updatedMetrics
     };
-    
     updateEntry(updatedEntry);
   };
 
@@ -176,12 +167,10 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
     );
   }
 
-  // If this is in the settings page and we specifically want to hide it there
   if (inSettings) {
     return null;
   }
 
-  // Entry page - show trackers to track values
   if (entryId) {
     return (
       <div className="tap-card">
