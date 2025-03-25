@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, XCircle, Plus, Info } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -62,12 +61,9 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
     toast.success(completed ? 'Goal marked as completed' : 'Goal marked as incomplete');
   };
 
-  // Generate personalized goal suggestions based on user data
   const generatePersonalizedSuggestions = () => {
-    // This would be more sophisticated in a real app, analyzing user patterns
     const suggestions = [];
 
-    // Water intake suggestion
     const avgWaterCount = entries.reduce((sum, entry) => sum + entry.waterCount, 0) / entries.length;
     if (avgWaterCount < 6) {
       suggestions.push({
@@ -77,7 +73,6 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
       });
     }
 
-    // Sleep suggestion
     const avgSleepHours = entries.reduce((sum, entry) => sum + entry.sleepHours, 0) / entries.length;
     if (avgSleepHours < 7) {
       suggestions.push({
@@ -87,7 +82,6 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
       });
     }
 
-    // Exercise suggestion
     const exerciseDays = entries.filter(entry => entry.exercises && entry.exercises.length > 0).length;
     const exerciseRate = exerciseDays / entries.length;
     if (exerciseRate < 0.5) {
@@ -98,7 +92,6 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
       });
     }
 
-    // Self-care suggestion
     const selfCareDays = entries.filter(entry => entry.selfCareActivities && entry.selfCareActivities.length > 0).length;
     const selfCareRate = selfCareDays / entries.length;
     if (selfCareRate < 0.3) {
@@ -109,7 +102,6 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
       });
     }
 
-    // Add some generic suggestions if we don't have enough
     if (suggestions.length < 3) {
       const generics = [
         {
@@ -139,19 +131,16 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
     return suggestions.slice(0, 3);
   };
 
-  // If we don't have enough entries, use generic goals
   const getGoalSuggestions = () => {
     if (hasEnoughEntries) {
       return generatePersonalizedSuggestions();
     } else {
-      // Use 3 random generic goals
       return genericGoals.slice(0, 3);
     }
   };
 
   const goalSuggestions = getGoalSuggestions();
 
-  // For entry page - show goals to check off
   if (entryId && todayEntry) {
     const entryGoals = todayEntry.goals || [];
     
@@ -189,7 +178,6 @@ const SmartGoalTracker: React.FC<SmartGoalTrackerProps> = ({ entryId, isInsights
     );
   }
 
-  // For insights page - show suggestions
   if (isInsightsPage) {
     if (!isPremium) {
       return (
