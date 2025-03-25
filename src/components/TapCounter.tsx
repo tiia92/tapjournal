@@ -44,7 +44,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
       <div className="flex items-center gap-4 mt-1">
         <button 
           onClick={handleDecrement}
-          className="tap-button w-10 h-10 text-muted-foreground hover:text-foreground"
+          className="tap-button flex items-center justify-center w-10 h-10 text-muted-foreground hover:text-foreground"
           disabled={count === 0}
           aria-label="Decrease count"
         >
@@ -53,7 +53,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
         
         <button 
           onClick={handleIncrement}
-          className="tap-button w-10 h-10 text-muted-foreground hover:text-foreground"
+          className="tap-button flex items-center justify-center w-10 h-10 text-muted-foreground hover:text-foreground"
           disabled={max !== undefined && count >= max}
           aria-label="Increase count"
         >

@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Paperclip, X, File, Image, Video, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -93,7 +94,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
         </Button>
       </div>
       
-      {/* Display images in proper dimensions */}
+      {/* Display images with proper dimensions */}
       {attachments.filter(url => isImageFile(url)).length > 0 && (
         <div className="space-y-3">
           <h5 className="text-sm font-medium">Images</h5>
@@ -103,7 +104,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
                 <img 
                   src={url} 
                   alt={`Attachment ${index + 1}`}
-                  className="rounded-md max-w-full max-h-[500px] object-contain"
+                  className="rounded-md object-contain max-h-[500px]"
                   style={{ maxWidth: '500px' }}
                 />
                 <button 

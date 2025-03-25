@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight, LogOut } from 'lucide-react';
@@ -47,10 +46,10 @@ const LandingPage = () => {
             <h1 className="text-2xl font-bold ml-2">TapJournal</h1>
           </div>
           <div className="space-x-4">
-            <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
+                <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
                 <Button variant="outline" onClick={handleLogout}>
                   <LogOut size={18} className="mr-2" />
                   Sign Out
@@ -58,6 +57,7 @@ const LandingPage = () => {
               </div>
             ) : (
               <>
+                <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
                 <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
                 <Button onClick={() => navigate('/signup')}>Sign Up</Button>
               </>
@@ -106,15 +106,15 @@ const LandingPage = () => {
           <div className="md:w-1/2 flex justify-center">
             <div className="rounded-lg overflow-hidden shadow-lg">
               <img 
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158" 
-                alt="Young woman journaling on her phone" 
+                src="/lovable-uploads/9367920c-5252-4e6a-8580-7837623b79f2.png" 
+                alt="Journal with phone and laptop" 
                 className="w-full h-auto object-cover"
               />
             </div>
           </div>
         </div>
 
-        {/* Features Section - Rearranged as requested */}
+        {/* Features Section */}
         <div className="py-16 border-t border-border">
           <h2 className="text-3xl font-bold mb-12 text-center">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
