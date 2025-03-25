@@ -86,6 +86,20 @@ const ThemeSelector: React.FC<ThemeSelectorProps> = ({ selectedTheme, onSelectTh
   }, [isPremium, onSelectTheme, selectedTheme]);
 
   const handleSelectTheme = (themeId: string) => {
+    // Make the actual DOM changes for theme
+    const theme = themes.find(t => t.id === themeId);
+    if (theme) {
+      // Apply primary color directly to CSS variables
+      document.documentElement.style.setProperty('--primary', theme.primaryColor);
+      document.documentElement.style.setProperty('--primary-foreground', 
+        isLightColor(theme.primaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
+      
+      // Apply secondary color
+      document.documentElement.style.setProperty('--secondary', theme.secondaryColor);
+      document.documentElement.style.setProperty('--secondary-foreground', 
+        isLightColor(theme.secondaryColor) ? 'hsl(222.1, 83.2%, 9.8%)' : 'hsl(210, 40%, 98%)');
+    }
+    
     onSelectTheme(themeId);
     toast.success(`${themes.find(t => t.id === themeId)?.name || 'Theme'} applied`);
   };
