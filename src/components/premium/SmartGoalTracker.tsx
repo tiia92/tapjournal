@@ -34,7 +34,7 @@ const genericGoals = [
   },
   {
     id: 'generic-5',
-    text: 'Write down 3 things you're grateful for daily',
+    text: "Write down 3 things you're grateful for daily",
     reason: 'Gratitude practice improves mental well-being'
   }
 ];
