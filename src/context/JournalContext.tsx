@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { formatDateForTimezone } from '@/utils/trackerUtils';
@@ -15,14 +14,6 @@ export type Medication = {
   id: string;
   name: string;
   taken: boolean;
-};
-
-// Goal type
-export type Goal = {
-  id: string;
-  text: string;
-  completed: boolean;
-  dateAdded: string;
 };
 
 // Entry types
@@ -46,7 +37,6 @@ export type JournalEntry = {
   images?: string[]; // For premium image journaling
   attachments?: string[]; // For file attachments
   customMetrics?: Record<string, any>; // For premium custom tracking
-  goals?: Goal[]; // For smart goals
   // Symptoms
   painLevel: number;
   energyLevel: number;
@@ -59,7 +49,6 @@ export type JournalEntry = {
 type JournalContextType = {
   entries: JournalEntry[];
   todayEntry: JournalEntry | undefined;
-  goals: Goal[];
   addEntry: (entry: JournalEntry) => void;
   updateEntry: (entry: JournalEntry) => void;
   getEntryByDate: (date: string) => JournalEntry | undefined;
@@ -71,9 +60,6 @@ type JournalContextType = {
   saveAudioToEntry: (entryId: string, audioUrl: string, transcription?: string) => void;
   saveAttachmentToEntry: (entryId: string, fileUrl: string) => void;
   removeAttachmentFromEntry: (entryId: string, fileUrl: string) => void;
-  addGoal: (goalText: string) => void;
-  removeGoal: (goalId: string) => void;
-  toggleGoalCompletion: (goalId: string, completed: boolean) => void;
 };
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
@@ -93,39 +79,13 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   audioTranscription: '',
   images: [],
   attachments: [],
-  customMetrics: {},
-  goals: [],
   // Default symptom values
   painLevel: 0,
-  energyLevel: 0,
+  energyLevel: 0, // Starting at 0 as requested
   hasFever: false,
   hasCoughSneezing: false,
   hasNausea: false,
   otherSymptoms: '',
-};
-
-// Smart goal suggestions
-const genericGoalSuggestions: string[] = [
-  "Drink at least 8 glasses of water daily",
-  "Get 7-8 hours of sleep each night",
-  "Take a 10-minute walk after lunch",
-  "Practice meditation for 5 minutes daily",
-  "Read for 15 minutes before bed",
-  "Stretch for 5 minutes in the morning",
-  "Take medication on schedule every day",
-  "Practice deep breathing for 2 minutes when stressed",
-  "Make time for one self-care activity daily",
-  "Write down one thing you're grateful for each day",
-  "Limit screen time one hour before bed",
-  "Call or text a friend or family member",
-  "Eat a fruit or vegetable with every meal",
-  "Take a short break every 90 minutes of work",
-  "Go outside for at least 15 minutes daily"
-];
-
-const getRandomGoalSuggestions = (count = 3) => {
-  const shuffled = [...genericGoalSuggestions].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
 };
 
 const JournalContext = createContext<JournalContextType | undefined>(undefined);
@@ -133,44 +93,12 @@ const JournalContext = createContext<JournalContextType | undefined>(undefined);
 export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | undefined>();
-  const [goals, setGoals] = useState<Goal[]>([]);
   const { user } = useAuth();
 
   // Get today's date in the user's timezone
   const getTodayInUserTimezone = (): string => {
     return formatDateForTimezone(new Date());
   };
-
-  // Generate new goal suggestions daily
-  useEffect(() => {
-    if (user?.isPremium) {
-      const lastGoalDate = localStorage.getItem(`lastGoalDate_${user.id}`);
-      const today = getTodayInUserTimezone();
-      
-      if (lastGoalDate !== today) {
-        // Generate new suggestions for a new day
-        let storedGoals = localStorage.getItem(`goals_${user.id}`);
-        let currentGoals: Goal[] = storedGoals ? JSON.parse(storedGoals) : [];
-        
-        // Only generate new goals if we have fewer than 3 active goals
-        if (entries.length < 3 && currentGoals.filter(g => !g.completed).length < 3) {
-          const newSuggestions = getRandomGoalSuggestions()
-            .filter(text => !currentGoals.some(g => g.text === text))
-            .map(text => ({
-              id: crypto.randomUUID(),
-              text,
-              completed: false,
-              dateAdded: today
-            }));
-          
-          const updatedGoals = [...currentGoals, ...newSuggestions];
-          setGoals(updatedGoals);
-          localStorage.setItem(`goals_${user.id}`, JSON.stringify(updatedGoals));
-          localStorage.setItem(`lastGoalDate_${user.id}`, today);
-        }
-      }
-    }
-  }, [user, entries.length]);
 
   // Load entries from localStorage on mount or when user changes
   useEffect(() => {
@@ -192,8 +120,6 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
             audioNotes: entry.audioNotes || '',
             audioTranscription: entry.audioTranscription || '',
             attachments: entry.attachments || [],
-            customMetrics: entry.customMetrics || {},
-            goals: entry.goals || [],
             // Set energyLevel to 0 if it's 5 (the old default)
             energyLevel: entry.energyLevel === 5 ? 0 : entry.energyLevel,
             // Ensure chores and workTasks are arrays
@@ -218,14 +144,6 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setEntries([]);
         setTodayEntry(undefined);
       }
-      
-      // Load goals
-      const storedGoals = localStorage.getItem(`goals_${user.id}`);
-      if (storedGoals) {
-        setGoals(JSON.parse(storedGoals));
-      } else {
-        setGoals([]);
-      }
     }
   }, [user]);
 
@@ -236,13 +154,6 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       localStorage.setItem(storageKey, JSON.stringify(entries));
     }
   }, [entries, user]);
-
-  // Save goals to localStorage whenever they change
-  useEffect(() => {
-    if (user && goals.length > 0) {
-      localStorage.setItem(`goals_${user.id}`, JSON.stringify(goals));
-    }
-  }, [goals, user]);
 
   const checkIfTodayEntryExists = (): boolean => {
     const today = getTodayInUserTimezone();
@@ -255,7 +166,6 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       ...defaultEntry,
       id: crypto.randomUUID(),
       date: today,
-      goals: goals.filter(g => !g.completed).map(g => ({...g, completed: false}))
     };
 
     setEntries(prev => [...prev, newEntry]);
@@ -401,57 +311,11 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
-  const addGoal = (goalText: string): void => {
-    const newGoal: Goal = {
-      id: crypto.randomUUID(),
-      text: goalText,
-      completed: false,
-      dateAdded: getTodayInUserTimezone()
-    };
-    
-    setGoals(prev => [...prev, newGoal]);
-    
-    // Add to today's entry if it exists
-    if (todayEntry) {
-      const updatedGoals = [...(todayEntry.goals || []), newGoal];
-      const updatedEntry = { ...todayEntry, goals: updatedGoals };
-      updateEntry(updatedEntry);
-    }
-  };
-
-  const removeGoal = (goalId: string): void => {
-    setGoals(prev => prev.filter(goal => goal.id !== goalId));
-    
-    // Remove from today's entry if it exists
-    if (todayEntry && todayEntry.goals) {
-      const updatedGoals = todayEntry.goals.filter(goal => goal.id !== goalId);
-      const updatedEntry = { ...todayEntry, goals: updatedGoals };
-      updateEntry(updatedEntry);
-    }
-  };
-
-  const toggleGoalCompletion = (goalId: string, completed: boolean): void => {
-    // Update in goals list
-    setGoals(prev => prev.map(goal => 
-      goal.id === goalId ? { ...goal, completed } : goal
-    ));
-    
-    // Update in today's entry if it exists
-    if (todayEntry && todayEntry.goals) {
-      const updatedGoals = todayEntry.goals.map(goal => 
-        goal.id === goalId ? { ...goal, completed } : goal
-      );
-      const updatedEntry = { ...todayEntry, goals: updatedGoals };
-      updateEntry(updatedEntry);
-    }
-  };
-
   return (
     <JournalContext.Provider
       value={{
         entries,
         todayEntry,
-        goals,
         addEntry,
         updateEntry,
         getEntryByDate,
@@ -462,10 +326,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getAllWorkTaskNames,
         saveAudioToEntry,
         saveAttachmentToEntry,
-        removeAttachmentFromEntry,
-        addGoal,
-        removeGoal,
-        toggleGoalCompletion
+        removeAttachmentFromEntry
       }}
     >
       {children}
