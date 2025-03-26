@@ -97,7 +97,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
       </div>
 
       <div className="flex flex-wrap gap-2 mb-3">
-        {options.slice(0, isExpanded ? options.length : 6).map(option => (
+        {options.map(option => (
           <button
             key={option.id}
             onClick={() => handleToggleEmoji(option.id)}
