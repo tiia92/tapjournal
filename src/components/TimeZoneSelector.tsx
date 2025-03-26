@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-interface TimeZoneSelectorProps {
+export interface TimeZoneSelectorProps {
   onChange: (timezone: string) => void;
   currentTimezone: string;
 }

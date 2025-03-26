@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import ThemeSelector from '@/components/premium/ThemeSelector';
 import TimeZoneSelector from '@/components/TimeZoneSelector';
@@ -11,8 +11,17 @@ import CustomTrackers from '@/components/premium/CustomTrackers';
 const Settings = () => {
   const { user, logout, upgradeUser, downgradeUser } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState('default');
+  const [userTimezone, setUserTimezone] = useState('UTC');
   const isPremium = user?.isPremium || false;
   
+  // Load saved timezone on component mount
+  useEffect(() => {
+    const savedTimezone = localStorage.getItem('userTimezone');
+    if (savedTimezone) {
+      setUserTimezone(savedTimezone);
+    }
+  }, []);
+
   const handleUpgrade = () => {
     upgradeUser();
     toast.success('You are now a premium user!');
@@ -21,6 +30,10 @@ const Settings = () => {
   const handleDowngrade = () => {
     downgradeUser();
     toast.success('Your account has been downgraded to free.');
+  };
+
+  const handleTimezoneChange = (timezone: string) => {
+    setUserTimezone(timezone);
   };
   
   return (
@@ -62,7 +75,10 @@ const Settings = () => {
         </div>
         
         {/* Timezone Settings */}
-        <TimeZoneSelector />
+        <TimeZoneSelector 
+          onChange={handleTimezoneChange}
+          currentTimezone={userTimezone}
+        />
         
         {/* Theme Settings */}
         <ThemeSelector 

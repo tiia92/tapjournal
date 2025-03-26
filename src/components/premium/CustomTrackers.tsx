@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useJournal } from '@/context/JournalContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomTracker {
   id: string;
@@ -24,6 +25,7 @@ const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({
 }) => {
   const { user } = useAuth();
   const { todayEntry, updateEntry } = useJournal();
+  const navigate = useNavigate();
   const isPremium = user?.isPremium || false;
   const [trackers, setTrackers] = useState<CustomTracker[]>([]);
   const [showForm, setShowForm] = useState(false);

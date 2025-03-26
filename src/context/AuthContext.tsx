@@ -16,6 +16,8 @@ type AuthContextType = {
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   upgradeAccount: () => void;
+  upgradeUser: () => void;  // Add this method for backward compatibility
+  downgradeUser: () => void;  // Add this method
 };
 
 // Mock users database
@@ -113,6 +115,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const upgradeUser = upgradeAccount; // Alias for backward compatibility
+  
+  const downgradeUser = () => {
+    if (user) {
+      const downgradedUser = { ...user, isPremium: false };
+      setUser(downgradedUser);
+      localStorage.setItem('tapjournal_user', JSON.stringify(downgradedUser));
+      
+      // Update mock database
+      const userIndex = MOCK_USERS.findIndex(u => u.id === user.id);
+      if (userIndex !== -1) {
+        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: false };
+      }
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -122,6 +140,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signup,
         logout,
         upgradeAccount,
+        upgradeUser,
+        downgradeUser,
       }}
     >
       {children}
