@@ -42,8 +42,8 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
     
-    // Take last 14 days maximum
-    const recentEntries = sortedEntries.slice(-14);
+    // Take last 7 days maximum (changed from 14)
+    const recentEntries = sortedEntries.slice(-7);
     
     switch (chartType) {
       case 'water':
@@ -162,6 +162,20 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
     }
   };
 
+  // Set Y-axis domain based on chart type
+  const getYAxisDomain = () => {
+    switch (chartType) {
+      case 'mood': return [1, 5];
+      case 'pain': return [0, 10]; // Changed from default
+      case 'energy': return [0, 10]; // Changed from default
+      case 'medication': return [0, 100];
+      default: 
+        // For other types, find the max value or use a sensible default
+        const maxValue = Math.max(...chartData.map(d => d.value || 0));
+        return [0, Math.max(maxValue * 1.1, 10)]; // Add 10% padding
+    }
+  };
+
   const renderChart = () => {
     switch (chartType) {
       case 'mood':
@@ -176,7 +190,7 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
               <YAxis 
                 tickLine={false} 
                 axisLine={false} 
-                domain={[1, 5]}
+                domain={getYAxisDomain()}
                 ticks={[1, 2, 3, 4, 5]}
                 tickFormatter={renderMoodTick}
               />
@@ -205,7 +219,7 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
               <YAxis 
                 tickLine={false} 
                 axisLine={false} 
-                domain={[0, 100]}
+                domain={getYAxisDomain()}
                 tickFormatter={(value) => `${value}%`}
               />
               <Tooltip content={<CustomTooltip />} />
@@ -218,6 +232,35 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
           </ResponsiveContainer>
         );
       
+      case 'pain':
+      case 'energy':
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="date" tickLine={false} />
+              <YAxis 
+                tickLine={false} 
+                axisLine={false} 
+                domain={getYAxisDomain()}
+                ticks={[0, 2, 4, 6, 8, 10]} // Show ticks at these points
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line 
+                type="monotone" 
+                dataKey="value" 
+                stroke={color} 
+                strokeWidth={2}
+                dot={{ fill: color, strokeWidth: 1, r: 4 }}
+                activeDot={{ r: 6, fill: color }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        );
+      
       default:
         return (
           <ResponsiveContainer width="100%" height="100%">
@@ -227,7 +270,11 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
             >
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
               <XAxis dataKey="date" tickLine={false} />
-              <YAxis tickLine={false} axisLine={false} />
+              <YAxis 
+                tickLine={false} 
+                axisLine={false} 
+                domain={getYAxisDomain()}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Area 
                 type="monotone" 
@@ -268,7 +315,7 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
             onClick={() => window.location.href = '/dashboard'}
             variant="outline"
           >
-            Add Your First Entry
+            Add an Entry
           </Button>
         </div>
       </div>
