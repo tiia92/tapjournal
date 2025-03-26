@@ -12,6 +12,7 @@ import MedicationTracker from '@/components/MedicationTracker';
 import VoiceJournal from '@/components/premium/VoiceJournal';
 import JournalPrompts from '@/components/premium/JournalPrompts';
 import CustomTrackers from '@/components/premium/CustomTrackers';
+import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
 import FileAttachment from '@/components/FileAttachment';
 import { useJournal, JournalEntry } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
@@ -321,9 +322,14 @@ const Index = () => {
           onChange={(medications) => handleUpdateField('medications', medications)}
         />
         
-        {/* Custom Tracker for Premium Users - moved above Journal Notes */}
+        {/* Smart Goals for Premium Users */}
         {isPremium && (
-          <CustomTrackers />
+          <SmartGoalTracker entryId={entry.id} />
+        )}
+        
+        {/* Custom Tracker for Premium Users */}
+        {isPremium && (
+          <CustomTrackers entryId={entry.id} />
         )}
         
         {/* Journal Notes Section with Voice Journal and Journal Prompts for Premium */}
@@ -342,28 +348,13 @@ const Index = () => {
             )}
           </div>
           
-          {isPremium && (
-            <div className="space-y-4 mb-4">
-              <VoiceJournal 
-                entryId={entry.id}
-                audioUrl={entry.audioNotes}
-                transcription={entry.audioTranscription}
-              />
-              <JournalPrompts />
-            </div>
-          )}
-          
-          <FileAttachment 
-            entryId={entry.id} 
-            attachments={entry.attachments} 
-          />
-          
+          {/* Text entry box for notes */}
           {isEditing ? (
             <>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full h-32 p-3 bg-secondary/50 rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm mt-4"
+                className="w-full h-32 p-3 bg-secondary/50 rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm"
                 placeholder="Write your thoughts for the day..."
               />
               
@@ -375,12 +366,28 @@ const Index = () => {
               </div>
             </>
           ) : (
-            <div className="bg-secondary/50 rounded-lg p-3 min-h-[80px] text-sm mt-4">
+            <div className="bg-secondary/50 rounded-lg p-3 min-h-[80px] text-sm">
               {entry.notes ? (
                 <p>{entry.notes}</p>
               ) : (
                 <p className="text-muted-foreground italic">No notes for today. Tap edit to add some thoughts.</p>
               )}
+            </div>
+          )}
+          
+          {/* Premium features */}
+          {isPremium && (
+            <div className="space-y-4 mt-4">
+              <JournalPrompts inJournalPage={true} />
+              <VoiceJournal 
+                entryId={entry.id}
+                audioUrl={entry.audioNotes}
+                transcription={entry.audioTranscription}
+              />
+              <FileAttachment 
+                entryId={entry.id} 
+                attachments={entry.attachments} 
+              />
             </div>
           )}
         </div>
@@ -400,7 +407,7 @@ const Index = () => {
             className="w-full"
           >
             <BookOpen size={16} className="mr-2" />
-            View Journal History
+            View Insights
           </AnimatedButton>
         </div>
       </div>

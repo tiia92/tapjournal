@@ -1,10 +1,11 @@
-
-import React, { useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Trash2, PlusCircle, MinusCircle, CheckCircle, X, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { useJournal } from '@/context/JournalContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomTracker {
   id: string;
@@ -13,13 +14,19 @@ interface CustomTracker {
   type: 'counter' | 'yes-no' | 'scale';
 }
 
-const CustomTrackers: React.FC = () => {
+interface CustomTrackerWithValue extends CustomTracker {
+  value: number | boolean;
+}
+
+const CustomTrackers: React.FC<{ entryId?: string; inSettings?: boolean }> = ({ 
+  entryId,
+  inSettings = false
+}) => {
   const { user } = useAuth();
+  const { todayEntry, updateEntry } = useJournal();
+  const navigate = useNavigate();
   const isPremium = user?.isPremium || false;
-  const [trackers, setTrackers] = useState<CustomTracker[]>(() => {
-    const saved = localStorage.getItem('customTrackers');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [trackers, setTrackers] = useState<CustomTracker[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newTracker, setNewTracker] = useState<Omit<CustomTracker, 'id'>>({
     name: '',
@@ -27,7 +34,18 @@ const CustomTrackers: React.FC = () => {
     type: 'counter',
   });
 
-  // Common emojis that could be used for tracking
+  useEffect(() => {
+    const saved = localStorage.getItem('customTrackers');
+    if (saved) {
+      setTrackers(JSON.parse(saved));
+    }
+  }, []);
+
+  const getTrackerValues = (): Record<string, any> => {
+    if (!entryId || !todayEntry) return {};
+    return todayEntry.customMetrics || {};
+  };
+
   const commonEmojis = ['📊', '🏃‍♂️', '🍽️', '🚰', '💧', '☕', '💊', '💤', '😊', '📚', '💰', '🧘‍♀️'];
 
   const handleAddTracker = () => {
@@ -56,6 +74,84 @@ const CustomTrackers: React.FC = () => {
     toast.success('Tracker deleted');
   };
 
+  const handleUpdateTrackerValue = (trackerId: string, value: number | boolean) => {
+    if (!entryId || !todayEntry) return;
+    
+    const currentMetrics = todayEntry.customMetrics || {};
+    const updatedMetrics = {
+      ...currentMetrics,
+      [trackerId]: value
+    };
+    const updatedEntry = {
+      ...todayEntry,
+      customMetrics: updatedMetrics
+    };
+    updateEntry(updatedEntry);
+  };
+
+  const renderTrackerInput = (tracker: CustomTracker) => {
+    const trackerValues = getTrackerValues();
+    const currentValue = trackerValues[tracker.id];
+    
+    switch (tracker.type) {
+      case 'counter':
+        return (
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => handleUpdateTrackerValue(tracker.id, Math.max(0, (currentValue || 0) - 1))}
+              disabled={(currentValue || 0) <= 0}
+              className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+            >
+              <MinusCircle size={20} />
+            </button>
+            <span className="text-lg font-medium w-8 text-center">{currentValue || 0}</span>
+            <button 
+              onClick={() => handleUpdateTrackerValue(tracker.id, (currentValue || 0) + 1)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <PlusCircle size={20} />
+            </button>
+          </div>
+        );
+      
+      case 'yes-no':
+        return (
+          <button 
+            onClick={() => handleUpdateTrackerValue(tracker.id, !currentValue)}
+            className={`px-3 py-1 rounded-full text-sm ${
+              currentValue ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            {currentValue ? (
+              <><CheckCircle size={14} className="inline mr-1" /> Yes</>
+            ) : (
+              <><X size={14} className="inline mr-1" /> No</>
+            )}
+          </button>
+        );
+      
+      case 'scale':
+        return (
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map(value => (
+              <button
+                key={value}
+                onClick={() => handleUpdateTrackerValue(tracker.id, value)}
+                className={`w-8 h-8 rounded-full ${
+                  currentValue === value ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   if (!isPremium) {
     return (
       <div className="tap-card flex flex-col items-center justify-center py-8 bg-muted/30">
@@ -67,6 +163,49 @@ const CustomTrackers: React.FC = () => {
         <div className="text-primary text-sm mt-4">
           Premium Feature
         </div>
+      </div>
+    );
+  }
+
+  if (inSettings) {
+    return null;
+  }
+
+  if (entryId) {
+    return (
+      <div className="tap-card">
+        <h3 className="text-lg font-medium mb-2">Custom Trackers</h3>
+        <p className="text-sm text-muted-foreground mb-4">Track your personal metrics</p>
+        
+        {trackers.length > 0 ? (
+          <div className="space-y-3 mb-4">
+            {trackers.map(tracker => (
+              <div 
+                key={tracker.id} 
+                className="flex items-center justify-between bg-muted/30 p-3 rounded-lg"
+              >
+                <div className="flex items-center">
+                  <span className="text-xl mr-3">{tracker.emoji}</span>
+                  <span className="font-medium">{tracker.name}</span>
+                </div>
+                
+                {renderTrackerInput(tracker)}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-muted/30 p-4 rounded-lg text-center text-muted-foreground mb-4">
+            You haven't created any custom trackers yet
+          </div>
+        )}
+        
+        <Button
+          variant="outline"
+          onClick={() => navigate('/settings')}
+          className="w-full"
+        >
+          <Plus size={16} className="mr-2" /> Manage Custom Trackers
+        </Button>
       </div>
     );
   }
