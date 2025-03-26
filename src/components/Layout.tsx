@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Calendar, BookOpen, Settings } from 'lucide-react';
+import { Home, Calendar, Book, Settings } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import UserProfileHeader from './UserProfileHeader';
 import Logo from './Logo';
@@ -54,10 +54,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <button 
             onClick={() => navigate('/journal')}
             className={`nav-button ${location.pathname === '/journal' ? 'text-primary' : 'text-muted-foreground'}`}
-            aria-label="Insights"
+            aria-label="Journal"
           >
-            <BookOpen size={20} />
-            <span className="text-xs">Insights</span>
+            <Book size={20} />
+            <span className="text-xs">Journal</span>
           </button>
           
           <button 
