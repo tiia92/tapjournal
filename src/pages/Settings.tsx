@@ -9,31 +9,33 @@ import { toast } from 'sonner';
 import CustomTrackers from '@/components/premium/CustomTrackers';
 
 const Settings = () => {
-  const { user, logout, upgradeUser, downgradeUser } = useAuth();
+  const { user, logout, upgradeAccount } = useAuth();
   const [selectedTheme, setSelectedTheme] = useState('default');
-  const [userTimezone, setUserTimezone] = useState('UTC');
+  const [currentTimezone, setCurrentTimezone] = useState('UTC');
   const isPremium = user?.isPremium || false;
   
-  // Load saved timezone on component mount
   useEffect(() => {
+    // Load timezone from localStorage if available
     const savedTimezone = localStorage.getItem('userTimezone');
     if (savedTimezone) {
-      setUserTimezone(savedTimezone);
+      setCurrentTimezone(savedTimezone);
     }
   }, []);
-
+  
   const handleUpgrade = () => {
-    upgradeUser();
+    upgradeAccount();
     toast.success('You are now a premium user!');
   };
   
   const handleDowngrade = () => {
-    downgradeUser();
+    // Since the actual method name is upgradeAccount, we'll toggle premium state in reverse
+    upgradeAccount();
     toast.success('Your account has been downgraded to free.');
   };
-
+  
   const handleTimezoneChange = (timezone: string) => {
-    setUserTimezone(timezone);
+    setCurrentTimezone(timezone);
+    toast.success('Timezone updated successfully');
   };
   
   return (
@@ -77,7 +79,7 @@ const Settings = () => {
         {/* Timezone Settings */}
         <TimeZoneSelector 
           onChange={handleTimezoneChange}
-          currentTimezone={userTimezone}
+          currentTimezone={currentTimezone}
         />
         
         {/* Theme Settings */}
@@ -87,7 +89,7 @@ const Settings = () => {
         />
         
         {/* Custom Trackers - Only show this in Settings for non-premium users */}
-        <CustomTrackers inSettings={true} />
+        {!isPremium && <CustomTrackers inSettings={true} />}
         
         {/* Logout Button */}
         <div className="tap-card">

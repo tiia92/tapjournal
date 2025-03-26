@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define user types
@@ -16,8 +15,6 @@ type AuthContextType = {
   signup: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   upgradeAccount: () => void;
-  upgradeUser: () => void;  // Add this method for backward compatibility
-  downgradeUser: () => void;  // Add this method
 };
 
 // Mock users database
@@ -103,30 +100,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const upgradeAccount = () => {
     if (user) {
-      const upgradedUser = { ...user, isPremium: true };
+      const upgradedUser = { ...user, isPremium: !user.isPremium }; // Toggle premium status
       setUser(upgradedUser);
       localStorage.setItem('tapjournal_user', JSON.stringify(upgradedUser));
       
       // Update mock database
       const userIndex = MOCK_USERS.findIndex(u => u.id === user.id);
       if (userIndex !== -1) {
-        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: true };
-      }
-    }
-  };
-
-  const upgradeUser = upgradeAccount; // Alias for backward compatibility
-  
-  const downgradeUser = () => {
-    if (user) {
-      const downgradedUser = { ...user, isPremium: false };
-      setUser(downgradedUser);
-      localStorage.setItem('tapjournal_user', JSON.stringify(downgradedUser));
-      
-      // Update mock database
-      const userIndex = MOCK_USERS.findIndex(u => u.id === user.id);
-      if (userIndex !== -1) {
-        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: false };
+        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: upgradedUser.isPremium };
       }
     }
   };
@@ -140,8 +121,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signup,
         logout,
         upgradeAccount,
-        upgradeUser,
-        downgradeUser,
       }}
     >
       {children}
