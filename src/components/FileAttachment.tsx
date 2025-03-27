@@ -1,11 +1,9 @@
 
-import React, { useRef, useState } from 'react';
-import { Paperclip, X, File, Image, Video, FileText, Lock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import React, { useState } from 'react';
 import { useJournal } from '@/context/JournalContext';
+import { Paperclip, X, FileText, Image, File } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 interface FileAttachmentProps {
   entryId: string;
@@ -13,195 +11,122 @@ interface FileAttachmentProps {
 }
 
 const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = [] }) => {
-  const { saveAttachmentToEntry, removeAttachmentFromEntry } = useJournal();
   const { user } = useAuth();
-  const isPremium = user?.isPremium || false;
+  const { saveAttachmentToEntry, removeAttachmentFromEntry } = useJournal();
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [openImageDialog, setOpenImageDialog] = useState<string | null>(null);
+  const isPremium = user?.isPremium || false;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     
     const file = e.target.files[0];
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File is too large. Maximum size is 5MB.');
+      return;
+    }
+    
+    const reader = new FileReader();
     setIsUploading(true);
     
-    // In a real app, you would upload the file to storage
-    // For demo purposes, we'll just create an object URL
-    const fileUrl = URL.createObjectURL(file);
-    
-    // Small delay to simulate upload
-    setTimeout(() => {
-      saveAttachmentToEntry(entryId, fileUrl);
-      setIsUploading(false);
-      toast.success(`File "${file.name}" attached`);
-      
-      // Reset the file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+    reader.onload = (event) => {
+      if (event.target && event.target.result) {
+        // In a real app, you'd upload this to a server
+        // For demo purposes, we'll just store the data URL
+        const fileUrl = event.target.result.toString();
+        saveAttachmentToEntry(entryId, fileUrl);
+        toast.success('File attached successfully');
+        setIsUploading(false);
       }
-    }, 800);
+    };
+    
+    reader.onerror = () => {
+      toast.error('Error uploading file');
+      setIsUploading(false);
+    };
+    
+    reader.readAsDataURL(file);
+    e.target.value = '';
   };
 
   const handleRemoveAttachment = (url: string) => {
     removeAttachmentFromEntry(entryId, url);
-    toast.success('File removed');
+    toast.success('Attachment removed');
   };
 
   const getFileIcon = (url: string) => {
-    const extension = url.split('.').pop()?.toLowerCase();
-    
-    // This is a simplified version - in a real app you'd do more sophisticated detection
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) {
-      return <Image size={16} className="text-blue-500" />;
-    } else if (['mp4', 'webm', 'mov'].includes(extension || '')) {
-      return <Video size={16} className="text-purple-500" />;
-    } else if (['pdf', 'doc', 'docx', 'txt'].includes(extension || '')) {
-      return <FileText size={16} className="text-red-500" />;
+    if (url.startsWith('data:image')) {
+      return <Image size={16} />;
+    } else if (url.startsWith('data:text')) {
+      return <FileText size={16} />;
     } else {
-      return <File size={16} className="text-gray-500" />;
+      return <File size={16} />;
     }
   };
 
-  const getFileName = (url: string) => {
-    // In a real app, you would store the original filename
-    // Here we're just extracting from the URL
-    const parts = url.split('/');
-    return parts[parts.length - 1].substring(0, 15) + '...';
-  };
-
-  const isImageFile = (url: string) => {
-    const extension = url.split('.').pop()?.toLowerCase();
-    return ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '');
-  };
-
-  const handleFileClick = (url: string) => {
-    if (isImageFile(url)) {
-      setOpenImageDialog(url);
+  const getFileName = (url: string, index: number) => {
+    if (url.startsWith('data:image')) {
+      return `Image ${index + 1}`;
+    } else if (url.startsWith('data:text')) {
+      return `Document ${index + 1}`;
     } else {
-      // For non-image files, open in new tab
-      window.open(url, '_blank');
+      return `File ${index + 1}`;
     }
+  };
+
+  const openAttachment = (url: string) => {
+    window.open(url, '_blank');
   };
 
   if (!isPremium) {
-    return (
-      <div className="tap-card flex flex-col items-center justify-center py-6 bg-muted/30">
-        <Lock className="w-8 h-8 text-muted-foreground mb-2" />
-        <h3 className="text-lg font-medium">File Attachments</h3>
-        <p className="text-sm text-muted-foreground text-center mt-1 max-w-sm">
-          Add images and documents to your journal entries
-        </p>
-        <div className="text-primary text-sm mt-4">
-          Premium Feature
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="space-y-3">
-      <div className="flex justify-between items-center">
-        <h4 className="text-sm font-medium text-muted-foreground">Attachments</h4>
-        
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-          accept="image/*,application/pdf,text/*,video/*"
-        />
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
-          className="text-xs"
-        >
-          <Paperclip size={14} className="mr-1" />
-          {isUploading ? 'Uploading...' : 'Attach File'}
-        </Button>
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+          <Paperclip size={16} />
+          Attachments
+        </span>
       </div>
       
-      {/* Display images with proper dimensions */}
-      {attachments.filter(url => isImageFile(url)).length > 0 && (
-        <div className="space-y-3">
-          <h5 className="text-sm font-medium">Images</h5>
-          <div className="grid grid-cols-1 gap-3">
-            {attachments.filter(url => isImageFile(url)).map((url, index) => (
-              <div key={`img-${index}`} className="relative">
-                <img 
-                  src={url} 
-                  alt={`Attachment ${index + 1}`}
-                  className="rounded-md object-contain max-h-[500px] cursor-pointer"
-                  style={{ maxWidth: '100%' }}
-                  onClick={() => setOpenImageDialog(url)}
-                />
-                <button 
-                  className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
-                  onClick={() => handleRemoveAttachment(url)}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-      
-      {/* Other file types */}
-      {attachments.filter(url => !isImageFile(url)).length > 0 && (
-        <div className="space-y-2">
-          <h5 className="text-sm font-medium">Files</h5>
-          {attachments.filter(url => !isImageFile(url)).map((url, index) => (
-            <div 
-              key={`file-${index}`} 
-              className="flex items-center justify-between bg-muted/30 p-2 rounded-md"
+      <div className="space-y-2">
+        {attachments.map((url, index) => (
+          <div 
+            key={index} 
+            className="flex items-center justify-between p-2 bg-muted/30 rounded-md"
+          >
+            <button 
+              className="flex items-center gap-2 text-sm text-left flex-grow"
+              onClick={() => openAttachment(url)}
             >
-              <div className="flex items-center gap-2">
-                {getFileIcon(url)}
-                <button 
-                  onClick={() => handleFileClick(url)}
-                  className="text-sm hover:underline cursor-pointer"
-                >
-                  {getFileName(url)}
-                </button>
-              </div>
-              <button 
-                className="text-muted-foreground hover:text-destructive"
-                onClick={() => handleRemoveAttachment(url)}
-              >
-                <X size={14} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-      
-      {attachments.length === 0 && (
-        <p className="text-sm text-muted-foreground italic">No files attached yet.</p>
-      )}
-
-      {/* Image Preview Dialog */}
-      <Dialog open={!!openImageDialog} onOpenChange={(open) => !open && setOpenImageDialog(null)}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-background/95 backdrop-blur-sm">
-          {openImageDialog && (
-            <div className="relative w-full h-full max-h-[80vh] flex items-center justify-center p-4">
-              <img 
-                src={openImageDialog} 
-                alt="Full size preview" 
-                className="max-w-full max-h-full object-contain"
-              />
-              <button 
-                onClick={() => setOpenImageDialog(null)}
-                className="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+              {getFileIcon(url)}
+              <span>{getFileName(url, index)}</span>
+            </button>
+            <button 
+              onClick={() => handleRemoveAttachment(url)}
+              className="p-1 hover:bg-muted rounded-full"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+        
+        {attachments.length === 0 && (
+          <p className="text-sm text-muted-foreground italic">No attachments</p>
+        )}
+        
+        <label className="mt-2 cursor-pointer flex items-center justify-center w-full py-2 bg-muted/50 hover:bg-muted rounded-md transition-colors">
+          <input 
+            type="file" 
+            className="hidden"
+            onChange={handleFileChange}
+            disabled={isUploading}
+          />
+          <Paperclip size={16} className="mr-2" />
+          <span className="text-sm">{isUploading ? 'Uploading...' : 'Add attachment'}</span>
+        </label>
+      </div>
     </div>
   );
 };

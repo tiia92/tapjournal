@@ -16,7 +16,7 @@ import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
 import FileAttachment from '@/components/FileAttachment';
 import { useJournal, JournalEntry } from '@/context/JournalContext';
 import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
-import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen, Check } from 'lucide-react';
+import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -49,6 +49,8 @@ const Index = () => {
   const [moodNote, setMoodNote] = useState('');
   const [exercisesNote, setExercisesNote] = useState('');
   const [selfCareNote, setSelfCareNote] = useState('');
+  const [waterNote, setWaterNote] = useState('');
+  const [sleepNote, setSleepNote] = useState('');
   
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
@@ -59,12 +61,16 @@ const Index = () => {
       setMoodNote(existingEntry.moodNote || '');
       setExercisesNote(existingEntry.exercisesNote || '');
       setSelfCareNote(existingEntry.selfCareNote || '');
+      setWaterNote(existingEntry.waterNote || '');
+      setSleepNote(existingEntry.sleepNote || '');
     } else {
       setEntry(null);
       setNotes('');
       setMoodNote('');
       setExercisesNote('');
       setSelfCareNote('');
+      setWaterNote('');
+      setSleepNote('');
     }
     
     // Get all task and medication names
@@ -87,7 +93,9 @@ const Index = () => {
         id: crypto.randomUUID(),
         date: currentDate,
         waterCount: 0,
+        waterNote: '',
         sleepHours: 0,
+        sleepNote: '',
         chores: [],
         workTasks: [],
         medications: [],
@@ -95,8 +103,10 @@ const Index = () => {
         moodNote: '',
         exercises: [],
         exercisesNote: '',
+        exerciseMinutes: 0,
         selfCareActivities: [],
         selfCareNote: '',
+        selfCareMinutes: 0,
         notes: '',
         painLevel: 0,
         energyLevel: 0,
@@ -161,7 +171,9 @@ const Index = () => {
       notes,
       moodNote,
       exercisesNote,
-      selfCareNote
+      selfCareNote,
+      waterNote,
+      sleepNote
     };
     
     updateEntry(updatedEntry);
@@ -172,7 +184,7 @@ const Index = () => {
     navigate('/journal');
   };
   
-  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote', value: string) => {
+  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote' | 'waterNote' | 'sleepNote', value: string) => {
     if (!entry) return;
     
     if (category === 'moodNote') {
@@ -181,6 +193,10 @@ const Index = () => {
       setExercisesNote(value);
     } else if (category === 'selfCareNote') {
       setSelfCareNote(value);
+    } else if (category === 'waterNote') {
+      setWaterNote(value);
+    } else if (category === 'sleepNote') {
+      setSleepNote(value);
     }
     
     const updatedEntry = {
@@ -244,6 +260,7 @@ const Index = () => {
             multiSelect={false}
             onNoteChange={(note) => handleUpdateCategoryNote('moodNote', note)}
             note={moodNote}
+            maxCharacters={100}
           />
           
           <EmojiSelector
@@ -253,6 +270,7 @@ const Index = () => {
             label="Exercise Activities"
             onNoteChange={(note) => handleUpdateCategoryNote('exercisesNote', note)}
             note={exercisesNote}
+            maxCharacters={100}
           />
           
           <EmojiSelector
@@ -262,6 +280,7 @@ const Index = () => {
             label="Self Care Activities"
             onNoteChange={(note) => handleUpdateCategoryNote('selfCareNote', note)}
             note={selfCareNote}
+            maxCharacters={100}
           />
         </div>
 
@@ -272,6 +291,8 @@ const Index = () => {
             icon={<Droplets className="text-blue-500" />}
             label="Water Glasses"
             color="bg-blue-100 text-blue-700"
+            onNoteChange={(note) => handleUpdateCategoryNote('waterNote', note)}
+            note={waterNote}
           />
           
           <TapCounter
@@ -281,6 +302,8 @@ const Index = () => {
             label="Sleep Hours"
             color="bg-indigo-100 text-indigo-700"
             max={24}
+            onNoteChange={(note) => handleUpdateCategoryNote('sleepNote', note)}
+            note={sleepNote}
           />
         </div>
         

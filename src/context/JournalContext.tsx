@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { formatDateForTimezone } from '@/utils/trackerUtils';
@@ -30,7 +29,9 @@ export type JournalEntry = {
   id: string;
   date: string;
   waterCount: number;
+  waterNote?: string;
   sleepHours: number;
+  sleepNote?: string;
   chores: Task[];
   workTasks: Task[];
   medications: Medication[];
@@ -38,8 +39,10 @@ export type JournalEntry = {
   moodNote?: string;
   exercises: string[];
   exercisesNote?: string;
+  exerciseMinutes?: number;
   selfCareActivities: string[];
   selfCareNote?: string;
+  selfCareMinutes?: number;
   notes: string;
   audioNotes?: string; // For premium voice journaling
   audioTranscription?: string; // For premium voice transcription
@@ -78,7 +81,9 @@ type JournalContextType = {
 
 const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   waterCount: 0,
+  waterNote: '',
   sleepHours: 0,
+  sleepNote: '',
   chores: [],
   workTasks: [],
   medications: [],
@@ -86,8 +91,10 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   moodNote: '',
   exercises: [],
   exercisesNote: '',
+  exerciseMinutes: 0,
   selfCareActivities: [],
   selfCareNote: '',
+  selfCareMinutes: 0,
   notes: '',
   audioNotes: '',
   audioTranscription: '',

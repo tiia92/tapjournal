@@ -51,6 +51,20 @@ const Journal = () => {
         />
         
         <InsightsChart 
+          title="Exercise Minutes" 
+          description="Track your daily exercise duration"
+          chartType="exercise"
+          color="#F59E0B"
+        />
+        
+        <InsightsChart 
+          title="Self-Care Minutes" 
+          description="See how much time you dedicate to self-care"
+          chartType="selfcare"
+          color="#EC4899"
+        />
+        
+        <InsightsChart 
           title="Pain Level Tracking" 
           description="Monitor your pain levels over time"
           chartType="pain"

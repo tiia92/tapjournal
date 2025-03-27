@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 interface EmojiOption {
   id: string;
@@ -18,9 +19,11 @@ interface EmojiSelectorProps {
   multiSelect?: boolean;
   onNoteChange?: (note: string) => void;
   note?: string;
+  placeholder?: string;
+  maxCharacters?: number;
 }
 
-// Full emoji categories
+// Full emoji categories for premium users
 const emojiCategories = {
   smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚', '😙', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😶‍🌫️', '😏', '😒', '🙄', '😬', '😮‍💨', '🤥', '😌', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥵', '🥶', '🥴', '😵', '😵‍💫', '🤯', '🤠', '🥳', '🥸', '😎', '🤓', '🧐', '😕', '😟', '🙁', '☹️', '😮', '😯', '😲', '😳', '🥺', '😦', '😧', '😨', '😰', '😥', '😢', '😭', '😱', '😖', '😣', '😞', '😓', '😩', '😫', '🥱', '😤', '😡', '😠', '🤬', '😈', '👿', '💀', '☠️'],
   gestures: ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '👍', '👎', '✊', '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '💪', '🦾', '🦿', '🦵', '🦶', '👂', '🦻', '👃', '👀', '👁️', '👅', '👄', '💋', '🩸'],
@@ -39,13 +42,16 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   label,
   multiSelect = true,
   onNoteChange,
-  note = ''
+  note = '',
+  placeholder = 'Add a note...',
+  maxCharacters = 100
 }) => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<keyof typeof emojiCategories>('smileys');
+  const [minutes, setMinutes] = useState<string>('');
 
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -65,7 +71,10 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onNoteChange) {
-      onNoteChange(e.target.value);
+      const value = e.target.value;
+      if (value.length <= maxCharacters) {
+        onNoteChange(value);
+      }
     }
   };
 
@@ -88,13 +97,21 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     <div className="tap-card">
       <div className="flex justify-between items-center mb-3">
         <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <button
-          onClick={handleToggleExpand}
-          className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-        >
-          {isExpanded ? "Less" : "More"}
-        </button>
+        {label !== "Today's Mood" && (
+          <button
+            onClick={handleToggleExpand}
+            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {isExpanded ? "Less" : "More"}
+          </button>
+        )}
       </div>
+
+      {selectedIds.length === 0 && (
+        <div className="text-center p-4 bg-muted/30 rounded-lg mb-3">
+          <p className="text-sm text-muted-foreground">Tap to select</p>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 mb-3">
         {options.map(option => (
@@ -115,7 +132,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
           </button>
         ))}
         
-        {isPremium && (
+        {isPremium && label !== "Today's Mood" && (
           <button 
             onClick={() => setShowEmojiDialog(true)}
             className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
@@ -126,19 +143,42 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         )}
       </div>
 
-      {selectedIds.length > 0 && onNoteChange && (
-        <div className="mt-2">
-          <textarea
-            value={note}
-            onChange={handleNoteChange}
-            placeholder={`Add a note about your ${label.toLowerCase()}...`}
-            className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+      {/* Minutes input for Exercise or Self Care */}
+      {(label === "Exercise Activities" || label === "Self Care Activities") && (
+        <div className="mt-2 mb-3">
+          <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-minutes`} className="block text-sm text-muted-foreground mb-1">
+            Minutes of {label === "Exercise Activities" ? "exercise" : "self-care"} today:
+          </label>
+          <input
+            id={`${label.toLowerCase().replace(/\s+/g, '-')}-minutes`}
+            type="number"
+            min="0"
+            value={minutes}
+            onChange={(e) => setMinutes(e.target.value)}
+            className="w-full p-2 text-sm bg-muted/30 rounded-md focus:ring-1 focus:ring-primary focus:outline-none"
+            placeholder="Enter minutes"
           />
         </div>
       )}
 
+      {/* Notes section */}
+      {selectedIds.length > 0 && onNoteChange && (
+        <div className="mt-2">
+          <Textarea
+            value={note}
+            onChange={handleNoteChange}
+            placeholder={placeholder}
+            className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+            maxLength={maxCharacters}
+          />
+          <div className="text-xs text-right text-muted-foreground mt-1">
+            {note.length}/{maxCharacters}
+          </div>
+        </div>
+      )}
+
       {/* Full Emoji Dialog */}
-      {isPremium && (
+      {isPremium && label !== "Today's Mood" && (
         <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
           <DialogContent className="max-w-md">
             <DialogTitle>Select an Emoji</DialogTitle>

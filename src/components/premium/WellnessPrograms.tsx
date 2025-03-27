@@ -1,8 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Target, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from '@/components/ui/dialog';
 
 interface Program {
   id: string;
@@ -46,6 +55,13 @@ const programs: Program[] = [
 const WellnessPrograms: React.FC = () => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
+
+  const handleProgramClick = (program: Program) => {
+    setSelectedProgram(program);
+    setShowComingSoon(true);
+  };
 
   if (!isPremium) {
     return (
@@ -88,7 +104,12 @@ const WellnessPrograms: React.FC = () => {
                   </span>
                 </div>
                 
-                <Button size="sm" variant="ghost" className="h-8 px-2">
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="h-8 px-2"
+                  onClick={() => handleProgramClick(program)}
+                >
                   <ArrowRight size={16} />
                 </Button>
               </div>
@@ -96,6 +117,28 @@ const WellnessPrograms: React.FC = () => {
           </div>
         ))}
       </div>
+
+      <Dialog open={showComingSoon} onOpenChange={setShowComingSoon}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedProgram?.title}</DialogTitle>
+            <DialogDescription>
+              We're excited to announce that {selectedProgram?.title} is coming soon! 
+              We're working hard to bring you the best experience possible.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-center text-2xl animate-pulse">🚀</p>
+            <p className="text-center font-semibold mt-2">Coming Soon!</p>
+            <p className="text-center text-sm text-muted-foreground mt-1">
+              This program will be available in a future update.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowComingSoon(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

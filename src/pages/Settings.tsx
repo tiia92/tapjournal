@@ -7,6 +7,15 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomTrackers from '@/components/premium/CustomTrackers';
+import { 
+  ChartLine, 
+  Palette, 
+  Mic, 
+  Camera, 
+  Plus, 
+  BookOpen, 
+  Target 
+} from 'lucide-react';
 
 const Settings = () => {
   const { user, logout, upgradeAccount } = useAuth();
@@ -75,6 +84,68 @@ const Settings = () => {
             )}
           </div>
         </div>
+
+        {/* Premium Features List (only show for free users) */}
+        {!isPremium && (
+          <div className="tap-card">
+            <h3 className="text-lg font-medium mb-2">Premium Features</h3>
+            <p className="text-sm text-muted-foreground mb-4">Upgrade to access these premium features</p>
+            
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <ChartLine className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Advanced Insights & Trends</h4>
+                  <p className="text-sm text-muted-foreground">Detailed charts showing your patterns over time</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <Palette className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Customizable Themes</h4>
+                  <p className="text-sm text-muted-foreground">Personalize the look and feel of your journal</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <Mic className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Voice & Image Journaling</h4>
+                  <p className="text-sm text-muted-foreground">Record voice notes or add images to entries</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <Plus className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Custom Tracking Metrics</h4>
+                  <p className="text-sm text-muted-foreground">Create your own trackers for personalized tracking</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <BookOpen className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Guided Wellness Programs</h4>
+                  <p className="text-sm text-muted-foreground">Follow structured programs like "7-Day Sleep Reset"</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3">
+                <Target className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-medium">Smart Goal Suggestions</h4>
+                  <p className="text-sm text-muted-foreground">Get personalized recommendations based on your habits</p>
+                </div>
+              </div>
+            </div>
+            
+            <Button onClick={handleUpgrade} className="w-full mt-6">
+              Upgrade to Premium Now
+            </Button>
+          </div>
+        )}
         
         {/* Timezone Settings */}
         <TimeZoneSelector 

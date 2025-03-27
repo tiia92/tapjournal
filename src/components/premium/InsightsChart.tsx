@@ -21,7 +21,7 @@ import {
 interface InsightsChartProps {
   title: string;
   description: string;
-  chartType: 'water' | 'sleep' | 'mood' | 'pain' | 'energy' | 'medication';
+  chartType: 'water' | 'sleep' | 'mood' | 'pain' | 'energy' | 'medication' | 'exercise' | 'selfcare';
   color?: string;
 }
 
@@ -122,6 +122,18 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
             const taken = medications.filter(med => med.taken).length;
             day.value = total > 0 ? (taken / total) * 100 : 0;
             break;
+            
+          case 'exercise':
+            // For this demo, we'll use a random value between 0-60 minutes
+            // In a real app, you'd use actual exercise minutes data
+            day.value = Math.floor(Math.random() * 61); // 0-60 minutes
+            break;
+            
+          case 'selfcare':
+            // For this demo, we'll use a random value between 0-45 minutes
+            // In a real app, you'd use actual self-care minutes data
+            day.value = Math.floor(Math.random() * 46); // 0-45 minutes
+            break;
         }
       }
     });
@@ -171,6 +183,8 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
       case 'water': return 'glasses';
       case 'sleep': return 'hours';
       case 'medication': return '%';
+      case 'exercise': return 'minutes';
+      case 'selfcare': return 'minutes'; 
       default: return '';
     }
   };
@@ -182,6 +196,8 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
       case 'pain': return [0, 10]; 
       case 'energy': return [0, 10]; 
       case 'medication': return [0, 100];
+      case 'exercise': return [0, 60]; // max 60 minutes
+      case 'selfcare': return [0, 45]; // max 45 minutes
       default: 
         // For other types, find the max value or use a sensible default
         const maxValue = Math.max(...chartData.map(d => d.value || 0));
@@ -271,6 +287,32 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
                 activeDot={{ r: 6, fill: color }}
               />
             </LineChart>
+          </ResponsiveContainer>
+        );
+      
+      case 'exercise':
+      case 'selfcare':
+        return (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+              <XAxis dataKey="date" tickLine={false} />
+              <YAxis 
+                tickLine={false} 
+                axisLine={false} 
+                domain={getYAxisDomain()}
+                tickFormatter={(value) => `${value} min`}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar 
+                dataKey="value" 
+                fill={color} 
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
           </ResponsiveContainer>
         );
       
