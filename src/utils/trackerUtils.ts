@@ -10,6 +10,12 @@ export const getTodayDate = (): string => {
   return formatDateForTimezone(new Date());
 };
 
+// Format date for display (used in DateNavigation component)
+export const formatDateDisplay = (date: string): string => {
+  const dateObj = new Date(date);
+  return format(dateObj, 'EEEE, MMMM d, yyyy');
+};
+
 // Mood options (limited set for the basic "Today's Mood")
 export const moodOptions = [
   { id: 'happy', emoji: '😊', label: 'Happy' },
