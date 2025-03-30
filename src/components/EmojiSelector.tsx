@@ -52,6 +52,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<keyof typeof emojiCategories>('smileys');
+  const [showNote, setShowNote] = useState(false);
   const [minutes, setMinutes] = useState<string>('');
 
   const handleToggleExpand = () => {
@@ -100,14 +101,24 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     <div className="tap-card">
       <div className="flex justify-between items-center mb-3">
         <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        {label !== "Today's Mood" && (
-          <button
-            onClick={handleToggleExpand}
-            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {isExpanded ? "Less" : "More"}
-          </button>
-        )}
+        <div className="flex gap-2">
+          {onNoteChange && (
+            <button
+              onClick={() => setShowNote(!showNote)}
+              className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showNote ? "Hide Note" : "Add Note"}
+            </button>
+          )}
+          {label !== "Today's Mood" && (
+            <button
+              onClick={handleToggleExpand}
+              className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {isExpanded ? "Less" : "More"}
+            </button>
+          )}
+        </div>
       </div>
 
       {!isSelecting && selectedIds.length === 0 ? (
@@ -119,7 +130,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         </div>
       ) : (
         <div className="flex flex-wrap gap-2 mb-3">
-          {options.map(option => (
+          {isSelecting && options.map(option => (
             <button
               key={option.id}
               onClick={() => handleToggleEmoji(option.id)}
@@ -149,8 +160,32 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         </div>
       )}
 
+      {/* Show selected emojis if any */}
+      {!isSelecting && selectedIds.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {selectedIds.map((id, index) => {
+            const option = options.find(opt => opt.id === id);
+            return (
+              <div
+                key={index}
+                className="relative text-2xl p-2 rounded-lg bg-primary/10 border border-primary"
+                onClick={() => setIsSelecting(true)}
+              >
+                {option?.emoji || id}
+              </div>
+            );
+          })}
+          <button 
+            onClick={() => setIsSelecting(true)}
+            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Change
+          </button>
+        </div>
+      )}
+
       {/* Minutes input for Exercise or Self Care */}
-      {(label === "Exercise Activities" || label === "Self Care Activities") && (
+      {(label === "Exercise Activities" || label === "Self Care Activities") && selectedIds.length > 0 && (
         <div className="mt-2 mb-3">
           <label htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-minutes`} className="block text-sm text-muted-foreground mb-1">
             Minutes of {label === "Exercise Activities" ? "exercise" : "self-care"} today:
@@ -168,7 +203,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
       )}
 
       {/* Notes section */}
-      {(isSelecting || selectedIds.length > 0) && onNoteChange && (
+      {(showNote || (selectedIds.length > 0 && note)) && onNoteChange && (
         <div className="mt-2">
           <Textarea
             value={note}

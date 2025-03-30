@@ -3,12 +3,19 @@ import { format } from 'date-fns';
 
 export const formatDateForTimezone = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  // Ensure we're using the user's local timezone
-  return dateObj.toISOString().split('T')[0];
+  
+  // Use the browser's timezone to get the correct date string
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
 };
 
 export const getTodayDate = (): string => {
-  return formatDateForTimezone(new Date());
+  // Get current date in user's local timezone
+  const now = new Date();
+  return formatDateForTimezone(now);
 };
 
 // Format date for display (used in DateNavigation component)

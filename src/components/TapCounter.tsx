@@ -24,7 +24,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
   onNoteChange,
   note = ''
 }) => {
-  const [expanded, setExpanded] = useState(false);
+  const [showNote, setShowNote] = useState(false);
   
   const increment = () => {
     if (count < max) {
@@ -56,10 +56,10 @@ const TapCounter: React.FC<TapCounterProps> = ({
         </span>
         {onNoteChange && (
           <button
-            onClick={() => setExpanded(!expanded)}
+            onClick={() => setShowNote(!showNote)}
             className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
           >
-            {expanded ? "Less" : "Note"}
+            {showNote ? "Hide Note" : "Add Note"}
           </button>
         )}
       </div>
@@ -86,7 +86,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
         </button>
       </div>
       
-      {expanded && onNoteChange && (
+      {(showNote || note) && onNoteChange && (
         <div className="mt-3">
           <Textarea
             value={note}

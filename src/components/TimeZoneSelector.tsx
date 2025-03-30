@@ -17,7 +17,11 @@ const TimeZoneSelector: React.FC<TimeZoneSelectorProps> = ({ onChange, currentTi
   useEffect(() => {
     // Get all available timezones
     try {
+      // Try to detect user's timezone
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      
       const allTimezones = [
+        detectedTimezone, // Put detected timezone first
         'America/Los_Angeles', // Pacific Time
         'America/Denver',      // Mountain Time
         'America/Chicago',     // Central Time
@@ -31,9 +35,16 @@ const TimeZoneSelector: React.FC<TimeZoneSelectorProps> = ({ onChange, currentTi
         'Asia/Shanghai',
         'Australia/Sydney',
         'UTC'
-      ];
+      ].filter((tz, index, self) => self.indexOf(tz) === index); // Remove duplicates
       
       setTimezones(allTimezones);
+      
+      // If no timezone is set yet, use detected timezone
+      if (!currentTimezone) {
+        setSelectedTimezone(detectedTimezone);
+        onChange(detectedTimezone);
+        localStorage.setItem('userTimezone', detectedTimezone);
+      }
     } catch (error) {
       console.error('Error getting timezones:', error);
       // Fallback to a few common timezones
@@ -45,7 +56,7 @@ const TimeZoneSelector: React.FC<TimeZoneSelectorProps> = ({ onChange, currentTi
         'UTC'
       ]);
     }
-  }, []);
+  }, [currentTimezone, onChange]);
 
   const handleTimezoneChange = (value: string) => {
     setSelectedTimezone(value);

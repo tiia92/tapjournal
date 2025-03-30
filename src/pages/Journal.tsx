@@ -32,7 +32,7 @@ const Journal = () => {
         </div>
       )}
 
-      {/* Premium insights */}
+      {/* Insights for all users */}
       <div className="space-y-6">
         <InsightsChart 
           title="Water Intake Trends" 
@@ -69,6 +69,7 @@ const Journal = () => {
           color="#EC4899"
         />
         
+        {/* Additional charts - also available to free users */}
         <InsightsChart 
           title="Pain Level Tracking" 
           description="Monitor your pain levels over time"
@@ -90,11 +91,16 @@ const Journal = () => {
           color="#EC4899"
         />
         
-        <SmartGoalTracker isInsightsPage={true} />
-        
-        <div onClick={handleComingSoon} className="cursor-pointer">
-          <WellnessPrograms />
-        </div>
+        {/* Premium features */}
+        {isPremium && (
+          <>
+            <SmartGoalTracker isInsightsPage={true} />
+            
+            <div onClick={handleComingSoon} className="cursor-pointer">
+              <WellnessPrograms />
+            </div>
+          </>
+        )}
       </div>
     </Layout>
   );
