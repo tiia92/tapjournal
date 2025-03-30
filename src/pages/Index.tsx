@@ -50,7 +50,7 @@ const Index = () => {
   const [selfCareNote, setSelfCareNote] = useState('');
   const [waterNote, setWaterNote] = useState('');
   const [sleepNote, setSleepNote] = useState('');
-  
+
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
     
@@ -121,7 +121,7 @@ const Index = () => {
       toast.success(`Created new entry for ${currentDate}`);
     }
   };
-  
+
   const handleUpdateField = <K extends keyof JournalEntry>(
     field: K,
     value: JournalEntry[K]
@@ -206,7 +206,7 @@ const Index = () => {
     setEntry(updatedEntry);
     updateEntry(updatedEntry);
   };
-  
+
   if (!entry) {
     return (
       <Layout>
@@ -249,38 +249,161 @@ const Index = () => {
       />
       
       <div className="mt-6 space-y-6 pb-20">
-        {/* Mood & Activities Section - Moved to top */}
+        {/* Mood & Activities Section - Restored to original version */}
         <div className="space-y-4">
-          <EmojiSelector
-            options={moodOptions}
-            selectedIds={entry.mood ? [entry.mood] : []}
-            onChange={(ids) => handleUpdateField('mood', ids[0] || '')}
-            label="Today's Mood"
-            multiSelect={false}
-            onNoteChange={(note) => handleUpdateCategoryNote('moodNote', note)}
-            note={moodNote}
-            maxCharacters={100}
-          />
+          <div className="tap-card">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium text-muted-foreground">Today's Mood</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 py-2">
+              {moodOptions.map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => handleUpdateField('mood', option.id)}
+                  className={`mood-button ${entry.mood === option.id ? 'selected' : ''}`}
+                >
+                  <span role="img" aria-label={option.label} className="text-2xl">
+                    {entry.mood === option.id ? option.emoji : ''}
+                  </span>
+                  <span className="mood-label">
+                    {entry.mood === option.id ? option.label : 'tap to select'}
+                  </span>
+                </button>
+              ))}
+            </div>
+            
+            {entry.mood && (
+              <div className="mt-3">
+                <textarea
+                  value={moodNote}
+                  onChange={(e) => handleUpdateCategoryNote('moodNote', e.target.value)}
+                  placeholder="Add a note about your mood..."
+                  className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+                  maxLength={100}
+                />
+                <div className="text-xs text-right text-muted-foreground mt-1">
+                  {moodNote.length}/100
+                </div>
+              </div>
+            )}
+          </div>
           
-          <EmojiSelector
-            options={exerciseOptions}
-            selectedIds={entry.exercises}
-            onChange={(ids) => handleUpdateField('exercises', ids)}
-            label="Exercise Activities"
-            onNoteChange={(note) => handleUpdateCategoryNote('exercisesNote', note)}
-            note={exercisesNote}
-            maxCharacters={100}
-          />
+          <div className="tap-card">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium text-muted-foreground">Exercise Activities</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 py-2">
+              {exerciseOptions.map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    const updated = entry.exercises.includes(option.id)
+                      ? entry.exercises.filter(id => id !== option.id)
+                      : [...entry.exercises, option.id];
+                    handleUpdateField('exercises', updated);
+                  }}
+                  className={`activity-button ${entry.exercises.includes(option.id) ? 'selected' : ''}`}
+                >
+                  <span role="img" aria-label={option.label} className="text-2xl">
+                    {entry.exercises.includes(option.id) ? option.emoji : ''}
+                  </span>
+                  <span className="activity-label">
+                    {entry.exercises.includes(option.id) ? option.label : 'tap to select'}
+                  </span>
+                </button>
+              ))}
+            </div>
+            
+            {entry.exercises.length > 0 && (
+              <div className="mt-3">
+                <div className="mb-2">
+                  <label className="block text-sm text-muted-foreground mb-1">
+                    Minutes spent exercising
+                  </label>
+                  <input
+                    type="number"
+                    value={entry.exerciseMinutes || 0}
+                    onChange={(e) => handleUpdateField('exerciseMinutes', Number(e.target.value))}
+                    className="w-full p-2 text-sm bg-muted/30 rounded-md border border-border focus:border-primary focus:outline-none"
+                    placeholder="Minutes"
+                    min={0}
+                    max={1440}
+                  />
+                </div>
+                
+                <textarea
+                  value={exercisesNote}
+                  onChange={(e) => handleUpdateCategoryNote('exercisesNote', e.target.value)}
+                  placeholder="Add a note about your exercise..."
+                  className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+                  maxLength={100}
+                />
+                <div className="text-xs text-right text-muted-foreground mt-1">
+                  {exercisesNote.length}/100
+                </div>
+              </div>
+            )}
+          </div>
           
-          <EmojiSelector
-            options={selfCareOptions}
-            selectedIds={entry.selfCareActivities}
-            onChange={(ids) => handleUpdateField('selfCareActivities', ids)}
-            label="Self Care Activities"
-            onNoteChange={(note) => handleUpdateCategoryNote('selfCareNote', note)}
-            note={selfCareNote}
-            maxCharacters={100}
-          />
+          <div className="tap-card">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium text-muted-foreground">Self Care Activities</span>
+            </div>
+            
+            <div className="flex flex-wrap gap-4 py-2">
+              {selfCareOptions.map(option => (
+                <button
+                  key={option.id}
+                  onClick={() => {
+                    const updated = entry.selfCareActivities.includes(option.id)
+                      ? entry.selfCareActivities.filter(id => id !== option.id)
+                      : [...entry.selfCareActivities, option.id];
+                    handleUpdateField('selfCareActivities', updated);
+                  }}
+                  className={`activity-button ${entry.selfCareActivities.includes(option.id) ? 'selected' : ''}`}
+                >
+                  <span role="img" aria-label={option.label} className="text-2xl">
+                    {entry.selfCareActivities.includes(option.id) ? option.emoji : ''}
+                  </span>
+                  <span className="activity-label">
+                    {entry.selfCareActivities.includes(option.id) ? option.label : 'tap to select'}
+                  </span>
+                </button>
+              ))}
+            </div>
+            
+            {entry.selfCareActivities.length > 0 && (
+              <div className="mt-3">
+                <div className="mb-2">
+                  <label className="block text-sm text-muted-foreground mb-1">
+                    Minutes spent on self care
+                  </label>
+                  <input
+                    type="number"
+                    value={entry.selfCareMinutes || 0}
+                    onChange={(e) => handleUpdateField('selfCareMinutes', Number(e.target.value))}
+                    className="w-full p-2 text-sm bg-muted/30 rounded-md border border-border focus:border-primary focus:outline-none"
+                    placeholder="Minutes"
+                    min={0}
+                    max={1440}
+                  />
+                </div>
+                
+                <textarea
+                  value={selfCareNote}
+                  onChange={(e) => handleUpdateCategoryNote('selfCareNote', e.target.value)}
+                  placeholder="Add a note about your self care..."
+                  className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+                  maxLength={100}
+                />
+                <div className="text-xs text-right text-muted-foreground mt-1">
+                  {selfCareNote.length}/100
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

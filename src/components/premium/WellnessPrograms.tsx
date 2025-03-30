@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Target, ArrowRight, Clock, ChevronLeft, ChevronRight, Check, Lock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -541,15 +540,14 @@ const WellnessPrograms: React.FC = () => {
   const [selectedProgram, setSelectedProgram] = useState<Program | null>(null);
   const [activeProgramId, setActiveProgramId] = useState<string | null>(null);
   
-  // For Sleep Reset program
   const [showSleepResetProgram, setShowSleepResetProgram] = useState(false);
   const [currentProgramDay, setCurrentProgramDay] = useState(1);
   const [programStarted, setProgramStarted] = useState(false);
   const [programProgress, setProgramProgress] = useState<ProgramProgress | null>(null);
   const [responses, setResponses] = useState<Record<string, any>>({});
+  const [allowDaySkipping, setAllowDaySkipping] = useState(false);
 
   useEffect(() => {
-    // Load saved program progress from localStorage
     const savedProgress = localStorage.getItem('sleepResetProgress');
     if (savedProgress) {
       const progress = JSON.parse(savedProgress) as ProgramProgress;
@@ -557,11 +555,9 @@ const WellnessPrograms: React.FC = () => {
       setActiveProgramId(progress.programId);
       setProgramStarted(true);
       
-      // Calculate current program day based on start date
       const currentDay = calculateProgramDay(progress.startDate);
-      setCurrentProgramDay(Math.min(currentDay, 7)); // Cap at 7 days
+      setCurrentProgramDay(Math.min(currentDay, 7));
       
-      // Load responses for the current day if they exist
       if (progress.dayData[currentDay]?.responses) {
         setResponses(progress.dayData[currentDay].responses);
       }
@@ -604,7 +600,6 @@ const WellnessPrograms: React.FC = () => {
       setCurrentProgramDay(1);
       setActiveProgramId('sleep-reset');
       
-      // Save to localStorage
       localStorage.setItem('sleepResetProgress', JSON.stringify(newProgress));
       
       toast.success('7-Day Sleep Reset program started!');
@@ -615,7 +610,6 @@ const WellnessPrograms: React.FC = () => {
     if (currentProgramDay > 1) {
       setCurrentProgramDay(currentProgramDay - 1);
       
-      // Load responses for the previous day if they exist
       if (programProgress?.dayData[currentProgramDay - 1]?.responses) {
         setResponses(programProgress.dayData[currentProgramDay - 1].responses);
       } else {
@@ -626,13 +620,11 @@ const WellnessPrograms: React.FC = () => {
 
   const handleNextDay = () => {
     if (currentProgramDay < 7 && programProgress) {
-      // Check if the next day is accessible
-      const canAccess = isDayAccessible(programProgress.startDate, currentProgramDay + 1);
+      const canAccess = allowDaySkipping || isDayAccessible(programProgress.startDate, currentProgramDay + 1);
       
       if (canAccess) {
         setCurrentProgramDay(currentProgramDay + 1);
         
-        // Initialize the next day's data if it doesn't exist
         const updatedProgress = { ...programProgress };
         if (!updatedProgress.dayData[currentProgramDay + 1]) {
           updatedProgress.dayData[currentProgramDay + 1] = {
@@ -643,14 +635,13 @@ const WellnessPrograms: React.FC = () => {
           localStorage.setItem('sleepResetProgress', JSON.stringify(updatedProgress));
         }
         
-        // Load responses for the next day if they exist
         if (updatedProgress.dayData[currentProgramDay + 1]?.responses) {
           setResponses(updatedProgress.dayData[currentProgramDay + 1].responses);
         } else {
           setResponses({});
         }
       } else {
-        toast.info("This day will be available tomorrow at 8 AM.");
+        toast.info("This day will be available tomorrow at 8 AM. Enable 'Skip Days' to access it now.");
       }
     }
   };
@@ -659,7 +650,6 @@ const WellnessPrograms: React.FC = () => {
     setResponses(prev => {
       const updated = { ...prev, [id]: value };
       
-      // Update progress in state and localStorage
       if (programProgress) {
         const updatedProgress = { ...programProgress };
         if (!updatedProgress.dayData[currentProgramDay]) {
@@ -677,6 +667,11 @@ const WellnessPrograms: React.FC = () => {
     });
   };
 
+  const toggleDaySkipping = () => {
+    setAllowDaySkipping(!allowDaySkipping);
+    toast.info(allowDaySkipping ? "Day restrictions enabled" : "Day restrictions disabled - you can now navigate to any day");
+  };
+
   const completeDay = () => {
     if (programProgress) {
       const updatedProgress = { ...programProgress };
@@ -688,7 +683,6 @@ const WellnessPrograms: React.FC = () => {
       }
       updatedProgress.dayData[currentProgramDay].completed = true;
       
-      // If it's the last day, mark the program as completed
       if (currentProgramDay === 7) {
         updatedProgress.completed = true;
         toast.success("Congratulations! You've completed the 7-Day Sleep Reset program!");
@@ -716,12 +710,11 @@ const WellnessPrograms: React.FC = () => {
     );
   }
 
-  // Sleep Reset Program Display
   if (showSleepResetProgram) {
     const dayData = sleepResetProgram.days[currentProgramDay - 1];
-    const isAccessible = programProgress ? 
+    const isAccessible = allowDaySkipping || (programProgress ? 
       isDayAccessible(programProgress.startDate, currentProgramDay) : 
-      currentProgramDay === 1;
+      currentProgramDay === 1);
     
     const progress = programProgress ? 
       (Object.keys(programProgress.dayData).filter(day => 
@@ -739,12 +732,23 @@ const WellnessPrograms: React.FC = () => {
             <ChevronLeft size={16} className="mr-1" /> Back to Programs
           </button>
           
-          <div className="text-sm text-muted-foreground">
-            {programStarted ? `Day ${currentProgramDay} of 7` : 'Program Overview'}
+          <div className="flex items-center">
+            <div className="text-sm text-muted-foreground mr-4">
+              {programStarted ? `Day ${currentProgramDay} of 7` : 'Program Overview'}
+            </div>
+            {programStarted && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={toggleDaySkipping}
+                className="text-xs h-8"
+              >
+                {allowDaySkipping ? "Disable Skip" : "Enable Skip"}
+              </Button>
+            )}
           </div>
         </div>
 
-        {/* Progress bar */}
         {programStarted && (
           <div className="mb-6">
             <div className="flex justify-between text-xs text-muted-foreground mb-2">
@@ -755,11 +759,9 @@ const WellnessPrograms: React.FC = () => {
           </div>
         )}
         
-        {/* Program header */}
         <h2 className="text-2xl font-bold mb-2">{sleepResetProgram.overview.title}</h2>
         
         {!programStarted ? (
-          // Program overview (before starting)
           <div className="space-y-6">
             <p className="text-muted-foreground">{sleepResetProgram.overview.description}</p>
             
@@ -802,7 +804,6 @@ const WellnessPrograms: React.FC = () => {
             </div>
           </div>
         ) : (
-          // Daily program content
           <div>
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-2">
@@ -975,7 +976,6 @@ const WellnessPrograms: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                {/* Navigation buttons */}
                 <div className="flex justify-between pt-4">
                   <Button
                     variant="outline"
@@ -1002,7 +1002,6 @@ const WellnessPrograms: React.FC = () => {
                 </div>
               </div>
             ) : (
-              // Locked content
               <div className="p-10 flex flex-col items-center justify-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
                   <Lock className="w-8 h-8 text-muted-foreground" />
@@ -1011,9 +1010,15 @@ const WellnessPrograms: React.FC = () => {
                 <p className="text-center text-muted-foreground">
                   This day's content will be available at 8 AM tomorrow.
                 </p>
-                <div className="flex items-center text-sm text-muted-foreground">
+                <div className="flex items-center text-sm text-muted-foreground mb-4">
                   <Clock size={16} className="mr-1" /> Check back tomorrow
                 </div>
+                <Button 
+                  variant="outline" 
+                  onClick={toggleDaySkipping}
+                >
+                  Skip Time Restrictions
+                </Button>
               </div>
             )}
           </div>
@@ -1022,7 +1027,6 @@ const WellnessPrograms: React.FC = () => {
     );
   }
 
-  // Programs list view
   return (
     <div className="tap-card">
       <h3 className="text-lg font-medium mb-2">Wellness Programs</h3>
