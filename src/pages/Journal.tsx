@@ -6,10 +6,15 @@ import PremiumUpgrade from '@/components/PremiumUpgrade';
 import { useAuth } from '@/context/AuthContext';
 import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
 import WellnessPrograms from '@/components/premium/WellnessPrograms';
+import { toast } from 'sonner';
 
 const Journal = () => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
+
+  const handleComingSoon = () => {
+    toast.info("Coming soon!");
+  };
 
   return (
     <Layout>
@@ -87,7 +92,9 @@ const Journal = () => {
         
         <SmartGoalTracker isInsightsPage={true} />
         
-        <WellnessPrograms />
+        <div onClick={handleComingSoon} className="cursor-pointer">
+          <WellnessPrograms />
+        </div>
       </div>
     </Layout>
   );

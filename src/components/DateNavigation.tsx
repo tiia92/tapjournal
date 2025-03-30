@@ -12,7 +12,9 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
   const handlePreviousDay = () => {
     const date = new Date(currentDate);
     date.setDate(date.getDate() - 1);
-    onDateChange(date.toISOString().split('T')[0]);
+    // Format using user's local timezone
+    const prevDate = date.toISOString().split('T')[0];
+    onDateChange(prevDate);
   };
 
   const handleNextDay = () => {
@@ -24,7 +26,9 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
     today.setHours(0, 0, 0, 0);
     
     if (date <= today) {
-      onDateChange(date.toISOString().split('T')[0]);
+      // Format using user's local timezone
+      const nextDate = date.toISOString().split('T')[0];
+      onDateChange(nextDate);
     }
   };
 

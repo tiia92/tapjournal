@@ -3,7 +3,8 @@ import { format } from 'date-fns';
 
 export const formatDateForTimezone = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
-  return format(dateObj, 'yyyy-MM-dd');
+  // Ensure we're using the user's local timezone
+  return dateObj.toISOString().split('T')[0];
 };
 
 export const getTodayDate = (): string => {
@@ -14,6 +15,16 @@ export const getTodayDate = (): string => {
 export const formatDateDisplay = (date: string): string => {
   const dateObj = new Date(date);
   return format(dateObj, 'EEEE, MMMM d, yyyy');
+};
+
+// Format date for shorter display
+export const formatDate = (date: string): string => {
+  const options: Intl.DateTimeFormatOptions = { 
+    weekday: 'short', 
+    month: 'short', 
+    day: 'numeric' 
+  };
+  return new Date(date).toLocaleDateString('en-US', options);
 };
 
 // Mood options (limited set for the basic "Today's Mood")
@@ -55,12 +66,3 @@ export const selfCareOptions = [
   { id: 'music', emoji: '🎵', label: 'Music' },
   { id: 'friend', emoji: '👋', label: 'Friend Time' }
 ];
-
-export const formatDate = (date: string): string => {
-  const options: Intl.DateTimeFormatOptions = { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric' 
-  };
-  return new Date(date).toLocaleDateString('en-US', options);
-};

@@ -48,6 +48,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
 }) => {
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
+  const [isSelecting, setIsSelecting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<keyof typeof emojiCategories>('smileys');
@@ -67,6 +68,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     } else {
       onChange([id]);
     }
+    setIsSelecting(true);
   };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -91,6 +93,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     }
     
     setShowEmojiDialog(false);
+    setIsSelecting(true);
   };
 
   return (
@@ -107,41 +110,44 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         )}
       </div>
 
-      {selectedIds.length === 0 && (
-        <div className="text-center p-4 bg-muted/30 rounded-lg mb-3">
+      {!isSelecting && selectedIds.length === 0 ? (
+        <div 
+          className="text-center p-4 bg-muted/30 rounded-lg mb-3 cursor-pointer"
+          onClick={() => setIsSelecting(true)}
+        >
           <p className="text-sm text-muted-foreground">Tap to select</p>
         </div>
+      ) : (
+        <div className="flex flex-wrap gap-2 mb-3">
+          {options.map(option => (
+            <button
+              key={option.id}
+              onClick={() => handleToggleEmoji(option.id)}
+              className={`relative text-2xl p-2 rounded-lg hover:bg-muted/50 transition-colors ${
+                selectedIds.includes(option.id) ? 'bg-primary/10 border border-primary' : 'bg-muted/30'
+              }`}
+              title={option.label}
+            >
+              {option.emoji}
+              {selectedIds.includes(option.id) && (
+                <span className="absolute -top-1 -right-1 bg-primary text-[10px] text-primary-foreground w-5 h-5 flex items-center justify-center rounded-full">
+                  ✓
+                </span>
+              )}
+            </button>
+          ))}
+          
+          {isPremium && isSelecting && label !== "Today's Mood" && (
+            <button 
+              onClick={() => setShowEmojiDialog(true)}
+              className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+              title="More emojis"
+            >
+              +
+            </button>
+          )}
+        </div>
       )}
-
-      <div className="flex flex-wrap gap-2 mb-3">
-        {options.map(option => (
-          <button
-            key={option.id}
-            onClick={() => handleToggleEmoji(option.id)}
-            className={`relative text-2xl p-2 rounded-lg hover:bg-muted/50 transition-colors ${
-              selectedIds.includes(option.id) ? 'bg-primary/10 border border-primary' : 'bg-muted/30'
-            }`}
-            title={option.label}
-          >
-            {option.emoji}
-            {selectedIds.includes(option.id) && (
-              <span className="absolute -top-1 -right-1 bg-primary text-[10px] text-primary-foreground w-5 h-5 flex items-center justify-center rounded-full">
-                ✓
-              </span>
-            )}
-          </button>
-        ))}
-        
-        {isPremium && label !== "Today's Mood" && (
-          <button 
-            onClick={() => setShowEmojiDialog(true)}
-            className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
-            title="More emojis"
-          >
-            +
-          </button>
-        )}
-      </div>
 
       {/* Minutes input for Exercise or Self Care */}
       {(label === "Exercise Activities" || label === "Self Care Activities") && (
@@ -162,7 +168,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
       )}
 
       {/* Notes section */}
-      {selectedIds.length > 0 && onNoteChange && (
+      {(isSelecting || selectedIds.length > 0) && onNoteChange && (
         <div className="mt-2">
           <Textarea
             value={note}
