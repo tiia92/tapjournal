@@ -264,10 +264,10 @@ const Index = () => {
                   className={`mood-button ${entry.mood === option.id ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {option.emoji}
+                    {entry.mood === option.id ? option.emoji : ''}
                   </span>
                   <span className="mood-label">
-                    {option.label}
+                    {entry.mood === option.id ? option.label : 'tap to select'}
                   </span>
                 </button>
               ))}
@@ -307,10 +307,10 @@ const Index = () => {
                   className={`activity-button ${entry.exercises.includes(option.id) ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {option.emoji}
+                    {entry.exercises.includes(option.id) ? option.emoji : ''}
                   </span>
                   <span className="activity-label">
-                    {option.label}
+                    {entry.exercises.includes(option.id) ? option.label : 'tap to select'}
                   </span>
                 </button>
               ))}
@@ -365,10 +365,10 @@ const Index = () => {
                   className={`activity-button ${entry.selfCareActivities.includes(option.id) ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {option.emoji}
+                    {entry.selfCareActivities.includes(option.id) ? option.emoji : ''}
                   </span>
                   <span className="activity-label">
-                    {option.label}
+                    {entry.selfCareActivities.includes(option.id) ? option.label : 'tap to select'}
                   </span>
                 </button>
               ))}
