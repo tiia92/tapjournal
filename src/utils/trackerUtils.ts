@@ -34,6 +34,45 @@ export const formatDate = (date: string): string => {
   return new Date(date).toLocaleDateString('en-US', options);
 };
 
+// Check if it's past 8 AM in the user's timezone
+export const isPast8AM = (): boolean => {
+  const now = new Date();
+  return now.getHours() >= 8;
+};
+
+// Calculate program start date based on enrollment
+export const calculateProgramDay = (startDate: string): number => {
+  const start = new Date(startDate);
+  const today = new Date();
+  
+  // Set both dates to midnight to compare just the dates
+  start.setHours(0, 0, 0, 0);
+  const todayAtMidnight = new Date(today);
+  todayAtMidnight.setHours(0, 0, 0, 0);
+  
+  // Calculate difference in days
+  const diffTime = todayAtMidnight.getTime() - start.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  // Day count starts at 1
+  return diffDays + 1;
+};
+
+// Determine if a specific program day is accessible
+export const isDayAccessible = (startDate: string, day: number): boolean => {
+  const currentDay = calculateProgramDay(startDate);
+  const is8AMPassed = isPast8AM();
+  
+  // Current day is accessible if 8 AM has passed
+  if (day === currentDay) return is8AMPassed;
+  
+  // Past days are always accessible
+  if (day < currentDay) return true;
+  
+  // Future days are not accessible
+  return false;
+};
+
 // Mood options (limited set for the basic "Today's Mood")
 export const moodOptions = [
   { id: 'happy', emoji: '😊', label: 'Happy' },
