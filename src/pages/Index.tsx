@@ -249,7 +249,6 @@ const Index = () => {
       />
       
       <div className="mt-6 space-y-6 pb-20">
-        {/* Mood & Activities Section - Restored to original version */}
         <div className="space-y-4">
           <div className="tap-card">
             <div className="flex justify-between items-center mb-3">
@@ -264,10 +263,10 @@ const Index = () => {
                   className={`mood-button ${entry.mood === option.id ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {entry.mood === option.id ? option.emoji : ''}
+                    {option.emoji}
                   </span>
                   <span className="mood-label">
-                    {entry.mood === option.id ? option.label : 'tap to select'}
+                    {option.label}
                   </span>
                 </button>
               ))}
@@ -307,10 +306,10 @@ const Index = () => {
                   className={`activity-button ${entry.exercises.includes(option.id) ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {entry.exercises.includes(option.id) ? option.emoji : ''}
+                    {option.emoji}
                   </span>
                   <span className="activity-label">
-                    {entry.exercises.includes(option.id) ? option.label : 'tap to select'}
+                    {option.label}
                   </span>
                 </button>
               ))}
@@ -365,10 +364,10 @@ const Index = () => {
                   className={`activity-button ${entry.selfCareActivities.includes(option.id) ? 'selected' : ''}`}
                 >
                   <span role="img" aria-label={option.label} className="text-2xl">
-                    {entry.selfCareActivities.includes(option.id) ? option.emoji : ''}
+                    {option.emoji}
                   </span>
                   <span className="activity-label">
-                    {entry.selfCareActivities.includes(option.id) ? option.label : 'tap to select'}
+                    {option.label}
                   </span>
                 </button>
               ))}
@@ -449,7 +448,6 @@ const Index = () => {
           />
         </div>
 
-        {/* Symptom Tracker */}
         <SymptomTracker 
           painLevel={entry.painLevel}
           energyLevel={entry.energyLevel}
@@ -460,24 +458,20 @@ const Index = () => {
           onChange={handleUpdateSymptom}
         />
 
-        {/* Medication Tracker */}
         <MedicationTracker 
           medications={entry.medications}
           previousMedications={allMedicationNames}
           onChange={(medications) => handleUpdateField('medications', medications)}
         />
         
-        {/* Smart Goals for Premium Users */}
         {isPremium && (
           <SmartGoalTracker entryId={entry.id} />
         )}
         
-        {/* Custom Tracker for Premium Users */}
         {isPremium && (
           <CustomTrackers entryId={entry.id} />
         )}
         
-        {/* Journal Notes Section with Voice Journal and Journal Prompts for Premium */}
         <div className="tap-card">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-muted-foreground">Journal Notes</span>
@@ -493,7 +487,6 @@ const Index = () => {
             )}
           </div>
           
-          {/* Text entry box for notes */}
           {isEditing ? (
             <>
               <textarea
@@ -520,7 +513,6 @@ const Index = () => {
             </div>
           )}
           
-          {/* Premium features */}
           {isPremium && (
             <div className="space-y-4 mt-4">
               <JournalPrompts inJournalPage={true} />
