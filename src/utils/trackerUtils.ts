@@ -1,6 +1,6 @@
 
 import { format } from 'date-fns';
-import { utcToZonedTime, format as formatTZ } from 'date-fns-tz';
+import { toZonedTime, format as formatTZ } from 'date-fns-tz';
 
 export const formatDateForTimezone = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
@@ -9,7 +9,7 @@ export const formatDateForTimezone = (date: Date | string): string => {
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   
   // Convert UTC date to user's timezone
-  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  const zonedDate = toZonedTime(dateObj, userTimezone);
   
   // Format the date in YYYY-MM-DD
   const year = zonedDate.getFullYear();
@@ -23,7 +23,7 @@ export const getTodayDate = (): string => {
   // Get current date in user's timezone
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const now = new Date();
-  const zonedDate = utcToZonedTime(now, userTimezone);
+  const zonedDate = toZonedTime(now, userTimezone);
   
   return formatDateForTimezone(zonedDate);
 };
@@ -32,7 +32,7 @@ export const getTodayDate = (): string => {
 export const formatDateDisplay = (date: string): string => {
   const dateObj = new Date(date);
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
-  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  const zonedDate = toZonedTime(dateObj, userTimezone);
   
   return formatTZ(zonedDate, 'EEEE, MMMM d, yyyy', { timeZone: userTimezone });
 };
@@ -41,7 +41,7 @@ export const formatDateDisplay = (date: string): string => {
 export const formatDate = (date: string): string => {
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const dateObj = new Date(date);
-  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  const zonedDate = toZonedTime(dateObj, userTimezone);
   
   return formatTZ(zonedDate, 'EEE, MMM d', { timeZone: userTimezone });
 };
@@ -50,7 +50,7 @@ export const formatDate = (date: string): string => {
 export const isPast8AM = (): boolean => {
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const now = new Date();
-  const zonedDate = utcToZonedTime(now, userTimezone);
+  const zonedDate = toZonedTime(now, userTimezone);
   return zonedDate.getHours() >= 8;
 };
 
@@ -59,7 +59,7 @@ export const calculateProgramDay = (startDate: string): number => {
   const start = new Date(startDate);
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const now = new Date();
-  const todayInTimezone = utcToZonedTime(now, userTimezone);
+  const todayInTimezone = toZonedTime(now, userTimezone);
   
   // Set both dates to midnight to compare just the dates
   start.setHours(0, 0, 0, 0);

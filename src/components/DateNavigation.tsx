@@ -2,7 +2,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, CalendarIcon } from 'lucide-react';
 import { formatDateDisplay, getTodayDate } from '@/utils/trackerUtils';
-import { utcToZonedTime } from 'date-fns-tz';
+import { toZonedTime } from 'date-fns-tz';
 
 interface DateNavigationProps {
   currentDate: string;
@@ -18,7 +18,7 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
     const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
     
     // Format using user's timezone
-    const zonedDate = utcToZonedTime(date, userTimezone);
+    const zonedDate = toZonedTime(date, userTimezone);
     const year = zonedDate.getFullYear();
     const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
     const day = String(zonedDate.getDate()).padStart(2, '0');
@@ -33,12 +33,12 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
     // Don't allow navigating to future dates
     const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
     const now = new Date();
-    const todayInTimezone = utcToZonedTime(now, userTimezone);
+    const todayInTimezone = toZonedTime(now, userTimezone);
     todayInTimezone.setHours(0, 0, 0, 0);
     
     if (date <= todayInTimezone) {
       // Format using user's timezone
-      const zonedDate = utcToZonedTime(date, userTimezone);
+      const zonedDate = toZonedTime(date, userTimezone);
       const year = zonedDate.getFullYear();
       const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
       const day = String(zonedDate.getDate()).padStart(2, '0');
