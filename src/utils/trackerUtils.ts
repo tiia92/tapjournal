@@ -30,10 +30,16 @@ export const getTodayDate = (): string => {
 
 // Format date for display (used in DateNavigation component)
 export const formatDateDisplay = (date: string): string => {
-  const dateObj = new Date(date);
+  // Create a new date object from the date string
+  // The date string is in YYYY-MM-DD format, which is interpreted as UTC
+  // So we need to explicitly create a date in the correct timezone
+  const dateObj = new Date(date + 'T00:00:00');
   const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+  
+  // Convert to the user's timezone
   const zonedDate = toZonedTime(dateObj, userTimezone);
   
+  // Format with the correct day name, month, day, year
   return formatTZ(zonedDate, 'EEEE, MMMM d, yyyy', { timeZone: userTimezone });
 };
 
