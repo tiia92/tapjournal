@@ -68,43 +68,55 @@ export type Database = {
       }
       "scraped-hackathon": {
         Row: {
+          cause: string | null
           created_at: string
-          "Date Posted": string | null
-          "How to Apply": string | null
+          date_posted: string | null
+          description: string | null
+          how_to_apply: string | null
           id: number
-          "Job Listing Link": string | null
-          "Job Title": string | null
-          "Job Type": string | null
+          job_level: string | null
+          job_listing_link: string | null
+          job_title: string | null
+          job_type: string | null
           Location: string | null
+          logo: string | null
           Organization: string | null
-          "Salary Range": string | null
-          "WFH Option": string | null
+          salary_range: string | null
+          wfh_option: string | null
         }
         Insert: {
+          cause?: string | null
           created_at?: string
-          "Date Posted"?: string | null
-          "How to Apply"?: string | null
+          date_posted?: string | null
+          description?: string | null
+          how_to_apply?: string | null
           id?: number
-          "Job Listing Link"?: string | null
-          "Job Title"?: string | null
-          "Job Type"?: string | null
+          job_level?: string | null
+          job_listing_link?: string | null
+          job_title?: string | null
+          job_type?: string | null
           Location?: string | null
+          logo?: string | null
           Organization?: string | null
-          "Salary Range"?: string | null
-          "WFH Option"?: string | null
+          salary_range?: string | null
+          wfh_option?: string | null
         }
         Update: {
+          cause?: string | null
           created_at?: string
-          "Date Posted"?: string | null
-          "How to Apply"?: string | null
+          date_posted?: string | null
+          description?: string | null
+          how_to_apply?: string | null
           id?: number
-          "Job Listing Link"?: string | null
-          "Job Title"?: string | null
-          "Job Type"?: string | null
+          job_level?: string | null
+          job_listing_link?: string | null
+          job_title?: string | null
+          job_type?: string | null
           Location?: string | null
+          logo?: string | null
           Organization?: string | null
-          "Salary Range"?: string | null
-          "WFH Option"?: string | null
+          salary_range?: string | null
+          wfh_option?: string | null
         }
         Relationships: []
       }

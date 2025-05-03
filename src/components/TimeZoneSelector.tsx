@@ -17,12 +17,11 @@ const TimeZoneSelector: React.FC<TimeZoneSelectorProps> = ({ onChange, currentTi
   useEffect(() => {
     // Get all available timezones
     try {
-      // Try to detect user's timezone
-      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // Set Los Angeles as the default timezone
+      const defaultTimezone = 'America/Los_Angeles';
       
       const allTimezones = [
-        detectedTimezone, // Put detected timezone first
-        'America/Los_Angeles', // Pacific Time
+        defaultTimezone,        // Los Angeles (Pacific Time)
         'America/Denver',      // Mountain Time
         'America/Chicago',     // Central Time
         'America/New_York',    // Eastern Time
@@ -39,15 +38,15 @@ const TimeZoneSelector: React.FC<TimeZoneSelectorProps> = ({ onChange, currentTi
       
       setTimezones(allTimezones);
       
-      // If no timezone is set yet, use detected timezone
+      // If no timezone is set yet, use default timezone
       if (!currentTimezone) {
-        setSelectedTimezone(detectedTimezone);
-        onChange(detectedTimezone);
-        localStorage.setItem('userTimezone', detectedTimezone);
+        setSelectedTimezone(defaultTimezone);
+        onChange(defaultTimezone);
+        localStorage.setItem('userTimezone', defaultTimezone);
       }
     } catch (error) {
       console.error('Error getting timezones:', error);
-      // Fallback to a few common timezones
+      // Fallback to a few common timezones with LA as default
       setTimezones([
         'America/Los_Angeles', // Pacific Time
         'America/Denver',      // Mountain Time

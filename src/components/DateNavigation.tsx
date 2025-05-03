@@ -2,6 +2,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, CalendarIcon } from 'lucide-react';
 import { formatDateDisplay, getTodayDate } from '@/utils/trackerUtils';
+import { utcToZonedTime } from 'date-fns-tz';
 
 interface DateNavigationProps {
   currentDate: string;
@@ -13,9 +14,16 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
     const date = new Date(currentDate);
     date.setDate(date.getDate() - 1);
     
-    // Format using user's local timezone
-    const prevDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    onDateChange(prevDate.toISOString().split('T')[0]);
+    // Get user timezone
+    const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+    
+    // Format using user's timezone
+    const zonedDate = utcToZonedTime(date, userTimezone);
+    const year = zonedDate.getFullYear();
+    const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(zonedDate.getDate()).padStart(2, '0');
+    
+    onDateChange(`${year}-${month}-${day}`);
   };
 
   const handleNextDay = () => {
@@ -23,13 +31,19 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChan
     date.setDate(date.getDate() + 1);
     
     // Don't allow navigating to future dates
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+    const now = new Date();
+    const todayInTimezone = utcToZonedTime(now, userTimezone);
+    todayInTimezone.setHours(0, 0, 0, 0);
     
-    if (date <= today) {
-      // Format using user's local timezone
-      const nextDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-      onDateChange(nextDate.toISOString().split('T')[0]);
+    if (date <= todayInTimezone) {
+      // Format using user's timezone
+      const zonedDate = utcToZonedTime(date, userTimezone);
+      const year = zonedDate.getFullYear();
+      const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(zonedDate.getDate()).padStart(2, '0');
+      
+      onDateChange(`${year}-${month}-${day}`);
     }
   };
 

@@ -1,53 +1,69 @@
 
 import { format } from 'date-fns';
+import { utcToZonedTime, format as formatTZ } from 'date-fns-tz';
 
 export const formatDateForTimezone = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   
-  // Use the browser's timezone to get the correct date string
-  const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
+  // Get user's timezone from localStorage or default to America/Los_Angeles
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+  
+  // Convert UTC date to user's timezone
+  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  
+  // Format the date in YYYY-MM-DD
+  const year = zonedDate.getFullYear();
+  const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(zonedDate.getDate()).padStart(2, '0');
   
   return `${year}-${month}-${day}`;
 };
 
 export const getTodayDate = (): string => {
-  // Get current date in user's local timezone
+  // Get current date in user's timezone
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const now = new Date();
-  return formatDateForTimezone(now);
+  const zonedDate = utcToZonedTime(now, userTimezone);
+  
+  return formatDateForTimezone(zonedDate);
 };
 
 // Format date for display (used in DateNavigation component)
 export const formatDateDisplay = (date: string): string => {
   const dateObj = new Date(date);
-  return format(dateObj, 'EEEE, MMMM d, yyyy');
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  
+  return formatTZ(zonedDate, 'EEEE, MMMM d, yyyy', { timeZone: userTimezone });
 };
 
 // Format date for shorter display
 export const formatDate = (date: string): string => {
-  const options: Intl.DateTimeFormatOptions = { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric' 
-  };
-  return new Date(date).toLocaleDateString('en-US', options);
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+  const dateObj = new Date(date);
+  const zonedDate = utcToZonedTime(dateObj, userTimezone);
+  
+  return formatTZ(zonedDate, 'EEE, MMM d', { timeZone: userTimezone });
 };
 
 // Check if it's past 8 AM in the user's timezone
 export const isPast8AM = (): boolean => {
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
   const now = new Date();
-  return now.getHours() >= 8;
+  const zonedDate = utcToZonedTime(now, userTimezone);
+  return zonedDate.getHours() >= 8;
 };
 
 // Calculate program start date based on enrollment
 export const calculateProgramDay = (startDate: string): number => {
   const start = new Date(startDate);
-  const today = new Date();
+  const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+  const now = new Date();
+  const todayInTimezone = utcToZonedTime(now, userTimezone);
   
   // Set both dates to midnight to compare just the dates
   start.setHours(0, 0, 0, 0);
-  const todayAtMidnight = new Date(today);
+  const todayAtMidnight = new Date(todayInTimezone);
   todayAtMidnight.setHours(0, 0, 0, 0);
   
   // Calculate difference in days
