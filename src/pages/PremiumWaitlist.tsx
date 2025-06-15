@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { ArrowLeft, Check, CreditCard, Clock, Shield } from 'lucide-react';
 import Layout from '@/components/Layout';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
 
 const PremiumWaitlist = () => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
@@ -17,23 +19,37 @@ const PremiumWaitlist = () => {
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!cardNumber || !expiryDate || !cvv || !name) {
       toast.error('Please fill in all payment details');
       return;
     }
-    
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
+    // Save user info to Supabase (DO NOT save card info!)
+    const { error } = await supabase
+      .from('premium_waitlist')
+      .insert([
+        {
+          user_id: user?.id,
+          name,
+          email: user?.email || '',
+          phone: null,
+          payment_attempted: true,
+          stripe_customer_id: null,
+        }
+      ]);
+    if (error) {
+      toast.error('Failed to join waitlist. Please try again.');
+      setIsSubmitting(false);
+      return;
+    }
+
     toast.success('Successfully joined the premium waitlist!');
-    navigate('/');
-    
+    navigate('/dashboard');
     setIsSubmitting(false);
   };
 
@@ -82,7 +98,6 @@ const PremiumWaitlist = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Insights
           </Button>
-          
           <h1 className="text-3xl font-bold mb-2">Join Premium Waitlist</h1>
           <p className="text-muted-foreground">
             Be the first to access premium features when they launch
@@ -160,7 +175,6 @@ const PremiumWaitlist = () => {
                     disabled={isSubmitting}
                   />
                 </div>
-
                 <div>
                   <label className="text-sm font-medium mb-2 block">
                     Card Number
@@ -173,7 +187,6 @@ const PremiumWaitlist = () => {
                     disabled={isSubmitting}
                   />
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">
@@ -200,7 +213,6 @@ const PremiumWaitlist = () => {
                     />
                   </div>
                 </div>
-
                 <Button 
                   type="submit" 
                   className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"

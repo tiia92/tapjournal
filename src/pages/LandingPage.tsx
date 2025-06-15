@@ -50,6 +50,7 @@ const LandingPage = () => {
               <div className="flex items-center gap-3">
                 <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
                 <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
+                <Button variant="ghost" onClick={() => navigate('/pricing')}>Pricing</Button>
                 <Button variant="outline" onClick={handleLogout}>
                   <LogOut size={18} className="mr-2" />
                   Sign Out
@@ -58,6 +59,7 @@ const LandingPage = () => {
             ) : (
               <>
                 <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
+                <Button variant="ghost" onClick={() => navigate('/pricing')}>Pricing</Button>
                 <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
                 <Button onClick={() => navigate('/signup')}>Sign Up</Button>
               </>
@@ -173,6 +175,17 @@ const LandingPage = () => {
                 Gain valuable insights into your habits and health patterns with premium analytics.
               </p>
             </div>
+
+            {/* AI-powered Recommendations */}
+            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
+                <BookOpen className="text-indigo-600" size={24} />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">AI-Powered Recommendations</h3>
+              <p className="text-muted-foreground">
+                Get personalized wellness programs and actionable suggestions powered by AI (included with Premium).
+              </p>
+            </div>
           </div>
         </div>
 
@@ -206,6 +219,9 @@ const LandingPage = () => {
             <div className="flex gap-6">
               <a href="/about" className="text-sm hover:text-primary transition-colors">
                 About Us
+              </a>
+              <a href="/pricing" className="text-sm hover:text-primary transition-colors">
+                Pricing
               </a>
               <span className="text-sm text-muted-foreground">
                 © {new Date().getFullYear()} TapJournal. All rights reserved.

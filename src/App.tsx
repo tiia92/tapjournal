@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
 import AboutUs from "./pages/AboutUs";
 import PremiumWaitlist from "./pages/PremiumWaitlist";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +47,7 @@ const AppRoutes = () => {
       {/* Landing page available to everyone */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutUs />} />
+      <Route path="/pricing" element={<Pricing />} />
       
       {/* Login/signup routes */}
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
