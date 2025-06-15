@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 interface PremiumFeature {
   title: string;
@@ -21,11 +21,11 @@ interface PremiumFeature {
 }
 
 const PremiumUpgrade: React.FC = () => {
-  const { upgradeAccount, user } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleUpgrade = () => {
-    upgradeAccount();
-    toast.success('Congratulations! You are now a premium user.');
+    navigate('/premium-waitlist');
   };
 
   const premiumFeatures: PremiumFeature[] = [
@@ -95,14 +95,8 @@ const PremiumUpgrade: React.FC = () => {
         onClick={handleUpgrade}
         className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"
       >
-        Upgrade to Premium
+        Join Premium Waitlist
       </Button>
-      
-      <p className="text-xs text-center text-muted-foreground mt-4">
-        Instant access to all premium features with a simple click.
-        <br />
-        <span className="font-medium">Note:</span> This is a demo - no actual payment required.
-      </p>
     </div>
   );
 };

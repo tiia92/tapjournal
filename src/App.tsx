@@ -15,6 +15,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
 import AboutUs from "./pages/AboutUs";
+import PremiumWaitlist from "./pages/PremiumWaitlist";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Settings />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/premium-waitlist" 
+        element={
+          <ProtectedRoute>
+            <PremiumWaitlist />
           </ProtectedRoute>
         } 
       />
