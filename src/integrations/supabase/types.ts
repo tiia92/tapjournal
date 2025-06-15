@@ -30,6 +30,27 @@ export type Database = {
         }
         Relationships: []
       }
+      business_reporting_waitlist: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       "idealist old": {
         Row: {
           "Date Posted": string | null
@@ -66,6 +87,247 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          duration_days: number
+          id: string
+          is_active: boolean
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          duration_days?: number
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      promo_redemptions: {
+        Row: {
+          id: string
+          promo_code_id: string
+          redeemed_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          promo_code_id: string
+          redeemed_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          promo_code_id?: string
+          redeemed_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_redemptions_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      racism_detections: {
+        Row: {
+          analysis: string | null
+          confidence_score: number | null
+          created_at: string | null
+          detected_keywords: string[] | null
+          detection_result: boolean
+          id: string
+          situation: string
+          user_id: string | null
+        }
+        Insert: {
+          analysis?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          detected_keywords?: string[] | null
+          detection_result: boolean
+          id?: string
+          situation: string
+          user_id?: string | null
+        }
+        Update: {
+          analysis?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          detected_keywords?: string[] | null
+          detection_result?: boolean
+          id?: string
+          situation?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      review_submissions: {
+        Row: {
+          business_name: string
+          business_type: string | null
+          created_at: string
+          description: string
+          discrimination_types: string[] | null
+          experience_type: string
+          id: string
+          location: string
+          status: string
+          street_address: string | null
+          submitted_at: string
+          submitter_email: string | null
+          submitter_name: string | null
+          supporting_link_1: string | null
+          supporting_link_2: string | null
+          supporting_link_3: string | null
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          business_name: string
+          business_type?: string | null
+          created_at?: string
+          description: string
+          discrimination_types?: string[] | null
+          experience_type: string
+          id?: string
+          location: string
+          status?: string
+          street_address?: string | null
+          submitted_at: string
+          submitter_email?: string | null
+          submitter_name?: string | null
+          supporting_link_1?: string | null
+          supporting_link_2?: string | null
+          supporting_link_3?: string | null
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          business_name?: string
+          business_type?: string | null
+          created_at?: string
+          description?: string
+          discrimination_types?: string[] | null
+          experience_type?: string
+          id?: string
+          location?: string
+          status?: string
+          street_address?: string | null
+          submitted_at?: string
+          submitter_email?: string | null
+          submitter_name?: string | null
+          supporting_link_1?: string | null
+          supporting_link_2?: string | null
+          supporting_link_3?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      review_votes: {
+        Row: {
+          created_at: string
+          id: string
+          review_id: string
+          user_id: string
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          review_id: string
+          user_id: string
+          vote_type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          review_id?: string
+          user_id?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_votes_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "review_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_searches: {
+        Row: {
+          cause: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          job_level: string | null
+          job_type: string | null
+          keyword: string | null
+          last_sent_date: string | null
+          location: string | null
+          salary_range: string | null
+          search_name: string
+          updated_at: string
+          user_id: string
+          wfh_option: string | null
+        }
+        Insert: {
+          cause?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          job_level?: string | null
+          job_type?: string | null
+          keyword?: string | null
+          last_sent_date?: string | null
+          location?: string | null
+          salary_range?: string | null
+          search_name: string
+          updated_at?: string
+          user_id: string
+          wfh_option?: string | null
+        }
+        Update: {
+          cause?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          job_level?: string | null
+          job_type?: string | null
+          keyword?: string | null
+          last_sent_date?: string | null
+          location?: string | null
+          salary_range?: string | null
+          search_name?: string
+          updated_at?: string
+          user_id?: string
+          wfh_option?: string | null
+        }
+        Relationships: []
+      }
       "scraped-hackathon": {
         Row: {
           cause: string | null
@@ -75,12 +337,11 @@ export type Database = {
           how_to_apply: string | null
           id: number
           job_level: string | null
-          job_listing_link: string | null
           job_title: string | null
           job_type: string | null
-          Location: string | null
+          location: string | null
           logo: string | null
-          Organization: string | null
+          organization: string | null
           salary_range: string | null
           wfh_option: string | null
         }
@@ -92,12 +353,11 @@ export type Database = {
           how_to_apply?: string | null
           id?: number
           job_level?: string | null
-          job_listing_link?: string | null
           job_title?: string | null
           job_type?: string | null
-          Location?: string | null
+          location?: string | null
           logo?: string | null
-          Organization?: string | null
+          organization?: string | null
           salary_range?: string | null
           wfh_option?: string | null
         }
@@ -109,16 +369,44 @@ export type Database = {
           how_to_apply?: string | null
           id?: number
           job_level?: string | null
-          job_listing_link?: string | null
           job_title?: string | null
           job_type?: string | null
-          Location?: string | null
+          location?: string | null
           logo?: string | null
-          Organization?: string | null
+          organization?: string | null
           salary_range?: string | null
           wfh_option?: string | null
         }
         Relationships: []
+      }
+      search_email_history: {
+        Row: {
+          id: string
+          job_id: number
+          saved_search_id: string
+          sent_at: string
+        }
+        Insert: {
+          id?: string
+          job_id: number
+          saved_search_id: string
+          sent_at?: string
+        }
+        Update: {
+          id?: string
+          job_id?: number
+          saved_search_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_email_history_saved_search_id_fkey"
+            columns: ["saved_search_id"]
+            isOneToOne: false
+            referencedRelation: "saved_searches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
@@ -153,11 +441,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          start_date: string
+          subscription_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          subscription_type?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          start_date?: string
+          subscription_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_premium_status: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
+      is_premium_email: {
+        Args: { email: string }
+        Returns: boolean
+      }
+      redeem_promo_code: {
+        Args: { user_id: string; code: string }
+        Returns: Json
+      }
       update_anthropic_api_key: {
         Args: { api_key: string }
         Returns: undefined

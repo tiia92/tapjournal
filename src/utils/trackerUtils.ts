@@ -95,16 +95,13 @@ export const isDayAccessible = (startDate: string, day: number): boolean => {
   return false;
 };
 
-// Mood options (limited set for the basic "Today's Mood")
+// Mood options (limited to 5 specific emojis for consistency with insights)
 export const moodOptions = [
+  { id: 'very-happy', emoji: '😁', label: 'Very Happy' },
   { id: 'happy', emoji: '😊', label: 'Happy' },
-  { id: 'good', emoji: '🙂', label: 'Good' },
   { id: 'neutral', emoji: '😐', label: 'Neutral' },
-  { id: 'sad', emoji: '😔', label: 'Sad' },
-  { id: 'angry', emoji: '😠', label: 'Angry' },
-  { id: 'anxious', emoji: '😰', label: 'Anxious' },
-  { id: 'tired', emoji: '😴', label: 'Tired' },
-  { id: 'sick', emoji: '🤒', label: 'Sick' }
+  { id: 'sad', emoji: '☹️', label: 'Sad' },
+  { id: 'angry', emoji: '😠', label: 'Angry' }
 ];
 
 // Exercise options

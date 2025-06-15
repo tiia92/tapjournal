@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Lock } from 'lucide-react';
@@ -89,18 +88,13 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
             break;
           
           case 'mood':
-            // Convert mood emoji to numeric value for the chart
+            // Convert mood emoji to numeric value for the chart (aligned with 5 specific emojis)
             const moodMap: Record<string, { value: number, emoji: string }> = {
-              'happy': { value: 5, emoji: '😊' },
-              'good': { value: 4, emoji: '🙂' },
+              'very-happy': { value: 5, emoji: '😁' },
+              'happy': { value: 4, emoji: '😊' },
               'neutral': { value: 3, emoji: '😐' },
-              'sad': { value: 2, emoji: '😔' },
-              'angry': { value: 1, emoji: '😠' },
-              'anxious': { value: 1.5, emoji: '😰' },
-              'tired': { value: 2.5, emoji: '😴' },
-              'sick': { value: 1.8, emoji: '🤒' },
-              'grateful': { value: 4.5, emoji: '🙏' },
-              'loved': { value: 4.8, emoji: '❤️' },
+              'sad': { value: 2, emoji: '☹️' },
+              'angry': { value: 1, emoji: '😠' }
             };
             
             day.value = matchingEntry.mood ? (moodMap[matchingEntry.mood]?.value || 3) : 0;
@@ -165,14 +159,14 @@ const InsightsChart: React.FC<InsightsChartProps> = ({
     return null;
   };
 
-  // Custom Y-axis tick formatter for mood chart
+  // Custom Y-axis tick formatter for mood chart (updated for 5 specific emojis)
   const renderMoodTick = (value: number) => {
     const emojiMap: Record<number, string> = {
       1: '😠',
-      2: '😔',
+      2: '☹️',
       3: '😐',
-      4: '🙂',
-      5: '😊'
+      4: '😊',
+      5: '😁'
     };
     return emojiMap[value] || '';
   };
