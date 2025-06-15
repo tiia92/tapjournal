@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { toZonedTime, format as formatTZ } from 'date-fns-tz';
 
@@ -115,7 +114,22 @@ export const exerciseOptions = [
   { id: 'sports', emoji: '⚽', label: 'Sports' },
   { id: 'dancing', emoji: '💃', label: 'Dancing' },
   { id: 'hiking', emoji: '🥾', label: 'Hiking' },
-  { id: 'stretch', emoji: '🤸', label: 'Stretching' }
+  { id: 'stretch', emoji: '🤸', label: 'Stretching' },
+  { id: 'boxing', emoji: '🥊', label: 'Boxing' },
+  { id: 'martial-arts', emoji: '🥋', label: 'Martial Arts' },
+  { id: 'roller-skating', emoji: '🛼', label: 'Roller Skating' },
+  { id: 'skateboarding', emoji: '🛹', label: 'Skateboarding' },
+  { id: 'rock-climbing', emoji: '🧗‍♀️', label: 'Rock Climbing' },
+  { id: 'skiing', emoji: '⛷️', label: 'Skiing' },
+  { id: 'golf', emoji: '⛳', label: 'Golf' },
+  { id: 'ice-skating', emoji: '⛸️', label: 'Ice Skating' },
+  { id: 'tennis', emoji: '🎾', label: 'Tennis' },
+  { id: 'hockey', emoji: '🏒', label: 'Hockey' },
+  { id: 'bowling', emoji: '🎳', label: 'Bowling' },
+  { id: 'basketball', emoji: '🏀', label: 'Basketball' },
+  { id: 'volleyball', emoji: '🏐', label: 'Volleyball' },
+  { id: 'football', emoji: '🏈', label: 'Football' },
+  { id: 'baseball', emoji: '⚾', label: 'Baseball' }
 ];
 
 // Self care options
