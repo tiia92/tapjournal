@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -12,9 +11,8 @@ const plans = [
     description: 'Track habits and write your daily journal entries. Get started for free.',
     features: [
       'Journaling with text and emoji',
-      'Track up to 3 habits',
-      'View 7-day journal history',
-      'Data export (CSV)',
+      'Track your mood, self-care, water, sleep, and to-dos',
+      'View your full journal history',
     ],
     badge: null,
   },
