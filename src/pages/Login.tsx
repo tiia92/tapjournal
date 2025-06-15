@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { LogIn, Mail, Lock } from 'lucide-react';
+import ForgotPassword from '@/components/ForgotPassword';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -69,11 +70,14 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <div className="flex items-center">
-                <Lock className="w-4 h-4 mr-2 text-muted-foreground" />
-                <label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </label>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Lock className="w-4 h-4 mr-2 text-muted-foreground" />
+                  <label htmlFor="password" className="text-sm font-medium">
+                    Password
+                  </label>
+                </div>
+                <ForgotPassword />
               </div>
               <Input
                 id="password"
