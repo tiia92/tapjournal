@@ -49,14 +49,14 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
   const [isSelecting, setIsSelecting] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<keyof typeof emojiCategories>('smileys');
   const [showNote, setShowNote] = useState(false);
   const [minutes, setMinutes] = useState<string>('');
 
-  const handleToggleExpand = () => {
-    setIsExpanded(!isExpanded);
+  const handleToggleView = () => {
+    setShowAll(!showAll);
   };
 
   const handleToggleEmoji = (id: string) => {
@@ -97,6 +97,19 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
     setIsSelecting(true);
   };
 
+  // Determine which emojis to show based on the current state
+  const getEmojisToShow = () => {
+    if (showAll) {
+      // Show all available options
+      return options;
+    } else {
+      // Show only selected emojis
+      return options.filter(option => selectedIds.includes(option.id));
+    }
+  };
+
+  const emojisToShow = getEmojisToShow();
+
   return (
     <div className="tap-card">
       <div className="flex justify-between items-center mb-3">
@@ -112,10 +125,10 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
           )}
           {label !== "Today's Mood" && (
             <button
-              onClick={handleToggleExpand}
+              onClick={handleToggleView}
               className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
             >
-              {isExpanded ? "Less" : "More"}
+              {showAll ? "Less" : "More"}
             </button>
           )}
         </div>
@@ -130,7 +143,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         </div>
       ) : (
         <div className="flex flex-wrap gap-2 mb-3">
-          {isSelecting && options.map(option => (
+          {isSelecting && emojisToShow.map(option => (
             <button
               key={option.id}
               onClick={() => handleToggleEmoji(option.id)}
@@ -148,7 +161,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
             </button>
           ))}
           
-          {isPremium && isSelecting && label !== "Today's Mood" && (
+          {isPremium && isSelecting && showAll && label !== "Today's Mood" && (
             <button 
               onClick={() => setShowEmojiDialog(true)}
               className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
@@ -160,7 +173,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
         </div>
       )}
 
-      {/* Show selected emojis if any */}
+      {/* Show selected emojis if any and not in selecting mode */}
       {!isSelecting && selectedIds.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-3">
           {selectedIds.map((id, index) => {
@@ -219,7 +232,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
       )}
 
       {/* Full Emoji Dialog */}
-      {isPremium && label !== "Today's Mood" && (
+      {isPrem um && label !== "Today's Mood" && (
         <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
           <DialogContent className="max-w-md">
             <DialogTitle>Select an Emoji</DialogTitle>
