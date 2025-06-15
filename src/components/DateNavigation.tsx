@@ -2,7 +2,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight, CalendarIcon } from 'lucide-react';
 import { formatDateDisplay, getTodayDate } from '@/utils/trackerUtils';
-import { toZonedTime } from 'date-fns-tz';
 
 interface DateNavigationProps {
   currentDate: string;
@@ -11,39 +10,43 @@ interface DateNavigationProps {
 
 const DateNavigation: React.FC<DateNavigationProps> = ({ currentDate, onDateChange }) => {
   const handlePreviousDay = () => {
-    const date = new Date(currentDate);
+    // Parse the current date string (YYYY-MM-DD format)
+    const [year, month, day] = currentDate.split('-').map(Number);
+    
+    // Create a date object in local time
+    const date = new Date(year, month - 1, day); // month is 0-indexed
+    
+    // Subtract one day
     date.setDate(date.getDate() - 1);
     
-    // Get user timezone
-    const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
+    // Format back to YYYY-MM-DD
+    const newYear = date.getFullYear();
+    const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+    const newDay = String(date.getDate()).padStart(2, '0');
     
-    // Format using user's timezone
-    const zonedDate = toZonedTime(date, userTimezone);
-    const year = zonedDate.getFullYear();
-    const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
-    const day = String(zonedDate.getDate()).padStart(2, '0');
-    
-    onDateChange(`${year}-${month}-${day}`);
+    onDateChange(`${newYear}-${newMonth}-${newDay}`);
   };
 
   const handleNextDay = () => {
-    const date = new Date(currentDate);
+    // Parse the current date string (YYYY-MM-DD format)
+    const [year, month, day] = currentDate.split('-').map(Number);
+    
+    // Create a date object in local time
+    const date = new Date(year, month - 1, day); // month is 0-indexed
+    
+    // Add one day
     date.setDate(date.getDate() + 1);
     
     // Don't allow navigating to future dates
-    const userTimezone = localStorage.getItem('userTimezone') || 'America/Los_Angeles';
-    const now = new Date();
-    const todayInTimezone = toZonedTime(now, userTimezone);
-    todayInTimezone.setHours(0, 0, 0, 0);
+    const today = getTodayDate();
+    const newYear = date.getFullYear();
+    const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+    const newDay = String(date.getDate()).padStart(2, '0');
+    const newDateString = `${newYear}-${newMonth}-${newDay}`;
     
-    if (date <= todayInTimezone) {
-      // Format using user's timezone
-      const zonedDate = toZonedTime(date, userTimezone);
-      const year = zonedDate.getFullYear();
-      const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
-      const day = String(zonedDate.getDate()).padStart(2, '0');
-      
-      onDateChange(`${year}-${month}-${day}`);
+    // Only update if the new date is not in the future
+    if (newDateString <= today) {
+      onDateChange(newDateString);
     }
   };
 
