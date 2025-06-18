@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -43,7 +42,7 @@ const Calendar = () => {
     if (date > today) return;
     
     const formattedDate = format(date, 'yyyy-MM-dd');
-    navigate('/', { state: { date: formattedDate } });
+    navigate('/', { state: { selectedDate: formattedDate } });
   };
   
   // Get all days in current month

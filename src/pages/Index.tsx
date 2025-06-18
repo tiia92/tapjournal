@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import DateNavigation from '@/components/DateNavigation';
 import TapCounter from '@/components/TapCounter';
@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const isPremium = user?.isPremium || false;
   
@@ -55,6 +56,15 @@ const Index = () => {
   const [selfCareNote, setSelfCareNote] = useState('');
   const [waterNote, setWaterNote] = useState('');
   const [sleepNote, setSleepNote] = useState('');
+
+  useEffect(() => {
+    // Check if we're navigating from calendar with a selected date
+    if (location.state?.selectedDate) {
+      setCurrentDate(location.state.selectedDate);
+      // Clear the state to prevent issues with browser back/forward
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const existingEntry = getEntryByDate(currentDate);
