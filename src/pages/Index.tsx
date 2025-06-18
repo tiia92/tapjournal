@@ -87,13 +87,13 @@ const Index = () => {
   }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames, getDeletedChoreNames, getDeletedWorkTaskNames]);
   
   const handleCreateEntry = () => {
+    let newEntry: JournalEntry;
+    
     if (currentDate === getTodayDate()) {
-      const newEntry = createTodayEntry();
-      setEntry(newEntry);
-      setIsEditing(true);
+      newEntry = createTodayEntry();
       toast.success('Created new entry for today');
     } else {
-      const newEntry: JournalEntry = {
+      newEntry = {
         id: crypto.randomUUID(),
         date: currentDate,
         waterCount: 0,
@@ -121,10 +121,11 @@ const Index = () => {
       };
       
       updateEntry(newEntry);
-      setEntry(newEntry);
-      setIsEditing(true);
       toast.success(`Created new entry for ${currentDate}`);
     }
+    
+    setEntry(newEntry);
+    setIsEditing(true);
   };
 
   const handleUpdateField = <K extends keyof JournalEntry>(
