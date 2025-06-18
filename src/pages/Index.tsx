@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -60,16 +61,19 @@ const Index = () => {
   useEffect(() => {
     // Check if we're navigating from calendar with a selected date
     if (location.state?.selectedDate) {
+      console.log('Navigating to selected date:', location.state.selectedDate);
       setCurrentDate(location.state.selectedDate);
       // Clear the state to prevent issues with browser back/forward
-      window.history.replaceState({}, document.title);
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state]);
+  }, [location.state, navigate, location.pathname]);
 
   useEffect(() => {
+    console.log('Loading entry for date:', currentDate);
     const existingEntry = getEntryByDate(currentDate);
     
     if (existingEntry) {
+      console.log('Found existing entry:', existingEntry);
       setEntry(existingEntry);
       setNotes(existingEntry.notes);
       setMoodNote(existingEntry.moodNote || '');
@@ -78,6 +82,7 @@ const Index = () => {
       setWaterNote(existingEntry.waterNote || '');
       setSleepNote(existingEntry.sleepNote || '');
     } else {
+      console.log('No entry found for date:', currentDate);
       setEntry(null);
       setNotes('');
       setMoodNote('');
@@ -97,6 +102,7 @@ const Index = () => {
   }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames, getDeletedChoreNames, getDeletedWorkTaskNames]);
   
   const handleCreateEntry = () => {
+    console.log('Creating entry for date:', currentDate);
     let newEntry: JournalEntry;
     
     if (currentDate === getTodayDate()) {
@@ -134,7 +140,8 @@ const Index = () => {
       toast.success(`Created new entry for ${currentDate}`);
     }
     
-    // Properly set the entry state so the interface appears
+    console.log('New entry created:', newEntry);
+    // Immediately set all the state to show the entry interface
     setEntry(newEntry);
     setNotes(newEntry.notes);
     setMoodNote(newEntry.moodNote || '');
