@@ -134,7 +134,14 @@ const Index = () => {
       toast.success(`Created new entry for ${currentDate}`);
     }
     
+    // Properly set the entry state so the interface appears
     setEntry(newEntry);
+    setNotes(newEntry.notes);
+    setMoodNote(newEntry.moodNote || '');
+    setExercisesNote(newEntry.exercisesNote || '');
+    setSelfCareNote(newEntry.selfCareNote || '');
+    setWaterNote(newEntry.waterNote || '');
+    setSleepNote(newEntry.sleepNote || '');
     setIsEditing(true);
   };
 
