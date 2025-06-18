@@ -71,6 +71,10 @@ type JournalContextType = {
   getAllMedicationNames: () => string[];
   getAllChoreNames: () => string[];
   getAllWorkTaskNames: () => string[];
+  getDeletedChoreNames: () => string[];
+  getDeletedWorkTaskNames: () => string[];
+  deleteChoreFromHistory: (choreName: string) => void;
+  deleteWorkTaskFromHistory: (taskName: string) => void;
   saveAudioToEntry: (entryId: string, audioUrl: string, transcription?: string) => void;
   saveAttachmentToEntry: (entryId: string, fileUrl: string) => void;
   removeAttachmentFromEntry: (entryId: string, fileUrl: string) => void;
@@ -141,6 +145,8 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [todayEntry, setTodayEntry] = useState<JournalEntry | undefined>();
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [deletedChores, setDeletedChores] = useState<string[]>([]);
+  const [deletedWorkTasks, setDeletedWorkTasks] = useState<string[]>([]);
   const { user } = useAuth();
 
   // Get today's date in the user's timezone
@@ -233,6 +239,17 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       } else {
         setGoals([]);
       }
+
+      // Load deleted tasks
+      const storedDeletedChores = localStorage.getItem(`deletedChores_${user.id}`);
+      if (storedDeletedChores) {
+        setDeletedChores(JSON.parse(storedDeletedChores));
+      }
+
+      const storedDeletedWorkTasks = localStorage.getItem(`deletedWorkTasks_${user.id}`);
+      if (storedDeletedWorkTasks) {
+        setDeletedWorkTasks(JSON.parse(storedDeletedWorkTasks));
+      }
     }
   }, [user]);
 
@@ -250,6 +267,14 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       localStorage.setItem(`goals_${user.id}`, JSON.stringify(goals));
     }
   }, [goals, user]);
+
+  // Save deleted tasks to localStorage whenever they change
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(`deletedChores_${user.id}`, JSON.stringify(deletedChores));
+      localStorage.setItem(`deletedWorkTasks_${user.id}`, JSON.stringify(deletedWorkTasks));
+    }
+  }, [deletedChores, deletedWorkTasks, user]);
 
   const checkIfTodayEntryExists = (): boolean => {
     const today = getTodayInUserTimezone();
@@ -335,6 +360,26 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
     
     return Array.from(allWorkTaskNames);
+  };
+
+  const getDeletedChoreNames = (): string[] => {
+    return deletedChores;
+  };
+
+  const getDeletedWorkTaskNames = (): string[] => {
+    return deletedWorkTasks;
+  };
+
+  const deleteChoreFromHistory = (choreName: string): void => {
+    if (!deletedChores.includes(choreName)) {
+      setDeletedChores(prev => [...prev, choreName]);
+    }
+  };
+
+  const deleteWorkTaskFromHistory = (taskName: string): void => {
+    if (!deletedWorkTasks.includes(taskName)) {
+      setDeletedWorkTasks(prev => [...prev, taskName]);
+    }
   };
 
   const saveAudioToEntry = (entryId: string, audioUrl: string, transcription?: string): void => {
@@ -467,6 +512,10 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getAllMedicationNames,
         getAllChoreNames,
         getAllWorkTaskNames,
+        getDeletedChoreNames,
+        getDeletedWorkTaskNames,
+        deleteChoreFromHistory,
+        deleteWorkTaskFromHistory,
         saveAudioToEntry,
         saveAttachmentToEntry,
         removeAttachmentFromEntry,

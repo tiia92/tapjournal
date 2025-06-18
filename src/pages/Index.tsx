@@ -33,7 +33,11 @@ const Index = () => {
     getEntryByDate,
     getAllMedicationNames,
     getAllChoreNames,
-    getAllWorkTaskNames
+    getAllWorkTaskNames,
+    getDeletedChoreNames,
+    getDeletedWorkTaskNames,
+    deleteChoreFromHistory,
+    deleteWorkTaskFromHistory
   } = useJournal();
   
   const [currentDate, setCurrentDate] = useState(getTodayDate());
@@ -43,6 +47,8 @@ const Index = () => {
   const [allMedicationNames, setAllMedicationNames] = useState<string[]>([]);
   const [allChoreNames, setAllChoreNames] = useState<string[]>([]);
   const [allWorkTaskNames, setAllWorkTaskNames] = useState<string[]>([]);
+  const [deletedChoreNames, setDeletedChoreNames] = useState<string[]>([]);
+  const [deletedWorkTaskNames, setDeletedWorkTaskNames] = useState<string[]>([]);
   
   const [moodNote, setMoodNote] = useState('');
   const [exercisesNote, setExercisesNote] = useState('');
@@ -74,9 +80,11 @@ const Index = () => {
     setAllMedicationNames(getAllMedicationNames());
     setAllChoreNames(getAllChoreNames());
     setAllWorkTaskNames(getAllWorkTaskNames());
+    setDeletedChoreNames(getDeletedChoreNames());
+    setDeletedWorkTaskNames(getDeletedWorkTaskNames());
     
     setIsEditing(false);
-  }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames]);
+  }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames, getDeletedChoreNames, getDeletedWorkTaskNames]);
   
   const handleCreateEntry = () => {
     if (currentDate === getTodayDate()) {
@@ -306,7 +314,9 @@ const Index = () => {
           <TaskTracker
             tasks={entry.chores || []}
             previousTasks={allChoreNames}
+            deletedTasks={deletedChoreNames}
             onChange={(tasks) => handleUpdateField('chores', tasks)}
+            onDeletePreviousTask={deleteChoreFromHistory}
             icon={<Home className="text-orange-500" />}
             label="Chores"
           />
@@ -316,7 +326,9 @@ const Index = () => {
           <TaskTracker
             tasks={entry.workTasks || []}
             previousTasks={allWorkTaskNames}
+            deletedTasks={deletedWorkTaskNames}
             onChange={(tasks) => handleUpdateField('workTasks', tasks)}
+            onDeletePreviousTask={deleteWorkTaskFromHistory}
             icon={<Briefcase className="text-slate-500" />}
             label="Work Tasks"
           />

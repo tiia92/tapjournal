@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Check, X, Plus, ListChecks } from 'lucide-react';
+import { Check, X, Plus, ListChecks, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -15,6 +15,8 @@ interface TaskTrackerProps {
   tasks: Task[];
   onChange: (tasks: Task[]) => void;
   previousTasks?: string[];
+  deletedTasks?: string[];
+  onDeletePreviousTask?: (taskName: string) => void;
   icon: React.ReactNode;
   label: string;
 }
@@ -23,20 +25,29 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
   tasks,
   onChange,
   previousTasks = [],
+  deletedTasks = [],
+  onDeletePreviousTask,
   icon,
   label
 }) => {
   const [newTaskName, setNewTaskName] = useState('');
   const [availableTasks, setAvailableTasks] = useState<string[]>(previousTasks);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [allHistoricalTasks, setAllHistoricalTasks] = useState<string[]>([]);
 
   useEffect(() => {
+    // Combine previous tasks and deleted tasks for search
+    const allTasks = [...previousTasks, ...deletedTasks];
+    const uniqueTasks = Array.from(new Set(allTasks));
+    setAllHistoricalTasks(uniqueTasks);
+
     // Filter out tasks that are already in the list
     const existingTaskNames = tasks.map(task => task.name.toLowerCase());
     const filteredAvailable = previousTasks.filter(
       task => !existingTaskNames.includes(task.toLowerCase())
     );
     setAvailableTasks(filteredAvailable);
-  }, [tasks, previousTasks]);
+  }, [tasks, previousTasks, deletedTasks]);
 
   const handleAddTask = () => {
     if (!newTaskName.trim()) return;
@@ -98,6 +109,22 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
     );
   };
 
+  const handleDeletePreviousTask = (taskName: string) => {
+    if (onDeletePreviousTask) {
+      onDeletePreviousTask(taskName);
+      toast.success(`Deleted "${taskName}" from history`);
+    }
+  };
+
+  // Filter tasks based on search query
+  const filteredHistoricalTasks = allHistoricalTasks.filter(task =>
+    task.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredAvailableTasks = availableTasks.filter(task =>
+    task.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="tap-card flex flex-col items-center gap-3 animate-fade-in">
       <div className="flex items-center justify-between w-full">
@@ -126,20 +153,62 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
           </Button>
         </div>
         
-        {availableTasks.length > 0 && (
+        {(availableTasks.length > 0 || allHistoricalTasks.length > 0) && (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">Previous {label.toLowerCase()}:</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">Previous {label.toLowerCase()}:</p>
+              {allHistoricalTasks.length > 0 && (
+                <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 rounded px-2 py-1">
+                  <Search size={12} />
+                  <Input
+                    placeholder="Search all..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="border-0 bg-transparent text-xs h-auto p-0 min-w-0 w-20 focus-visible:ring-0"
+                  />
+                </div>
+              )}
+            </div>
+            
             <div className="flex flex-wrap gap-2">
-              {availableTasks.map(task => (
-                <button
-                  key={task}
-                  onClick={() => handleSelectPreviousTask(task)}
-                  className="bg-muted hover:bg-muted/80 text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors"
-                >
-                  <ListChecks size={12} />
-                  {task}
-                </button>
+              {(searchQuery ? filteredAvailableTasks : availableTasks).map(task => (
+                <div key={task} className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleSelectPreviousTask(task)}
+                    className="bg-muted hover:bg-muted/80 text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors"
+                  >
+                    <ListChecks size={12} />
+                    {task}
+                  </button>
+                  {onDeletePreviousTask && (
+                    <button
+                      onClick={() => handleDeletePreviousTask(task)}
+                      className="w-5 h-5 flex items-center justify-center rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors"
+                    >
+                      <X size={10} />
+                    </button>
+                  )}
+                </div>
               ))}
+              
+              {searchQuery && filteredHistoricalTasks.length > filteredAvailableTasks.length && (
+                <>
+                  {filteredHistoricalTasks
+                    .filter(task => !filteredAvailableTasks.includes(task))
+                    .map(task => (
+                    <div key={`deleted-${task}`} className="flex items-center gap-1">
+                      <button
+                        onClick={() => handleSelectPreviousTask(task)}
+                        className="bg-red-100 hover:bg-red-200 text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors text-red-700"
+                        title="This task was deleted from history"
+                      >
+                        <ListChecks size={12} />
+                        {task}
+                      </button>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
           </div>
         )}
