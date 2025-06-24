@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // Define user types
@@ -24,7 +25,7 @@ const MOCK_USERS = [
     email: 'demo@example.com',
     password: 'password123',
     name: 'Demo User',
-    isPremium: false,
+    isPremium: true, // Changed back to true for premium access
   },
 ];
 

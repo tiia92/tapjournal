@@ -112,7 +112,12 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
   const handleDeletePreviousTask = (taskName: string) => {
     if (onDeletePreviousTask) {
       onDeletePreviousTask(taskName);
-      toast.success(`Deleted "${taskName}" from history`);
+      toast.success(`"${taskName}" won't appear in future suggestions`);
+      
+      // Remove from available tasks immediately
+      setAvailableTasks(prev => 
+        prev.filter(task => task.toLowerCase() !== taskName.toLowerCase())
+      );
     }
   };
 
@@ -141,6 +146,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
             placeholder={`Add ${label.toLowerCase()}...`}
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleAddTask()}
             className="flex-1"
           />
           <Button 
@@ -184,6 +190,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
                     <button
                       onClick={() => handleDeletePreviousTask(task)}
                       className="w-5 h-5 flex items-center justify-center rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors"
+                      title="Remove from suggestions"
                     >
                       <X size={10} />
                     </button>
@@ -200,7 +207,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
                       <button
                         onClick={() => handleSelectPreviousTask(task)}
                         className="bg-red-100 hover:bg-red-200 text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors text-red-700"
-                        title="This task was deleted from history"
+                        title="This task was removed from suggestions"
                       >
                         <ListChecks size={12} />
                         {task}
@@ -224,7 +231,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
               >
                 <div className="flex items-center gap-2">
                   <ListChecks className="text-primary" size={16} />
-                  <span>{task.name}</span>
+                  <span className={task.completed ? 'line-through text-muted-foreground' : ''}>{task.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
