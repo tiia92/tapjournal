@@ -255,7 +255,7 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Save entries to localStorage whenever they change
   useEffect(() => {
-    if (user && entries.length > 0) {
+    if (user && entries.length >= 0) { // Changed from > 0 to >= 0 to handle empty arrays
       const storageKey = `journalEntries_${user.id}`;
       localStorage.setItem(storageKey, JSON.stringify(entries));
     }
@@ -290,13 +290,22 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
       goals: goals.filter(g => !g.completed).map(g => ({...g, completed: false}))
     };
 
-    setEntries(prev => [...prev, newEntry]);
+    setEntries(prev => {
+      const updated = [...prev, newEntry];
+      console.log('Updated entries after creating today entry:', updated);
+      return updated;
+    });
     setTodayEntry(newEntry);
     return newEntry;
   };
 
   const addEntry = (entry: JournalEntry): void => {
-    setEntries(prev => [...prev, entry]);
+    console.log('Adding entry:', entry);
+    setEntries(prev => {
+      const updated = [...prev, entry];
+      console.log('Updated entries after adding:', updated);
+      return updated;
+    });
     
     // Update today's entry if the new entry is for today
     const today = getTodayInUserTimezone();
@@ -306,11 +315,14 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const updateEntry = (updatedEntry: JournalEntry): void => {
-    setEntries(prev => 
-      prev.map(entry => 
+    console.log('Updating entry:', updatedEntry);
+    setEntries(prev => {
+      const updated = prev.map(entry => 
         entry.id === updatedEntry.id ? updatedEntry : entry
-      )
-    );
+      );
+      console.log('Updated entries after updating:', updated);
+      return updated;
+    });
     
     // Update today's entry if needed
     const today = getTodayInUserTimezone();
@@ -320,7 +332,10 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const getEntryByDate = (date: string): JournalEntry | undefined => {
-    return entries.find(entry => entry.date === date);
+    const found = entries.find(entry => entry.date === date);
+    console.log(`Looking for entry with date ${date}, found:`, found);
+    console.log('All entries:', entries);
+    return found;
   };
 
   const getAllMedicationNames = (): string[] => {

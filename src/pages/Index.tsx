@@ -31,6 +31,7 @@ const Index = () => {
     todayEntry, 
     createTodayEntry, 
     updateEntry, 
+    addEntry,
     checkIfTodayEntryExists, 
     getEntryByDate,
     getAllMedicationNames,
@@ -136,7 +137,7 @@ const Index = () => {
         otherSymptoms: '',
       };
       
-      updateEntry(newEntry);
+      addEntry(newEntry);
       toast.success(`Created new entry for ${currentDate}`);
     }
     
