@@ -31,7 +31,7 @@ const Calendar = () => {
   
   const handleCreateTodayEntry = () => {
     createTodayEntry();
-    navigate('/');
+    navigate('/dashboard');
   };
   
   const handleDateClick = (date: Date) => {
@@ -42,7 +42,7 @@ const Calendar = () => {
     if (date > today) return;
     
     const formattedDate = format(date, 'yyyy-MM-dd');
-    navigate('/', { state: { selectedDate: formattedDate } });
+    navigate('/dashboard', { state: { selectedDate: formattedDate } });
   };
   
   // Get all days in current month
