@@ -31,7 +31,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
   label
 }) => {
   const [newTaskName, setNewTaskName] = useState('');
-  const [availableTasks, setAvailableTasks] = useState<string[]>(previousTasks);
+  const [availableTasks, setAvailableTasks] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [allHistoricalTasks, setAllHistoricalTasks] = useState<string[]>([]);
 
@@ -41,10 +41,13 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
     const uniqueTasks = Array.from(new Set(allTasks));
     setAllHistoricalTasks(uniqueTasks);
 
-    // Filter out tasks that are already in the list
+    // Filter out tasks that are already in the list AND tasks that were deleted
     const existingTaskNames = tasks.map(task => task.name.toLowerCase());
+    const deletedTaskNames = deletedTasks.map(task => task.toLowerCase());
+    
     const filteredAvailable = previousTasks.filter(
-      task => !existingTaskNames.includes(task.toLowerCase())
+      task => !existingTaskNames.includes(task.toLowerCase()) && 
+               !deletedTaskNames.includes(task.toLowerCase())
     );
     setAvailableTasks(filteredAvailable);
   }, [tasks, previousTasks, deletedTasks]);
