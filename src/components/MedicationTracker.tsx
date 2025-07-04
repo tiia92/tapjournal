@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Pill, X, Plus, Check } from 'lucide-react';
+import { Pill, X, Plus, Check, Edit3 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
 interface Medication {
   id: string;
   name: string;
   taken: boolean;
+  note?: string;
 }
 
 interface MedicationTrackerProps {
@@ -24,6 +26,8 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
 }) => {
   const [newMedicationName, setNewMedicationName] = useState('');
   const [availableMedications, setAvailableMedications] = useState<string[]>(previousMedications);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [tempNote, setTempNote] = useState('');
 
   useEffect(() => {
     // Filter out medications that are already in the list
@@ -50,6 +54,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
       id: crypto.randomUUID(),
       name: newMedicationName.trim(),
       taken: false,
+      note: '',
     };
     
     onChange([...medications, newMedication]);
@@ -84,6 +89,7 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
       id: crypto.randomUUID(),
       name,
       taken: false,
+      note: '',
     };
     
     onChange([...medications, newMedication]);
@@ -92,6 +98,26 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
     setAvailableMedications(prev => 
       prev.filter(med => med.toLowerCase() !== name.toLowerCase())
     );
+  };
+
+  const handleEditNote = (id: string, currentNote: string) => {
+    setEditingNoteId(id);
+    setTempNote(currentNote || '');
+  };
+
+  const handleSaveNote = (id: string) => {
+    onChange(
+      medications.map(med =>
+        med.id === id ? { ...med, note: tempNote } : med
+      )
+    );
+    setEditingNoteId(null);
+    setTempNote('');
+  };
+
+  const handleCancelNoteEdit = () => {
+    setEditingNoteId(null);
+    setTempNote('');
   };
 
   return (
@@ -141,28 +167,68 @@ const MedicationTracker: React.FC<MedicationTrackerProps> = ({
             medications.map((med) => (
               <div
                 key={med.id}
-                className="flex items-center justify-between p-3 rounded-md border bg-muted/30"
+                className="space-y-2"
               >
-                <div className="flex items-center gap-2">
-                  <Pill className="text-primary" size={16} />
-                  <span>{med.name}</span>
+                <div className="flex items-center justify-between p-3 rounded-md border bg-muted/30">
+                  <div className="flex items-center gap-2">
+                    <Pill className="text-primary" size={16} />
+                    <span>{med.name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleToggleTaken(med.id)}
+                      className={`tap-button w-9 h-9 flex items-center justify-center ${
+                        med.taken ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'
+                      }`}
+                    >
+                      {med.taken ? <Check size={16} /> : null}
+                    </button>
+                    <button
+                      onClick={() => handleEditNote(med.id, med.note || '')}
+                      className="tap-button w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground"
+                    >
+                      <Edit3 size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleRemoveMedication(med.id)}
+                      className="tap-button w-9 h-9 flex items-center justify-center hover:text-destructive"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleToggleTaken(med.id)}
-                    className={`tap-button w-9 h-9 flex items-center justify-center ${
-                      med.taken ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    {med.taken ? <Check size={16} /> : null}
-                  </button>
-                  <button
-                    onClick={() => handleRemoveMedication(med.id)}
-                    className="tap-button w-9 h-9 flex items-center justify-center hover:text-destructive"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
+                
+                {editingNoteId === med.id ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      value={tempNote}
+                      onChange={(e) => setTempNote(e.target.value)}
+                      placeholder="Add a note about this medication..."
+                      className="resize-none text-sm"
+                      rows={2}
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleSaveNote(med.id)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={handleCancelNoteEdit}
+                        size="sm"
+                        variant="ghost"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : med.note && (
+                  <div className="pl-6 text-sm text-muted-foreground bg-muted/20 p-2 rounded">
+                    {med.note}
+                  </div>
+                )}
               </div>
             ))
           )}

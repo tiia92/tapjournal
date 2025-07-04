@@ -336,6 +336,22 @@ const Index = () => {
           />
         </div>
         
+        <SymptomTracker 
+          painLevel={entry.painLevel}
+          energyLevel={entry.energyLevel}
+          hasFever={entry.hasFever}
+          hasCoughSneezing={entry.hasCoughSneezing}
+          hasNausea={entry.hasNausea}
+          otherSymptoms={entry.otherSymptoms}
+          onChange={handleUpdateSymptom}
+        />
+
+        <MedicationTracker 
+          medications={entry.medications}
+          previousMedications={allMedicationNames}
+          onChange={(medications) => handleUpdateField('medications', medications)}
+        />
+
         <div className="grid grid-cols-1 gap-4">
           <TaskTracker
             tasks={entry.chores || []}
@@ -359,22 +375,6 @@ const Index = () => {
             label="Work Tasks"
           />
         </div>
-
-        <SymptomTracker 
-          painLevel={entry.painLevel}
-          energyLevel={entry.energyLevel}
-          hasFever={entry.hasFever}
-          hasCoughSneezing={entry.hasCoughSneezing}
-          hasNausea={entry.hasNausea}
-          otherSymptoms={entry.otherSymptoms}
-          onChange={handleUpdateSymptom}
-        />
-
-        <MedicationTracker 
-          medications={entry.medications}
-          previousMedications={allMedicationNames}
-          onChange={(medications) => handleUpdateField('medications', medications)}
-        />
         
         {isPremium && (
           <SmartGoalTracker entryId={entry.id} />
