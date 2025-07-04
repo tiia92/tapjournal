@@ -44,6 +44,7 @@ export type JournalEntry = {
   selfCareNote?: string;
   selfCareMinutes?: number;
   notes: string;
+  medicationNote?: string;
   audioNotes?: string; // For premium voice journaling
   audioTranscription?: string; // For premium voice transcription
   images?: string[]; // For premium image journaling
@@ -100,6 +101,7 @@ const defaultEntry: Omit<JournalEntry, 'id' | 'date'> = {
   selfCareNote: '',
   selfCareMinutes: 0,
   notes: '',
+  medicationNote: '',
   audioNotes: '',
   audioTranscription: '',
   images: [],

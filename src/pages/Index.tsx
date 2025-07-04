@@ -58,6 +58,7 @@ const Index = () => {
   const [selfCareNote, setSelfCareNote] = useState('');
   const [waterNote, setWaterNote] = useState('');
   const [sleepNote, setSleepNote] = useState('');
+  const [medicationNote, setMedicationNote] = useState('');
 
   useEffect(() => {
     // Check if we're navigating from calendar with a selected date
@@ -82,6 +83,7 @@ const Index = () => {
       setSelfCareNote(existingEntry.selfCareNote || '');
       setWaterNote(existingEntry.waterNote || '');
       setSleepNote(existingEntry.sleepNote || '');
+      setMedicationNote(existingEntry.medicationNote || '');
     } else {
       console.log('No entry found for date:', currentDate);
       setEntry(null);
@@ -91,6 +93,7 @@ const Index = () => {
       setSelfCareNote('');
       setWaterNote('');
       setSleepNote('');
+      setMedicationNote('');
     }
     
     setAllMedicationNames(getAllMedicationNames());
@@ -135,6 +138,7 @@ const Index = () => {
         hasCoughSneezing: false,
         hasNausea: false,
         otherSymptoms: '',
+        medicationNote: '',
       };
       
       addEntry(newEntry);
@@ -150,6 +154,7 @@ const Index = () => {
     setSelfCareNote(newEntry.selfCareNote || '');
     setWaterNote(newEntry.waterNote || '');
     setSleepNote(newEntry.sleepNote || '');
+    setMedicationNote(newEntry.medicationNote || '');
     setIsEditing(true);
   };
 
@@ -203,7 +208,8 @@ const Index = () => {
       exercisesNote,
       selfCareNote,
       waterNote,
-      sleepNote
+      sleepNote,
+      medicationNote
     };
     
     updateEntry(updatedEntry);
@@ -214,7 +220,7 @@ const Index = () => {
     navigate('/journal');
   };
   
-  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote' | 'waterNote' | 'sleepNote', value: string) => {
+  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote' | 'waterNote' | 'sleepNote' | 'medicationNote', value: string) => {
     if (!entry) return;
     
     if (category === 'moodNote') {
@@ -227,6 +233,8 @@ const Index = () => {
       setWaterNote(value);
     } else if (category === 'sleepNote') {
       setSleepNote(value);
+    } else if (category === 'medicationNote') {
+      setMedicationNote(value);
     }
     
     const updatedEntry = {
@@ -350,6 +358,8 @@ const Index = () => {
           medications={entry.medications}
           previousMedications={allMedicationNames}
           onChange={(medications) => handleUpdateField('medications', medications)}
+          onNoteChange={(note) => handleUpdateCategoryNote('medicationNote', note)}
+          note={medicationNote}
         />
 
         <div className="grid grid-cols-1 gap-4">
@@ -437,6 +447,24 @@ const Index = () => {
                 entryId={entry.id} 
                 attachments={entry.attachments} 
               />
+            </div>
+          )}
+          
+          {entry.attachments && entry.attachments.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2">Attached Photos:</p>
+              <div className="flex gap-2 flex-wrap">
+                {entry.attachments.map((attachmentUrl, index) => (
+                  <div key={index} className="relative">
+                    <img 
+                      src={attachmentUrl} 
+                      alt={`Attachment ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded-lg border border-border cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => window.open(attachmentUrl, '_blank')}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
