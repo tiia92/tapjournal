@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instanciate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "12.2.3 (519615d)"
+  }
   public: {
     Tables: {
       admin_settings: {
@@ -30,6 +35,120 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_users: {
+        Row: {
+          can_manage_analytics: boolean | null
+          can_manage_beta_access: boolean | null
+          can_manage_employers: boolean | null
+          can_manage_jobs: boolean | null
+          created_at: string | null
+          id: string
+          is_super_admin: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          can_manage_analytics?: boolean | null
+          can_manage_beta_access?: boolean | null
+          can_manage_employers?: boolean | null
+          can_manage_jobs?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_super_admin?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          can_manage_analytics?: boolean | null
+          can_manage_beta_access?: boolean | null
+          can_manage_employers?: boolean | null
+          can_manage_jobs?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_super_admin?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      beta_access_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string | null
+          current_uses: number | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          max_uses: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          current_uses?: number | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          current_uses?: number | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_uses?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      beta_access_redemptions: {
+        Row: {
+          beta_code_id: string
+          employer_org_id: string | null
+          id: string
+          redeemed_at: string | null
+          user_id: string
+        }
+        Insert: {
+          beta_code_id: string
+          employer_org_id?: string | null
+          id?: string
+          redeemed_at?: string | null
+          user_id: string
+        }
+        Update: {
+          beta_code_id?: string
+          employer_org_id?: string | null
+          id?: string
+          redeemed_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "beta_access_redemptions_beta_code_id_fkey"
+            columns: ["beta_code_id"]
+            isOneToOne: false
+            referencedRelation: "beta_access_codes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "beta_access_redemptions_employer_org_id_fkey"
+            columns: ["employer_org_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       business_reporting_waitlist: {
         Row: {
           created_at: string | null
@@ -48,6 +167,184 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      employer_blog_posts: {
+        Row: {
+          content: string
+          created_at: string
+          employer_id: string
+          id: string
+          is_paid: boolean | null
+          payment_id: string | null
+          published_at: string | null
+          slug: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          employer_id: string
+          id?: string
+          is_paid?: boolean | null
+          payment_id?: string | null
+          published_at?: string | null
+          slug: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          employer_id?: string
+          id?: string
+          is_paid?: boolean | null
+          payment_id?: string | null
+          published_at?: string | null
+          slug?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employer_blog_posts_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employer_organizations: {
+        Row: {
+          beta_access_code: string | null
+          created_at: string
+          founding_member_expires_at: string | null
+          id: string
+          is_founding_member: boolean | null
+          linkedin_page: string | null
+          organization_description: string | null
+          organization_email: string
+          organization_name: string
+          remote_work_status: string
+          social_media_links: Json | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+          workplace_benefits: string | null
+        }
+        Insert: {
+          beta_access_code?: string | null
+          created_at?: string
+          founding_member_expires_at?: string | null
+          id?: string
+          is_founding_member?: boolean | null
+          linkedin_page?: string | null
+          organization_description?: string | null
+          organization_email: string
+          organization_name: string
+          remote_work_status: string
+          social_media_links?: Json | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+          workplace_benefits?: string | null
+        }
+        Update: {
+          beta_access_code?: string | null
+          created_at?: string
+          founding_member_expires_at?: string | null
+          id?: string
+          is_founding_member?: boolean | null
+          linkedin_page?: string | null
+          organization_description?: string | null
+          organization_email?: string
+          organization_name?: string
+          remote_work_status?: string
+          social_media_links?: Json | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
+          workplace_benefits?: string | null
+        }
+        Relationships: []
+      }
+      employer_subscriptions: {
+        Row: {
+          created_at: string
+          employer_id: string
+          expires_at: string | null
+          id: string
+          plan_type: string
+          starts_at: string
+          status: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employer_id: string
+          expires_at?: string | null
+          id?: string
+          plan_type: string
+          starts_at?: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employer_id?: string
+          expires_at?: string | null
+          id?: string
+          plan_type?: string
+          starts_at?: string
+          status?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employer_subscriptions_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employer_waitlist: {
+        Row: {
+          contact_email: string
+          contact_name: string
+          created_at: string
+          id: string
+          organization_name: string
+          organization_website: string | null
+          status: string | null
+        }
+        Insert: {
+          contact_email: string
+          contact_name: string
+          created_at?: string
+          id?: string
+          organization_name: string
+          organization_website?: string | null
+          status?: string | null
+        }
+        Update: {
+          contact_email?: string
+          contact_name?: string
+          created_at?: string
+          id?: string
+          organization_name?: string
+          organization_website?: string | null
+          status?: string | null
         }
         Relationships: []
       }
@@ -87,6 +384,283 @@ export type Database = {
         }
         Relationships: []
       }
+      job_analytics: {
+        Row: {
+          country: string | null
+          created_at: string
+          device_type: string | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          job_submission_id: string
+          referrer: string | null
+          timezone: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          job_submission_id: string
+          referrer?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          device_type?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          job_submission_id?: string
+          referrer?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_analytics_job_submission_id_fkey"
+            columns: ["job_submission_id"]
+            isOneToOne: false
+            referencedRelation: "job_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_submissions: {
+        Row: {
+          application_email: string | null
+          application_link: string | null
+          application_method: string
+          approved_at: string | null
+          approved_by: string | null
+          cause_area: string | null
+          created_at: string
+          employer_id: string
+          featured_until: string | null
+          id: string
+          is_paid: boolean | null
+          job_description: string
+          job_level: string
+          job_title: string
+          job_type: string
+          location: string
+          payment_id: string | null
+          salary_range: string | null
+          status: string | null
+          updated_at: string
+          wfh_location: string | null
+          wfh_option: string
+        }
+        Insert: {
+          application_email?: string | null
+          application_link?: string | null
+          application_method: string
+          approved_at?: string | null
+          approved_by?: string | null
+          cause_area?: string | null
+          created_at?: string
+          employer_id: string
+          featured_until?: string | null
+          id?: string
+          is_paid?: boolean | null
+          job_description: string
+          job_level: string
+          job_title: string
+          job_type: string
+          location: string
+          payment_id?: string | null
+          salary_range?: string | null
+          status?: string | null
+          updated_at?: string
+          wfh_location?: string | null
+          wfh_option: string
+        }
+        Update: {
+          application_email?: string | null
+          application_link?: string | null
+          application_method?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          cause_area?: string | null
+          created_at?: string
+          employer_id?: string
+          featured_until?: string | null
+          id?: string
+          is_paid?: boolean | null
+          job_description?: string
+          job_level?: string
+          job_title?: string
+          job_type?: string
+          location?: string
+          payment_id?: string | null
+          salary_range?: string | null
+          status?: string | null
+          updated_at?: string
+          wfh_location?: string | null
+          wfh_option?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_submissions_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_entries: {
+        Row: {
+          activity_note: string | null
+          attachments: Json | null
+          created_at: string | null
+          date: string
+          exercise_minutes: number | null
+          id: string
+          medication_note: string | null
+          medications: Json | null
+          mood_note: string | null
+          mood_rating: number | null
+          sleep_hours: number | null
+          symptoms: Json | null
+          tasks: Json | null
+          updated_at: string | null
+          user_id: string
+          water_intake: number | null
+        }
+        Insert: {
+          activity_note?: string | null
+          attachments?: Json | null
+          created_at?: string | null
+          date: string
+          exercise_minutes?: number | null
+          id?: string
+          medication_note?: string | null
+          medications?: Json | null
+          mood_note?: string | null
+          mood_rating?: number | null
+          sleep_hours?: number | null
+          symptoms?: Json | null
+          tasks?: Json | null
+          updated_at?: string | null
+          user_id: string
+          water_intake?: number | null
+        }
+        Update: {
+          activity_note?: string | null
+          attachments?: Json | null
+          created_at?: string | null
+          date?: string
+          exercise_minutes?: number | null
+          id?: string
+          medication_note?: string | null
+          medications?: Json | null
+          mood_note?: string | null
+          mood_rating?: number | null
+          sleep_hours?: number | null
+          symptoms?: Json | null
+          tasks?: Json | null
+          updated_at?: string | null
+          user_id?: string
+          water_intake?: number | null
+        }
+        Relationships: []
+      }
+      non_job_opportunities: {
+        Row: {
+          created_at: string
+          description: string | null
+          employer_id: string
+          external_link: string | null
+          id: string
+          job_submission_id: string | null
+          opportunity_type: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          employer_id: string
+          external_link?: string | null
+          id?: string
+          job_submission_id?: string | null
+          opportunity_type: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          employer_id?: string
+          external_link?: string | null
+          id?: string
+          job_submission_id?: string | null
+          opportunity_type?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "non_job_opportunities_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "non_job_opportunities_job_submission_id_fkey"
+            columns: ["job_submission_id"]
+            isOneToOne: false
+            referencedRelation: "job_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      premium_plus_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          payment_status: string | null
+          phone: string | null
+          stripe_session_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          payment_status?: string | null
+          phone?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          payment_status?: string | null
+          phone?: string | null
+          stripe_session_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       premium_waitlist: {
         Row: {
           created_at: string
@@ -120,6 +694,27 @@ export type Database = {
           stripe_customer_id?: string | null
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id: string
+          name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -370,6 +965,7 @@ export type Database = {
           created_at: string
           date_posted: string | null
           description: string | null
+          featured: string | null
           how_to_apply: string | null
           id: number
           job_level: string | null
@@ -386,6 +982,7 @@ export type Database = {
           created_at?: string
           date_posted?: string | null
           description?: string | null
+          featured?: string | null
           how_to_apply?: string | null
           id?: number
           job_level?: string | null
@@ -402,6 +999,7 @@ export type Database = {
           created_at?: string
           date_posted?: string | null
           description?: string | null
+          featured?: string | null
           how_to_apply?: string | null
           id?: number
           job_level?: string | null
@@ -523,6 +1121,10 @@ export type Database = {
         Args: { email: string }
         Returns: boolean
       }
+      redeem_beta_access: {
+        Args: { code_text: string }
+        Returns: Json
+      }
       redeem_promo_code: {
         Args: { user_id: string; code: string }
         Returns: Json
@@ -541,21 +1143,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -573,14 +1179,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -596,14 +1204,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -619,14 +1229,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -634,14 +1246,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

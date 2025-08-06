@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/input';
@@ -13,8 +13,15 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signup } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,13 +44,13 @@ const Signup = () => {
     setIsLoading(true);
     
     try {
-      const success = await signup(name, email, password);
+      const { error } = await signup(name, email, password);
       
-      if (success) {
-        toast.success('Account created successfully');
-        navigate('/');
+      if (error) {
+        toast.error(error);
       } else {
-        toast.error('Email already in use');
+        toast.success('Account created successfully! Please check your email to verify your account.');
+        // Don't navigate immediately - let them verify email first
       }
     } catch (error) {
       toast.error('An error occurred during signup');
@@ -77,6 +84,7 @@ const Signup = () => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
                 disabled={isLoading}
+                required
               />
             </div>
             
@@ -94,6 +102,7 @@ const Signup = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 disabled={isLoading}
+                required
               />
             </div>
             
@@ -109,8 +118,10 @@ const Signup = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a password"
+                placeholder="Create a password (min 6 characters)"
                 disabled={isLoading}
+                required
+                minLength={6}
               />
             </div>
 
@@ -128,6 +139,7 @@ const Signup = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm your password"
                 disabled={isLoading}
+                required
               />
             </div>
             

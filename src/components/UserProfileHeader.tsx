@@ -10,8 +10,8 @@ const UserProfileHeader: React.FC = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 

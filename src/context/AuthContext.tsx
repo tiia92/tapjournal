@@ -1,5 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 // Define user types
 export type User = {
@@ -11,105 +13,145 @@ export type User = {
 
 type AuthContextType = {
   user: User | null;
+  session: Session | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<{ error?: string }>;
+  signup: (name: string, email: string, password: string) => Promise<{ error?: string }>;
+  logout: () => Promise<void>;
   upgradeAccount: () => void;
+  loading: boolean;
 };
-
-// Mock users database
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'demo@example.com',
-    password: 'password123',
-    name: 'Demo User',
-    isPremium: true, // Changed back to true for premium access
-  },
-];
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Check for stored user on initial load
-  useEffect(() => {
-    const storedUser = localStorage.getItem('tapjournal_user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-      setIsAuthenticated(true);
+  // Transform Supabase user to our User type
+  const transformUser = (supabaseUser: SupabaseUser, profile?: any): User => {
+    return {
+      id: supabaseUser.id,
+      email: supabaseUser.email || '',
+      name: profile?.name || supabaseUser.user_metadata?.name || 'User',
+      isPremium: false, // Will be determined by subscription logic later
+    };
+  };
+
+  // Fetch user profile from profiles table
+  const fetchUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+        console.error('Error fetching profile:', error);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+      return null;
     }
+  };
+
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.id);
+        setSession(session);
+        
+        if (session?.user) {
+          // Defer profile fetching to avoid deadlock
+          setTimeout(async () => {
+            const profile = await fetchUserProfile(session.user.id);
+            const transformedUser = transformUser(session.user, profile);
+            setUser(transformedUser);
+            setIsAuthenticated(true);
+            setLoading(false);
+          }, 0);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+          setLoading(false);
+        }
+      }
+    );
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchUserProfile(session.user.id).then((profile) => {
+          const transformedUser = transformUser(session.user, profile);
+          setUser(transformedUser);
+          setSession(session);
+          setIsAuthenticated(true);
+          setLoading(false);
+        });
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Find user by email and password
-    const foundUser = MOCK_USERS.find(u => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const { password, ...userWithoutPassword } = foundUser;
-      setUser(userWithoutPassword);
-      setIsAuthenticated(true);
-      localStorage.setItem('tapjournal_user', JSON.stringify(userWithoutPassword));
-      return true;
+  const login = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'An error occurred during login' };
     }
-    
-    return false;
   };
 
-  const signup = async (name: string, email: string, password: string): Promise<boolean> => {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Check if email already exists
-    if (MOCK_USERS.some(u => u.email === email)) {
-      return false;
+  const signup = async (name: string, email: string, password: string) => {
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name
+          }
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'An error occurred during signup' };
     }
-    
-    // Create new user
-    const newUser = {
-      id: Math.random().toString(36).substring(2, 9),
-      email,
-      password,
-      name,
-      isPremium: false,
-    };
-    
-    // Add to mock database
-    MOCK_USERS.push(newUser);
-    
-    // Log in the user
-    const { password: _, ...userWithoutPassword } = newUser;
-    setUser(userWithoutPassword);
-    setIsAuthenticated(true);
-    localStorage.setItem('tapjournal_user', JSON.stringify(userWithoutPassword));
-    
-    return true;
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('tapjournal_user');
+  const logout = async () => {
+    await supabase.auth.signOut();
   };
 
   const upgradeAccount = () => {
     if (user) {
-      const upgradedUser = { ...user, isPremium: !user.isPremium }; // Toggle premium status
+      const upgradedUser = { ...user, isPremium: !user.isPremium };
       setUser(upgradedUser);
-      localStorage.setItem('tapjournal_user', JSON.stringify(upgradedUser));
-      
-      // Update mock database
-      const userIndex = MOCK_USERS.findIndex(u => u.id === user.id);
-      if (userIndex !== -1) {
-        MOCK_USERS[userIndex] = { ...MOCK_USERS[userIndex], isPremium: upgradedUser.isPremium };
-      }
     }
   };
 
@@ -117,11 +159,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider
       value={{
         user,
+        session,
         isAuthenticated,
         login,
         signup,
         logout,
         upgradeAccount,
+        loading,
       }}
     >
       {children}

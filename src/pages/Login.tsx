@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Input } from '@/components/ui/input';
@@ -12,8 +12,15 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +33,13 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const success = await login(email, password);
+      const { error } = await login(email, password);
       
-      if (success) {
+      if (error) {
+        toast.error(error);
+      } else {
         toast.success('Login successful');
         navigate('/');
-      } else {
-        toast.error('Invalid email or password');
       }
     } catch (error) {
       toast.error('An error occurred during login');
@@ -66,6 +73,7 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 disabled={isLoading}
+                required
               />
             </div>
             
@@ -86,6 +94,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
                 disabled={isLoading}
+                required
               />
             </div>
             
@@ -113,10 +122,6 @@ const Login = () => {
                 <Link to="/signup" className="text-primary ml-1 hover:underline">
                   Sign up
                 </Link>
-              </p>
-              
-              <p className="text-xs text-muted-foreground mt-4">
-                Demo credentials: demo@example.com / password123
               </p>
             </div>
           </form>
