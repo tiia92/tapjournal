@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -90,42 +91,42 @@ const Calendar = () => {
   
   return (
     <Layout>
-      <div className="mb-6">
-        <h2 className="text-2xl font-medium mb-2">Calendar View</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-medium mb-2">Calendar View</h2>
+        <p className="text-sm md:text-base text-muted-foreground">
           View your wellness journey by month
         </p>
       </div>
       
-      <div className="glass-panel p-4">
-        <div className="flex items-center justify-between mb-6">
+      <div className="glass-panel p-4 md:p-6">
+        <div className="flex items-center justify-between mb-4 md:mb-6">
           <button 
             onClick={handlePreviousMonth}
-            className="tap-button w-9 h-9 rounded-full"
+            className="tap-button w-11 h-11 md:w-9 md:h-9 rounded-full"
             aria-label="Previous month"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={20} />
           </button>
           
-          <h3 className="text-lg font-medium">
+          <h3 className="text-base md:text-lg font-medium">
             {format(currentDate, 'MMMM yyyy')}
           </h3>
           
           <button 
             onClick={handleNextMonth}
-            className={`tap-button w-9 h-9 rounded-full ${
+            className={`tap-button w-11 h-11 md:w-9 md:h-9 rounded-full ${
               isSameMonth(currentDate, new Date()) ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             disabled={isSameMonth(currentDate, new Date())}
             aria-label="Next month"
           >
-            <ChevronRight size={18} />
+            <ChevronRight size={20} />
           </button>
         </div>
         
         <div className="grid grid-cols-7 gap-1 mb-2">
           {daysOfWeek.map(day => (
-            <div key={day} className="text-xs font-medium text-center text-muted-foreground py-1">
+            <div key={day} className="text-xs font-medium text-center text-muted-foreground py-2">
               {day}
             </div>
           ))}
@@ -149,27 +150,27 @@ const Calendar = () => {
                 onClick={() => !isFutureDate && handleDateClick(day)}
                 className={`
                   aspect-square flex flex-col items-center justify-center rounded-lg text-sm
-                  transition-all cursor-pointer relative
+                  transition-all cursor-pointer relative min-h-[48px]
                   ${isToday(day) ? 'bg-primary/10 font-medium' : entry ? 'bg-secondary/50 hover:bg-secondary' : 'hover:bg-secondary/30'}
                   ${isFutureDate ? 'opacity-30 cursor-not-allowed' : ''}
                 `}
               >
-                <span className={`${isToday(day) ? 'text-primary font-medium' : ''}`}>
+                <span className={`${isToday(day) ? 'text-primary font-medium' : ''} mb-1`}>
                   {format(day, 'd')}
                 </span>
                 
                 {moodEmoji && (
-                  <span className="text-base mt-1">{moodEmoji}</span>
+                  <span className="text-sm md:text-base">{moodEmoji}</span>
                 )}
                 
                 {hasAttachment && (
-                  <div className="flex items-center justify-center mt-1">
-                    <Image size={14} className="text-blue-500" />
+                  <div className="flex items-center justify-center">
+                    <Image size={12} className="text-blue-500" />
                   </div>
                 )}
                 
                 {entry && !moodEmoji && !hasAttachment && (
-                  <div className="w-1.5 h-1.5 bg-primary rounded-full mt-1"></div>
+                  <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                 )}
               </div>
             );
@@ -177,17 +178,17 @@ const Calendar = () => {
         </div>
       </div>
       
-      <div className="mt-8">
-        <div className="bg-secondary/50 rounded-xl p-4 text-center animate-fade-in">
+      <div className="mt-6 md:mt-8">
+        <div className="bg-secondary/50 rounded-xl p-4 md:p-6 text-center animate-fade-in">
           <h3 className="font-medium mb-2">Start Tracking Today</h3>
           <p className="text-muted-foreground text-sm mb-4">
             Create a new entry to track your wellness journey
           </p>
           <button
             onClick={handleCreateTodayEntry}
-            className="tap-button py-2 px-4 bg-primary text-primary-foreground inline-flex items-center"
+            className="tap-button py-3 px-6 bg-primary text-primary-foreground inline-flex items-center rounded-lg font-medium w-full md:w-auto"
           >
-            <Plus size={16} className="mr-1" />
+            <Plus size={16} className="mr-2" />
             New Entry
           </button>
         </div>

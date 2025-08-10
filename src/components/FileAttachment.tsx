@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useJournal } from '@/context/JournalContext';
-import { Paperclip, X, FileText, Image, File } from 'lucide-react';
+import { Paperclip, X, FileText, Image, File, Camera } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
@@ -94,10 +94,10 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
         {attachments.map((url, index) => (
           <div 
             key={index} 
-            className="flex items-center justify-between p-2 bg-muted/30 rounded-md"
+            className="flex items-center justify-between p-3 bg-muted/30 rounded-md"
           >
             <button 
-              className="flex items-center gap-2 text-sm text-left flex-grow"
+              className="flex items-center gap-2 text-sm text-left flex-grow min-h-[44px]"
               onClick={() => openAttachment(url)}
             >
               {getFileIcon(url)}
@@ -105,9 +105,10 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
             </button>
             <button 
               onClick={() => handleRemoveAttachment(url)}
-              className="p-1 hover:bg-muted rounded-full"
+              className="p-2 hover:bg-muted rounded-full min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Remove attachment"
             >
-              <X size={14} />
+              <X size={16} />
             </button>
           </div>
         ))}
@@ -116,16 +117,31 @@ const FileAttachment: React.FC<FileAttachmentProps> = ({ entryId, attachments = 
           <p className="text-sm text-muted-foreground italic">No attachments</p>
         )}
         
-        <label className="mt-2 cursor-pointer flex items-center justify-center w-full py-2 bg-muted/50 hover:bg-muted rounded-md transition-colors">
-          <input 
-            type="file" 
-            className="hidden"
-            onChange={handleFileChange}
-            disabled={isUploading}
-          />
-          <Paperclip size={16} className="mr-2" />
-          <span className="text-sm">{isUploading ? 'Uploading...' : 'Add attachment'}</span>
-        </label>
+        <div className="flex gap-2">
+          <label className="cursor-pointer flex items-center justify-center flex-1 py-3 bg-muted/50 hover:bg-muted rounded-md transition-colors min-h-[44px]">
+            <input 
+              type="file" 
+              className="hidden"
+              onChange={handleFileChange}
+              disabled={isUploading}
+              accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"
+            />
+            <Paperclip size={16} className="mr-2" />
+            <span className="text-sm">{isUploading ? 'Uploading...' : 'Add File'}</span>
+          </label>
+          
+          <label className="cursor-pointer flex items-center justify-center py-3 px-4 bg-muted/50 hover:bg-muted rounded-md transition-colors min-h-[44px]">
+            <input 
+              type="file" 
+              className="hidden"
+              onChange={handleFileChange}
+              disabled={isUploading}
+              accept="image/*"
+              capture="environment"
+            />
+            <Camera size={16} />
+          </label>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Layout from '@/components/Layout';
-import InsightsChart from '@/components/premium/InsightsChart';
+import ScrollableCharts from '@/components/ScrollableCharts';
 import PremiumUpgrade from '@/components/PremiumUpgrade';
 import { useAuth } from '@/context/AuthContext';
 import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
@@ -16,11 +16,62 @@ const Journal = () => {
     toast.info("Coming soon!");
   };
 
+  const chartConfigs = [
+    {
+      title: "Water Intake Trends",
+      description: "Track your hydration habits over time",
+      chartType: "water",
+      color: "#0EA5E9"
+    },
+    {
+      title: "Sleep Patterns",
+      description: "Analyze your sleep duration and consistency",
+      chartType: "sleep",
+      color: "#8B5CF6"
+    },
+    {
+      title: "Mood Analysis",
+      description: "Understand patterns in your emotional wellbeing",
+      chartType: "mood",
+      color: "#10B981"
+    },
+    {
+      title: "Exercise Minutes",
+      description: "Track your daily exercise duration",
+      chartType: "exercise",
+      color: "#F59E0B"
+    },
+    {
+      title: "Self-Care Minutes",
+      description: "See how much time you dedicate to self-care",
+      chartType: "selfcare",
+      color: "#EC4899"
+    },
+    {
+      title: "Pain Level Tracking",
+      description: "Monitor your pain levels over time",
+      chartType: "pain",
+      color: "#F97316"
+    },
+    {
+      title: "Energy Level Tracking",
+      description: "See changes in your energy levels",
+      chartType: "energy",
+      color: "#64748B"
+    },
+    {
+      title: "Medication Adherence",
+      description: "Track how consistently you take your medications",
+      chartType: "medication",
+      color: "#EC4899"
+    }
+  ];
+
   return (
     <Layout>
-      <div className="mb-6">
-        <h2 className="text-2xl font-medium mb-2">Insights</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-4 md:mb-6">
+        <h2 className="text-xl md:text-2xl font-medium mb-2">Insights</h2>
+        <p className="text-sm md:text-base text-muted-foreground">
           Review your wellness journey
         </p>
       </div>
@@ -32,76 +83,19 @@ const Journal = () => {
         </div>
       )}
 
-      {/* Insights for all users */}
-      <div className="space-y-6">
-        <InsightsChart 
-          title="Water Intake Trends" 
-          description="Track your hydration habits over time"
-          chartType="water"
-          color="#0EA5E9"
-        />
-        
-        <InsightsChart 
-          title="Sleep Patterns" 
-          description="Analyze your sleep duration and consistency"
-          chartType="sleep"
-          color="#8B5CF6"
-        />
-        
-        <InsightsChart 
-          title="Mood Analysis" 
-          description="Understand patterns in your emotional wellbeing"
-          chartType="mood"
-          color="#10B981"
-        />
-        
-        <InsightsChart 
-          title="Exercise Minutes" 
-          description="Track your daily exercise duration"
-          chartType="exercise"
-          color="#F59E0B"
-        />
-        
-        <InsightsChart 
-          title="Self-Care Minutes" 
-          description="See how much time you dedicate to self-care"
-          chartType="selfcare"
-          color="#EC4899"
-        />
-        
-        {/* Additional charts - also available to free users */}
-        <InsightsChart 
-          title="Pain Level Tracking" 
-          description="Monitor your pain levels over time"
-          chartType="pain"
-          color="#F97316"
-        />
-        
-        <InsightsChart 
-          title="Energy Level Tracking" 
-          description="See changes in your energy levels"
-          chartType="energy"
-          color="#64748B"
-        />
-        
-        <InsightsChart 
-          title="Medication Adherence" 
-          description="Track how consistently you take your medications"
-          chartType="medication"
-          color="#EC4899"
-        />
-        
-        {/* Premium features */}
-        {isPremium && (
-          <>
-            <SmartGoalTracker isInsightsPage={true} />
-            
-            <div onClick={handleComingSoon} className="cursor-pointer">
-              <WellnessPrograms />
-            </div>
-          </>
-        )}
-      </div>
+      {/* Scrollable Charts */}
+      <ScrollableCharts charts={chartConfigs} />
+
+      {/* Premium features */}
+      {isPremium && (
+        <div className="space-y-6">
+          <SmartGoalTracker isInsightsPage={true} />
+          
+          <div onClick={handleComingSoon} className="cursor-pointer">
+            <WellnessPrograms />
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };

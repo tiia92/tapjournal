@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight, LogOut } from 'lucide-react';
 import Logo from '@/components/Logo';
+import MobileNav from '@/components/MobileNav';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
@@ -39,13 +40,15 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border shadow-sm bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="border-b border-border shadow-sm bg-card safe-top">
+        <div className="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
           <div className="flex items-center">
             <Logo size="medium" />
-            <h1 className="text-2xl font-bold ml-2">TapJournal</h1>
+            <h1 className="text-xl md:text-2xl font-bold ml-2">TapJournal</h1>
           </div>
-          <div className="space-x-4">
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex space-x-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
@@ -65,14 +68,17 @@ const LandingPage = () => {
               </>
             )}
           </div>
+          
+          {/* Mobile Navigation */}
+          <MobileNav />
         </div>
       </header>
 
       <main className="container mx-auto px-4">
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between py-16 md:py-24">
-          <div className="md:w-1/2 mb-10 md:mb-0">
-            <h2 className="text-4xl md:text-5xl font-bold mb-2">
+        <div className="flex flex-col md:flex-row items-center justify-between py-12 md:py-16 lg:py-24">
+          <div className="w-full md:w-1/2 mb-8 md:mb-0">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
               Track your{' '}
               <span 
                 className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
@@ -80,33 +86,33 @@ const LandingPage = () => {
                 {words[activeWord].text}
               </span>
             </h2>
-            <p className="text-4xl md:text-5xl font-bold mb-6">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
               one tap at a time
             </p>
-            <p className="text-xl text-muted-foreground mb-8">
+            <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">
               TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
-            <div className="space-x-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               {isAuthenticated ? (
-                <Button size="lg" onClick={() => navigate('/dashboard')}>
+                <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/dashboard')}>
                   Go to Journal
                   <ArrowRight className="ml-2" size={18} />
                 </Button>
               ) : (
                 <>
-                  <Button size="lg" onClick={() => navigate('/signup')}>
+                  <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/signup')}>
                     Get Started
                     <ArrowRight className="ml-2" size={18} />
                   </Button>
-                  <Button size="lg" variant="outline" onClick={() => navigate('/login')}>
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/login')}>
                     Log In
                   </Button>
                 </>
               )}
             </div>
           </div>
-          <div className="md:w-1/2 flex justify-center">
-            <div className="rounded-lg overflow-hidden shadow-lg">
+          <div className="w-full md:w-1/2 flex justify-center">
+            <div className="rounded-lg overflow-hidden shadow-lg max-w-md md:max-w-none">
               <img 
                 src="/lovable-uploads/9367920c-5252-4e6a-8580-7837623b79f2.png" 
                 alt="Journal with phone and laptop" 
@@ -117,9 +123,9 @@ const LandingPage = () => {
         </div>
 
         {/* Features Section */}
-        <div className="py-16 border-t border-border">
-          <h2 className="text-3xl font-bold mb-12 text-center">Key Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="py-12 md:py-16 border-t border-border">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center">Key Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
             <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
@@ -190,18 +196,18 @@ const LandingPage = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-16 border-t border-border mb-16 text-center">
-          <h2 className="text-3xl font-bold mb-6">Start your wellness journey today</h2>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <div className="py-12 md:py-16 border-t border-border mb-12 md:mb-16 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Start your wellness journey today</h2>
+          <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
             Join thousands of users who are taking control of their health one day at a time.
           </p>
           {isAuthenticated ? (
-            <Button size="lg" onClick={() => navigate('/dashboard')}>
+            <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/dashboard')}>
               Go to Journal
               <ArrowRight className="ml-2" size={18} />
             </Button>
           ) : (
-            <Button size="lg" onClick={() => navigate('/signup')}>
+            <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/signup')}>
               Sign Up for Free
               <ArrowRight className="ml-2" size={18} />
             </Button>
@@ -209,14 +215,14 @@ const LandingPage = () => {
         </div>
       </main>
 
-      <footer className="border-t border-border bg-card py-8">
+      <footer className="border-t border-border bg-card py-6 md:py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0">
               <Logo size="small" />
               <span className="text-lg font-bold ml-2">TapJournal</span>
             </div>
-            <div className="flex gap-6">
+            <div className="flex flex-col md:flex-row gap-4 md:gap-6 text-center md:text-left">
               <a href="/about" className="text-sm hover:text-primary transition-colors">
                 About Us
               </a>

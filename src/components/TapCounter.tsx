@@ -57,7 +57,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
         {onNoteChange && (
           <button
             onClick={() => setShowNote(!showNote)}
-            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs px-3 py-2 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors min-h-[36px]"
           >
             {showNote ? "Hide Note" : "Add Note"}
           </button>
@@ -67,22 +67,24 @@ const TapCounter: React.FC<TapCounterProps> = ({
       <div className="flex items-center justify-between">
         <button 
           onClick={decrement}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/50 hover:bg-secondary text-foreground transition-colors"
+          className="w-12 h-12 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-secondary/50 hover:bg-secondary text-foreground transition-colors disabled:opacity-50"
           disabled={count === 0}
+          aria-label="Decrease count"
         >
-          <Minus size={16} />
+          <Minus size={18} />
         </button>
         
-        <div className={`${color} rounded-full w-14 h-14 flex items-center justify-center text-xl font-semibold`}>
+        <div className={`${color} rounded-full w-16 h-16 md:w-14 md:h-14 flex items-center justify-center text-xl font-semibold`}>
           {count}
         </div>
         
         <button 
           onClick={increment}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-secondary/50 hover:bg-secondary text-foreground transition-colors"
+          className="w-12 h-12 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-secondary/50 hover:bg-secondary text-foreground transition-colors disabled:opacity-50"
           disabled={count === max}
+          aria-label="Increase count"
         >
-          <Plus size={16} />
+          <Plus size={18} />
         </button>
       </div>
       
@@ -92,7 +94,7 @@ const TapCounter: React.FC<TapCounterProps> = ({
             value={note}
             onChange={handleNoteChange}
             placeholder={`Add a note about your ${label.toLowerCase()}...`}
-            className="w-full p-2 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
+            className="w-full p-3 text-sm bg-muted/30 rounded-md resize-none h-20 focus:ring-1 focus:ring-primary focus:outline-none"
             maxLength={100}
           />
           <div className="text-xs text-right text-muted-foreground mt-1">

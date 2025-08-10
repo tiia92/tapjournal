@@ -32,25 +32,25 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <header className="border-b border-border shadow-sm bg-card">
-        <div className="container mx-auto px-4 flex items-center justify-between h-14">
+      <header className="border-b border-border shadow-sm bg-card safe-top">
+        <div className="container mx-auto px-4 flex items-center justify-between h-12 md:h-14">
           <div 
             className="flex items-center cursor-pointer"
             onClick={() => navigate('/')}
           >
             <Logo />
-            <h1 className="text-xl font-bold ml-1">TapJournal</h1>
+            <h1 className="text-lg md:text-xl font-bold ml-1">TapJournal</h1>
           </div>
           <UserProfileHeader />
         </div>
       </header>
       
-      <main className="flex-1 container mx-auto px-4 py-6 mb-16 md:mb-6">
+      <main className="flex-1 container mx-auto px-4 py-4 md:py-6 mb-20 md:mb-6 mobile-scroll">
         {children}
       </main>
       
-      <nav className="fixed bottom-0 w-full border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)] bg-card md:pb-0 pb-5">
-        <div className="container mx-auto px-4 flex items-center justify-between h-14">
+      <nav className="fixed bottom-0 w-full border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)] bg-card/95 backdrop-blur-sm z-50 safe-bottom">
+        <div className="container mx-auto px-2 md:px-4 flex items-center justify-between h-16 md:h-14">
           <button 
             onClick={() => navigate('/dashboard')}
             className={`nav-button ${location.pathname === '/dashboard' ? 'text-primary' : 'text-muted-foreground'}`}

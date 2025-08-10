@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -55,6 +56,58 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Mobile optimizations */
+  html {
+    scroll-behavior: smooth;
+    -webkit-touch-callout: none;
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  /* Safe area utilities for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* Mobile-friendly scrolling */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Chart container for mobile */
+  .chart-scroll {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .chart-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
   }
 }
 
@@ -64,7 +117,7 @@
   }
 
   .tap-button {
-    @apply rounded-md border bg-background hover:bg-accent transition-colors;
+    @apply rounded-md border bg-background hover:bg-accent transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center;
   }
 
   .tap-count-bubble {
@@ -76,7 +129,7 @@
   }
 
   .emoji-item {
-    @apply flex items-center justify-center w-12 h-12 text-2xl rounded-lg border bg-background hover:bg-accent transition-colors;
+    @apply flex items-center justify-center w-12 h-12 text-2xl rounded-lg border bg-background hover:bg-accent transition-colors min-h-[44px] min-w-[44px];
   }
 
   .emoji-item.selected {
@@ -84,6 +137,20 @@
   }
 
   .nav-button {
-    @apply flex flex-col items-center justify-center gap-1 p-2 hover:text-foreground transition-colors;
+    @apply flex flex-col items-center justify-center gap-1 p-2 hover:text-foreground transition-colors min-h-[44px] min-w-[44px] text-sm;
+  }
+  
+  /* Mobile-optimized glass panel */
+  .glass-panel {
+    @apply bg-card/95 backdrop-blur-sm border border-border/50 rounded-xl shadow-sm;
+  }
+  
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
