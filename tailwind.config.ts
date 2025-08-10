@@ -19,8 +19,9 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				display: ['Inter', 'SF Pro Display', 'sans-serif'],
+				sans: ['Outfit', 'Inter', 'sans-serif'],
+				display: ['Outfit', 'Inter', 'SF Pro Display', 'sans-serif'],
+				body: ['Inter', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -70,7 +71,18 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				xl: '1rem',
+				'2xl': '1.5rem',
+				'3xl': '2rem'
+			},
+			spacing: {
+				'18': '4.5rem',
+				'22': '5.5rem',
+			},
+			letterSpacing: {
+				'tighter': '-0.02em',
+				'wide': '0.02em',
 			},
 			keyframes: {
 				'accordion-down': {
@@ -138,7 +150,10 @@ export default {
 			},
 			boxShadow: {
 				'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-				'neo': '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff'
+				'neo': '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff',
+				'soft': '0 2px 12px rgba(0, 0, 0, 0.04)',
+				'elegant': '0 4px 20px rgba(0, 0, 0, 0.08)',
+				'floating': '0 8px 32px rgba(0, 0, 0, 0.12)',
 			},
 			backdropBlur: {
 				'glass': 'blur(10px)'
