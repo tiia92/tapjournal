@@ -17,6 +17,9 @@ type AuthContextType = {
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<{ error?: string }>;
   signup: (name: string, email: string, password: string) => Promise<{ error?: string }>;
+  signInWithGoogle: () => Promise<{ error?: string }>;
+  signInWithGithub: () => Promise<{ error?: string }>;
+  signInWithDiscord: () => Promise<{ error?: string }>;
   logout: () => Promise<void>;
   upgradeAccount: () => void;
   loading: boolean;
@@ -35,7 +38,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return {
       id: supabaseUser.id,
       email: supabaseUser.email || '',
-      name: profile?.name || supabaseUser.user_metadata?.name || 'User',
+      name: profile?.name || supabaseUser.user_metadata?.name || supabaseUser.user_metadata?.full_name || 'User',
       isPremium: false, // Will be determined by subscription logic later
     };
   };
@@ -144,6 +147,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'An error occurred during Google sign-in' };
+    }
+  };
+
+  const signInWithGithub = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'An error occurred during GitHub sign-in' };
+    }
+  };
+
+  const signInWithDiscord = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'discord',
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (error) {
+        return { error: error.message };
+      }
+
+      return {};
+    } catch (error: any) {
+      return { error: error.message || 'An error occurred during Discord sign-in' };
+    }
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
   };
@@ -163,6 +223,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         login,
         signup,
+        signInWithGoogle,
+        signInWithGithub,
+        signInWithDiscord,
         logout,
         upgradeAccount,
         loading,
