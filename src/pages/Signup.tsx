@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { UserPlus, Mail, Lock, User } from 'lucide-react';
-import SocialAuthButtons from '@/components/SocialAuthButtons';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -62,7 +61,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background safe-top safe-bottom">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">TapJournal</h1>
@@ -70,9 +69,7 @@ const Signup = () => {
         </div>
         
         <div className="bg-card border rounded-xl shadow-sm p-6">
-          <SocialAuthButtons isLoading={isLoading} setIsLoading={setIsLoading} />
-          
-          <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center">
                 <User className="w-4 h-4 mr-2 text-muted-foreground" />
@@ -88,7 +85,6 @@ const Signup = () => {
                 placeholder="Enter your name"
                 disabled={isLoading}
                 required
-                className="tap-button"
               />
             </div>
             
@@ -107,7 +103,6 @@ const Signup = () => {
                 placeholder="Enter your email"
                 disabled={isLoading}
                 required
-                className="tap-button"
               />
             </div>
             
@@ -127,7 +122,6 @@ const Signup = () => {
                 disabled={isLoading}
                 required
                 minLength={6}
-                className="tap-button"
               />
             </div>
 
@@ -146,13 +140,12 @@ const Signup = () => {
                 placeholder="Confirm your password"
                 disabled={isLoading}
                 required
-                className="tap-button"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full tap-button" 
+              className="w-full" 
               disabled={isLoading}
             >
               {isLoading ? (

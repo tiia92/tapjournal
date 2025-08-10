@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import ForgotPassword from '@/components/ForgotPassword';
-import SocialAuthButtons from '@/components/SocialAuthButtons';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -51,7 +50,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background safe-top safe-bottom">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">TapJournal</h1>
@@ -59,9 +58,7 @@ const Login = () => {
         </div>
         
         <div className="bg-card border rounded-xl shadow-sm p-6">
-          <SocialAuthButtons isLoading={isLoading} setIsLoading={setIsLoading} />
-          
-          <form onSubmit={handleSubmit} className="space-y-4 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center">
                 <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
@@ -77,7 +74,6 @@ const Login = () => {
                 placeholder="Enter your email"
                 disabled={isLoading}
                 required
-                className="tap-button"
               />
             </div>
             
@@ -99,13 +95,12 @@ const Login = () => {
                 placeholder="Enter your password"
                 disabled={isLoading}
                 required
-                className="tap-button"
               />
             </div>
             
             <Button 
               type="submit" 
-              className="w-full tap-button" 
+              className="w-full" 
               disabled={isLoading}
             >
               {isLoading ? (
