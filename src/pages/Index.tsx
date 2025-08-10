@@ -1,123 +1,494 @@
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Layout from '@/components/Layout';
+import DateNavigation from '@/components/DateNavigation';
+import TapCounter from '@/components/TapCounter';
+import TaskTracker from '@/components/TaskTracker';
+import EmojiSelector from '@/components/EmojiSelector';
+import AnimatedButton from '@/components/AnimatedButton';
+import SymptomTracker from '@/components/SymptomTracker';
+import MedicationTracker from '@/components/MedicationTracker';
+import VoiceJournal from '@/components/premium/VoiceJournal';
+import JournalPrompts from '@/components/premium/JournalPrompts';
+import CustomTrackers from '@/components/premium/CustomTrackers';
+import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
+import FileAttachment from '@/components/FileAttachment';
+import { useJournal, JournalEntry } from '@/context/JournalContext';
+import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/utils/trackerUtils';
+import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen } from 'lucide-react';
+import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { ArrowRight, Heart, Calendar, TrendingUp, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Logo from '@/components/Logo';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+  const { user } = useAuth();
+  const isPremium = user?.isPremium || false;
+  
+  const { 
+    todayEntry, 
+    createTodayEntry, 
+    updateEntry, 
+    addEntry,
+    checkIfTodayEntryExists, 
+    getEntryByDate,
+    getAllMedicationNames,
+    getAllChoreNames,
+    getAllWorkTaskNames,
+    getDeletedChoreNames,
+    getDeletedWorkTaskNames,
+    deleteChoreFromHistory,
+    deleteWorkTaskFromHistory
+  } = useJournal();
+  
+  const [currentDate, setCurrentDate] = useState(getTodayDate());
+  const [entry, setEntry] = useState<JournalEntry | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [allMedicationNames, setAllMedicationNames] = useState<string[]>([]);
+  const [allChoreNames, setAllChoreNames] = useState<string[]>([]);
+  const [allWorkTaskNames, setAllWorkTaskNames] = useState<string[]>([]);
+  const [deletedChoreNames, setDeletedChoreNames] = useState<string[]>([]);
+  const [deletedWorkTaskNames, setDeletedWorkTaskNames] = useState<string[]>([]);
+  
+  const [moodNote, setMoodNote] = useState('');
+  const [exercisesNote, setExercisesNote] = useState('');
+  const [selfCareNote, setSelfCareNote] = useState('');
+  const [waterNote, setWaterNote] = useState('');
+  const [sleepNote, setSleepNote] = useState('');
+  const [medicationNote, setMedicationNote] = useState('');
 
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
+  useEffect(() => {
+    // Check if we're navigating from calendar with a selected date
+    if (location.state?.selectedDate) {
+      console.log('Navigating to selected date:', location.state.selectedDate);
+      setCurrentDate(location.state.selectedDate);
+      // Clear the state to prevent issues with browser back/forward
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [isAuthenticated, navigate]);
+  }, [location.state, navigate, location.pathname]);
 
-  const features = [
-    {
-      icon: <Heart className="w-8 h-8" />,
-      title: "Track Your Wellness",
-      description: "Monitor mood, habits, and daily activities with simple taps"
-    },
-    {
-      icon: <Calendar className="w-8 h-8" />,
-      title: "View Progress",
-      description: "See your journey unfold with beautiful calendar views"
-    },
-    {
-      icon: <TrendingUp className="w-8 h-8" />,
-      title: "Gain Insights",
-      description: "Discover patterns and trends in your wellness data"
+  useEffect(() => {
+    console.log('Loading entry for date:', currentDate);
+    const existingEntry = getEntryByDate(currentDate);
+    
+    if (existingEntry) {
+      console.log('Found existing entry:', existingEntry);
+      setEntry(existingEntry);
+      setNotes(existingEntry.notes);
+      setMoodNote(existingEntry.moodNote || '');
+      setExercisesNote(existingEntry.exercisesNote || '');
+      setSelfCareNote(existingEntry.selfCareNote || '');
+      setWaterNote(existingEntry.waterNote || '');
+      setSleepNote(existingEntry.sleepNote || '');
+      setMedicationNote(existingEntry.medicationNote || '');
+    } else {
+      console.log('No entry found for date:', currentDate);
+      setEntry(null);
+      setNotes('');
+      setMoodNote('');
+      setExercisesNote('');
+      setSelfCareNote('');
+      setWaterNote('');
+      setSleepNote('');
+      setMedicationNote('');
     }
-  ];
+    
+    setAllMedicationNames(getAllMedicationNames());
+    setAllChoreNames(getAllChoreNames());
+    setAllWorkTaskNames(getAllWorkTaskNames());
+    setDeletedChoreNames(getDeletedChoreNames());
+    setDeletedWorkTaskNames(getDeletedWorkTaskNames());
+    
+    setIsEditing(false);
+  }, [currentDate, getEntryByDate, getAllMedicationNames, getAllChoreNames, getAllWorkTaskNames, getDeletedChoreNames, getDeletedWorkTaskNames]);
+  
+  const handleCreateEntry = () => {
+    console.log('Creating entry for date:', currentDate);
+    let newEntry: JournalEntry;
+    
+    if (currentDate === getTodayDate()) {
+      newEntry = createTodayEntry();
+      toast.success('Created new entry for today');
+    } else {
+      newEntry = {
+        id: crypto.randomUUID(),
+        date: currentDate,
+        waterCount: 0,
+        waterNote: '',
+        sleepHours: 0,
+        sleepNote: '',
+        chores: [],
+        workTasks: [],
+        medications: [],
+        mood: '',
+        moodNote: '',
+        exercises: [],
+        exercisesNote: '',
+        exerciseMinutes: 0,
+        selfCareActivities: [],
+        selfCareNote: '',
+        selfCareMinutes: 0,
+        notes: '',
+        painLevel: 0,
+        energyLevel: 0,
+        hasFever: false,
+        hasCoughSneezing: false,
+        hasNausea: false,
+        otherSymptoms: '',
+        medicationNote: '',
+      };
+      
+      addEntry(newEntry);
+      toast.success(`Created new entry for ${currentDate}`);
+    }
+    
+    console.log('New entry created:', newEntry);
+    // Immediately set all the state to show the entry interface
+    setEntry(newEntry);
+    setNotes(newEntry.notes);
+    setMoodNote(newEntry.moodNote || '');
+    setExercisesNote(newEntry.exercisesNote || '');
+    setSelfCareNote(newEntry.selfCareNote || '');
+    setWaterNote(newEntry.waterNote || '');
+    setSleepNote(newEntry.sleepNote || '');
+    setMedicationNote(newEntry.medicationNote || '');
+    setIsEditing(true);
+  };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5"></div>
+  const handleUpdateField = <K extends keyof JournalEntry>(
+    field: K,
+    value: JournalEntry[K]
+  ) => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      [field]: value,
+    };
+    
+    setEntry(updatedEntry);
+    updateEntry(updatedEntry);
+  };
+
+  const handleUpdateSymptom = (field: string, value: any) => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      [field]: value,
+    };
+    
+    setEntry(updatedEntry);
+    updateEntry(updatedEntry);
+  };
+  
+  const handleSaveNotes = () => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      notes,
+    };
+    
+    updateEntry(updatedEntry);
+    setIsEditing(false);
+    toast.success('Journal notes saved');
+  };
+  
+  const handleSaveAll = () => {
+    if (!entry) return;
+    
+    const updatedEntry = {
+      ...entry,
+      notes,
+      moodNote,
+      exercisesNote,
+      selfCareNote,
+      waterNote,
+      sleepNote,
+      medicationNote
+    };
+    
+    updateEntry(updatedEntry);
+    toast.success('All changes saved successfully');
+  };
+  
+  const handleViewJournal = () => {
+    navigate('/journal');
+  };
+  
+  const handleUpdateCategoryNote = (category: 'moodNote' | 'exercisesNote' | 'selfCareNote' | 'waterNote' | 'sleepNote' | 'medicationNote', value: string) => {
+    if (!entry) return;
+    
+    if (category === 'moodNote') {
+      setMoodNote(value);
+    } else if (category === 'exercisesNote') {
+      setExercisesNote(value);
+    } else if (category === 'selfCareNote') {
+      setSelfCareNote(value);
+    } else if (category === 'waterNote') {
+      setWaterNote(value);
+    } else if (category === 'sleepNote') {
+      setSleepNote(value);
+    } else if (category === 'medicationNote') {
+      setMedicationNote(value);
+    }
+    
+    const updatedEntry = {
+      ...entry,
+      [category]: value,
+    };
+    
+    setEntry(updatedEntry);
+    updateEntry(updatedEntry);
+  };
+
+  if (!entry) {
+    return (
+      <Layout>
+        <DateNavigation 
+          currentDate={currentDate}
+          onDateChange={setCurrentDate}
+        />
         
-        <div className="relative container mx-auto px-6 py-20">
-          <div className="text-center mb-16">
-            <div className="flex justify-center mb-8">
-              <Logo size="large" />
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-display font-bold text-foreground mb-6 tracking-tighter">
-              TapJournal
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-              Your personal wellness companion. Track, reflect, and grow with elegant simplicity.
+        <div className="mt-8 flex flex-col items-center justify-center gap-4 py-12">
+          <div className="text-center">
+            <h2 className="text-2xl font-medium mb-2">No Entry</h2>
+            <p className="text-muted-foreground mb-6">
+              You haven't created an entry for this date yet.
             </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                onClick={() => navigate('/signup')}
-                className="text-base px-8 py-3 h-14 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-elegant hover:shadow-floating"
-              >
-                Start Your Journey
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => navigate('/login')}
-                className="text-base px-8 py-3 h-14 backdrop-blur-sm"
-              >
-                Sign In
-              </Button>
-            </div>
           </div>
           
-          {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-8 mt-20">
-            {features.map((feature, index) => (
-              <div 
-                key={index} 
-                className="group text-center p-8 rounded-3xl bg-card/50 backdrop-blur-sm border border-border/50 shadow-soft hover:shadow-elegant transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary mb-6 group-hover:bg-primary/15 transition-colors duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-display font-semibold text-foreground mb-4 tracking-tight">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
+          <AnimatedButton onClick={handleCreateEntry} className="animate-pulse-soft">
+            <Plus className="mr-2" size={18} />
+            Create Entry
+          </AnimatedButton>
           
-          {/* CTA Section */}
-          <div className="text-center mt-20 p-12 rounded-3xl bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 border border-border/30">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6">
-              <Sparkles className="w-6 h-6" />
-            </div>
-            <h2 className="text-3xl font-display font-bold text-foreground mb-4 tracking-tight">
-              Ready to transform your wellness journey?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-              Join thousands who've discovered the power of mindful tracking.
-            </p>
-            <Button 
-              size="lg"
-              onClick={() => navigate('/signup')}
-              className="text-base px-8 py-3 h-14 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-elegant hover:shadow-floating"
+          {currentDate !== getTodayDate() && (
+            <button 
+              onClick={() => setCurrentDate(getTodayDate())}
+              className="text-primary text-sm mt-2"
             >
-              Get Started Free
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
+              Go to Today
+            </button>
+          )}
+        </div>
+      </Layout>
+    );
+  }
+  
+  return (
+    <Layout>
+      <DateNavigation 
+        currentDate={currentDate}
+        onDateChange={setCurrentDate}
+      />
+      
+      <div className="mt-6 space-y-6 pb-20">
+        <div className="space-y-4">
+          <EmojiSelector
+            options={moodOptions}
+            selectedIds={entry.mood ? [entry.mood] : []}
+            onChange={(ids) => handleUpdateField('mood', ids[0])}
+            label="Today's Mood"
+            multiSelect={false}
+            onNoteChange={(note) => handleUpdateCategoryNote('moodNote', note)}
+            note={moodNote}
+            placeholder="Add a note about your mood..."
+          />
+
+          <EmojiSelector
+            options={exerciseOptions}
+            selectedIds={entry.exercises}
+            onChange={(ids) => handleUpdateField('exercises', ids)}
+            label="Exercise Activities"
+            onNoteChange={(note) => handleUpdateCategoryNote('exercisesNote', note)}
+            note={exercisesNote}
+            placeholder="Add a note about your exercise..."
+          />
+
+          <EmojiSelector
+            options={selfCareOptions}
+            selectedIds={entry.selfCareActivities}
+            onChange={(ids) => handleUpdateField('selfCareActivities', ids)}
+            label="Self Care Activities"
+            onNoteChange={(note) => handleUpdateCategoryNote('selfCareNote', note)}
+            note={selfCareNote}
+            placeholder="Add a note about your self care..."
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <TapCounter
+            count={entry.waterCount}
+            onChange={(count) => handleUpdateField('waterCount', count)}
+            icon={<Droplets className="text-blue-500" />}
+            label="Water Glasses"
+            color="bg-blue-100 text-blue-700"
+            onNoteChange={(note) => handleUpdateCategoryNote('waterNote', note)}
+            note={waterNote}
+          />
+          
+          <TapCounter
+            count={entry.sleepHours}
+            onChange={(count) => handleUpdateField('sleepHours', count)}
+            icon={<Moon className="text-indigo-500" />}
+            label="Sleep Hours"
+            color="bg-indigo-100 text-indigo-700"
+            max={24}
+            onNoteChange={(note) => handleUpdateCategoryNote('sleepNote', note)}
+            note={sleepNote}
+          />
+        </div>
+        
+        <SymptomTracker 
+          painLevel={entry.painLevel}
+          energyLevel={entry.energyLevel}
+          hasFever={entry.hasFever}
+          hasCoughSneezing={entry.hasCoughSneezing}
+          hasNausea={entry.hasNausea}
+          otherSymptoms={entry.otherSymptoms}
+          onChange={handleUpdateSymptom}
+        />
+
+        <MedicationTracker 
+          medications={entry.medications}
+          previousMedications={allMedicationNames}
+          onChange={(medications) => handleUpdateField('medications', medications)}
+          onNoteChange={(note) => handleUpdateCategoryNote('medicationNote', note)}
+          note={medicationNote}
+        />
+
+        <div className="grid grid-cols-1 gap-4">
+          <TaskTracker
+            tasks={entry.chores || []}
+            previousTasks={allChoreNames}
+            deletedTasks={deletedChoreNames}
+            onChange={(tasks) => handleUpdateField('chores', tasks)}
+            onDeletePreviousTask={deleteChoreFromHistory}
+            icon={<Home className="text-orange-500" />}
+            label="Chores"
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 gap-4">
+          <TaskTracker
+            tasks={entry.workTasks || []}
+            previousTasks={allWorkTaskNames}
+            deletedTasks={deletedWorkTaskNames}
+            onChange={(tasks) => handleUpdateField('workTasks', tasks)}
+            onDeletePreviousTask={deleteWorkTaskFromHistory}
+            icon={<Briefcase className="text-slate-500" />}
+            label="Work Tasks"
+          />
+        </div>
+        
+        {isPremium && (
+          <SmartGoalTracker entryId={entry.id} />
+        )}
+        
+        {isPremium && (
+          <CustomTrackers entryId={entry.id} />
+        )}
+        
+        <div className="tap-card">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium text-muted-foreground">Journal Notes</span>
+            
+            {!isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Edit size={12} />
+                <span>Edit</span>
+              </button>
+            )}
           </div>
+          
+          {isEditing ? (
+            <>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="w-full h-32 p-3 bg-secondary/50 rounded-lg border border-border focus:border-primary focus:ring-1 focus:ring-primary resize-none text-sm"
+                placeholder="Write your thoughts for the day..."
+              />
+              
+              <div className="flex justify-end mt-3">
+                <AnimatedButton onClick={handleSaveNotes} size="sm">
+                  <Save size={14} className="mr-1" />
+                  Save Notes
+                </AnimatedButton>
+              </div>
+            </>
+          ) : (
+            <div className="bg-secondary/50 rounded-lg p-3 min-h-[80px] text-sm">
+              {entry.notes ? (
+                <p>{entry.notes}</p>
+              ) : (
+                <p className="text-muted-foreground italic">No notes for today. Tap edit to add some thoughts.</p>
+              )}
+            </div>
+          )}
+          
+          {isPremium && (
+            <div className="space-y-4 mt-4">
+              <JournalPrompts inJournalPage={true} />
+              <VoiceJournal 
+                entryId={entry.id}
+                audioUrl={entry.audioNotes}
+                transcription={entry.audioTranscription}
+              />
+              <FileAttachment 
+                entryId={entry.id} 
+                attachments={entry.attachments} 
+              />
+            </div>
+          )}
+          
+          {entry.attachments && entry.attachments.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-muted-foreground mb-2">Attached Photos:</p>
+              <div className="flex gap-2 flex-wrap">
+                {entry.attachments.map((attachmentUrl, index) => (
+                  <div key={index} className="relative">
+                    <img 
+                      src={attachmentUrl} 
+                      alt={`Attachment ${index + 1}`}
+                      className="w-16 h-16 object-cover rounded-lg border border-border cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => window.open(attachmentUrl, '_blank')}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <div className="flex flex-col gap-4">
+          <Button
+            onClick={handleSaveAll}
+            className="w-full flex items-center justify-center"
+          >
+            <Save size={18} className="mr-2" />
+            Save All Changes
+          </Button>
+          
+          <AnimatedButton 
+            onClick={handleViewJournal}
+            variant="outline"
+            className="w-full"
+          >
+            <BookOpen size={16} className="mr-2" />
+            View Insights
+          </AnimatedButton>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
