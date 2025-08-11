@@ -15,19 +15,19 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   size = 'md',
   ...props
 }) => {
-  const baseClasses = "relative overflow-hidden rounded-xl flex items-center justify-center transition-all duration-300 active:scale-95";
+  const baseClasses = "relative overflow-hidden rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] font-medium";
   
   const variantClasses = {
-    default: "bg-primary text-primary-foreground hover:bg-primary/90",
-    outline: "bg-transparent border border-primary text-primary hover:bg-primary/5",
+    default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+    outline: "bg-transparent border border-primary text-primary hover:bg-primary/5 shadow-sm",
     ghost: "bg-transparent hover:bg-primary/5 text-foreground",
-    glass: "bg-white/20 backdrop-blur-lg border border-white/30 text-foreground shadow-glass hover:bg-white/30"
+    glass: "bg-white/10 backdrop-blur-lg border border-white/20 text-foreground shadow-lg hover:bg-white/20"
   };
   
   const sizeClasses = {
-    sm: "text-sm px-3 py-1.5",
-    md: "px-4 py-2",
-    lg: "text-lg px-6 py-3"
+    sm: "text-sm px-4 py-2 h-9",
+    md: "px-6 py-2 h-11",
+    lg: "text-lg px-8 py-3 h-12"
   };
   
   return (
@@ -41,7 +41,6 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       {...props}
     >
       <span className="relative z-10">{children}</span>
-      <span className="absolute inset-0 bg-white/10 transform scale-x-0 origin-left transition-transform group-hover:scale-x-100" />
     </button>
   );
 };

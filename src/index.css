@@ -56,11 +56,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: 'cv03', 'cv04', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   
-  /* Mobile optimizations */
+  /* Enhanced mobile optimizations */
   html {
     scroll-behavior: smooth;
     -webkit-touch-callout: none;
@@ -101,7 +103,7 @@
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    gap: 1rem;
+    gap: 1.5rem;
     -webkit-overflow-scrolling: touch;
   }
   
@@ -113,36 +115,36 @@
 
 @layer components {
   .tap-card {
-    @apply rounded-lg border bg-card p-4 shadow-sm animate-fade-in;
+    @apply rounded-2xl border bg-card/50 backdrop-blur-sm p-6 shadow-sm animate-fade-in hover:shadow-md transition-all duration-300;
   }
 
   .tap-button {
-    @apply rounded-md border bg-background hover:bg-accent transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center;
+    @apply rounded-xl border bg-background hover:bg-accent transition-all duration-200 min-h-[48px] min-w-[48px] flex items-center justify-center hover:scale-[1.02] active:scale-[0.98];
   }
 
   .tap-count-bubble {
-    @apply px-2 py-0.5 rounded-full text-xs font-semibold;
+    @apply px-3 py-1 rounded-full text-xs font-medium;
   }
 
   .emoji-selector {
-    @apply grid grid-cols-4 gap-2;
+    @apply grid grid-cols-4 gap-3;
   }
 
   .emoji-item {
-    @apply flex items-center justify-center w-12 h-12 text-2xl rounded-lg border bg-background hover:bg-accent transition-colors min-h-[44px] min-w-[44px];
+    @apply flex items-center justify-center w-14 h-14 text-2xl rounded-2xl border bg-background hover:bg-accent transition-all duration-200 min-h-[48px] min-w-[48px] hover:scale-105 active:scale-95;
   }
 
   .emoji-item.selected {
-    @apply bg-primary/10 border-primary text-primary;
+    @apply bg-primary/10 border-primary text-primary shadow-sm;
   }
 
   .nav-button {
-    @apply flex flex-col items-center justify-center gap-1 p-2 hover:text-foreground transition-colors min-h-[44px] min-w-[44px] text-sm;
+    @apply flex flex-col items-center justify-center gap-1 p-3 hover:text-foreground transition-all duration-200 min-h-[48px] min-w-[48px] text-sm rounded-xl hover:bg-accent/50;
   }
   
-  /* Mobile-optimized glass panel */
+  /* Enhanced glass panel */
   .glass-panel {
-    @apply bg-card/95 backdrop-blur-sm border border-border/50 rounded-xl shadow-sm;
+    @apply bg-card/80 backdrop-blur-md border border-border/40 rounded-2xl shadow-lg;
   }
   
   /* Reduce motion for accessibility */
