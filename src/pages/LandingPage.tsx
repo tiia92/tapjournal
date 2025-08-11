@@ -32,6 +32,23 @@ const LandingPage = () => {
     return () => clearInterval(wordInterval);
   }, []);
 
+  // Scroll reveal animations for LandingPage
+  useEffect(() => {
+    const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-fade-in');
+          entry.target.classList.remove('opacity-0', 'translate-y-4');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    revealEls.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   const handleLogout = () => {
     logout();
     toast.success('Signed out successfully');
@@ -77,7 +94,7 @@ const LandingPage = () => {
       <main className="container mx-auto px-4">
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center justify-between py-12 md:py-16 lg:py-24">
-          <div className="w-full md:w-1/2 mb-8 md:mb-0">
+          <div data-reveal className="w-full md:w-1/2 mb-8 md:mb-0 opacity-0 translate-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
               Track your{' '}
               <span 
@@ -111,7 +128,7 @@ const LandingPage = () => {
               )}
             </div>
           </div>
-          <div className="w-full md:w-1/2 flex justify-center">
+          <div data-reveal className="w-full md:w-1/2 flex justify-center opacity-0 translate-y-4">
             <div className="rounded-lg overflow-hidden shadow-lg max-w-md md:max-w-none">
               <img 
                 src="/lovable-uploads/9367920c-5252-4e6a-8580-7837623b79f2.png" 
@@ -124,10 +141,10 @@ const LandingPage = () => {
 
         {/* Features Section */}
         <div className="py-12 md:py-16 border-t border-border">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center">Key Features</h2>
+          <h2 data-reveal className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center opacity-0 translate-y-4">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
                 <BookText className="text-orange-500" size={24} />
               </div>
@@ -138,7 +155,7 @@ const LandingPage = () => {
             </div>
 
             {/* Habit Tracking */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                 <Droplets className="text-blue-500" size={24} />
               </div>
@@ -150,7 +167,7 @@ const LandingPage = () => {
             </div>
 
             {/* Symptom Tracking */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                 <Heart className="text-green-500" size={24} />
               </div>
@@ -161,7 +178,7 @@ const LandingPage = () => {
             </div>
             
             {/* Medication Management */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                 <Pill className="text-purple-500" size={24} />
               </div>
@@ -172,7 +189,7 @@ const LandingPage = () => {
             </div>
             
             {/* Wellness Insights */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="text-red-500" size={24} />
               </div>
@@ -183,7 +200,7 @@ const LandingPage = () => {
             </div>
 
             {/* AI-powered Recommendations */}
-            <div className="bg-card p-6 rounded-lg shadow-sm border border-border">
+            <div data-reveal className="bg-card p-6 rounded-lg shadow-sm border border-border transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 focus:shadow-xl focus:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                 <BookOpen className="text-indigo-600" size={24} />
               </div>
@@ -196,7 +213,7 @@ const LandingPage = () => {
         </div>
 
         {/* CTA Section */}
-        <div className="py-12 md:py-16 border-t border-border mb-12 md:mb-16 text-center">
+        <div data-reveal className="py-12 md:py-16 border-t border-border mb-12 md:mb-16 text-center opacity-0 translate-y-4">
           <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Start your wellness journey today</h2>
           <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
             Join thousands of users who are taking control of their health one day at a time.
