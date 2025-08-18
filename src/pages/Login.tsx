@@ -123,6 +123,12 @@ const Login = () => {
                   Sign up
                 </Link>
               </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Can't access your account? 
+                <Link to="/recovery" className="text-primary ml-1 hover:underline">
+                  Recover local data
+                </Link>
+              </p>
             </div>
           </form>
         </div>

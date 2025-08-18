@@ -16,6 +16,7 @@ import LandingPage from "./pages/LandingPage";
 import AboutUs from "./pages/AboutUs";
 import PremiumWaitlist from "./pages/PremiumWaitlist";
 import Pricing from "./pages/Pricing";
+import DataRecovery from "./pages/DataRecovery";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +49,7 @@ const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutUs />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/recovery" element={<DataRecovery />} />
       
       {/* Login/signup routes */}
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
