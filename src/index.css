@@ -24,6 +24,12 @@
     --destructive-foreground: 210 40% 98%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
+    --priority-high: 0 84.2% 60.2%;
+    --priority-high-foreground: 210 40% 98%;
+    --priority-medium: 35 91.7% 55.1%;
+    --priority-medium-foreground: 210 40% 98%;
+    --priority-low: 145 63.2% 49%;
+    --priority-low-foreground: 210 40% 98%;
     --radius: 0.5rem;
   }
 
@@ -47,6 +53,12 @@
     --destructive-foreground: 210 40% 98%;
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+    --priority-high: 0 62.8% 30.6%;
+    --priority-high-foreground: 210 40% 98%;
+    --priority-medium: 35 84% 35%;
+    --priority-medium-foreground: 210 40% 98%;
+    --priority-low: 145 40% 30%;
+    --priority-low-foreground: 210 40% 98%;
   }
 }
 

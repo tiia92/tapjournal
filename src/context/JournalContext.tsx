@@ -3,10 +3,13 @@ import { useAuth } from './AuthContext';
 import { formatDateForTimezone } from '@/utils/trackerUtils';
 
 // Task type
+export type Priority = 'high' | 'medium' | 'low' | 'none';
+
 export type Task = {
   id: string;
   name: string;
   completed: boolean;
+  priority: Priority;
 };
 
 // Medication type
@@ -211,9 +214,15 @@ export const JournalProvider: React.FC<{ children: React.ReactNode }> = ({ child
             goals: entry.goals || [],
             // Set energyLevel to 0 if it's 5 (the old default)
             energyLevel: entry.energyLevel === 5 ? 0 : entry.energyLevel,
-            // Ensure chores and workTasks are arrays
-            chores: Array.isArray(entry.chores) ? entry.chores : [],
-            workTasks: Array.isArray(entry.workTasks) ? entry.workTasks : []
+            // Ensure chores and workTasks are arrays with priority field
+            chores: Array.isArray(entry.chores) ? entry.chores.map((chore: any) => ({
+              ...chore,
+              priority: chore.priority || 'none'
+            })) : [],
+            workTasks: Array.isArray(entry.workTasks) ? entry.workTasks.map((task: any) => ({
+              ...task,
+              priority: task.priority || 'none'
+            })) : []
           };
         });
         

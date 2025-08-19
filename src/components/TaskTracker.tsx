@@ -3,13 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { Check, X, Plus, ListChecks, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { Task, Priority } from '@/context/JournalContext';
 
-interface Task {
-  id: string;
-  name: string;
-  completed: boolean;
-}
 
 interface TaskTrackerProps {
   tasks: Task[];
@@ -68,6 +66,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
       id: crypto.randomUUID(),
       name: newTaskName.trim(),
       completed: false,
+      priority: 'none',
     };
     
     onChange([...tasks, newTask]);
@@ -102,6 +101,7 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
       id: crypto.randomUUID(),
       name,
       completed: false,
+      priority: 'none',
     };
     
     onChange([...tasks, newTask]);
@@ -132,6 +132,42 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
   const filteredAvailableTasks = availableTasks.filter(task =>
     task.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handlePriorityChange = (taskId: string, priority: Priority) => {
+    onChange(
+      tasks.map(task =>
+        task.id === taskId ? { ...task, priority } : task
+      )
+    );
+  };
+
+  const getPriorityStyles = (priority: Priority) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-priority-high/10 border-priority-high text-priority-high';
+      case 'medium':
+        return 'bg-priority-medium/10 border-priority-medium text-priority-medium';
+      case 'low':
+        return 'bg-priority-low/10 border-priority-low text-priority-low';
+      default:
+        return 'bg-muted/30 border-border text-foreground';
+    }
+  };
+
+  const getPriorityOrder = (priority: Priority) => {
+    switch (priority) {
+      case 'high': return 0;
+      case 'medium': return 1;
+      case 'low': return 2;
+      default: return 3;
+    }
+  };
+
+  const sortedTasks = [...tasks].sort((a, b) => {
+    const priorityDiff = getPriorityOrder(a.priority) - getPriorityOrder(b.priority);
+    if (priorityDiff !== 0) return priorityDiff;
+    return a.name.localeCompare(b.name);
+  });
 
   return (
     <div className="tap-card flex flex-col items-center gap-3 animate-fade-in">
@@ -227,16 +263,32 @@ const TaskTracker: React.FC<TaskTrackerProps> = ({
           {tasks.length === 0 ? (
             <p className="text-sm text-muted-foreground italic">No {label.toLowerCase()} added yet</p>
           ) : (
-            tasks.map((task) => (
+            sortedTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center justify-between p-3 rounded-md border bg-muted/30"
+                className={`flex items-center justify-between p-3 rounded-md border transition-all duration-200 ${getPriorityStyles(task.priority)}`}
               >
-                <div className="flex items-center gap-2">
-                  <ListChecks className="text-primary" size={16} />
-                  <span className={task.completed ? 'line-through text-muted-foreground' : ''}>{task.name}</span>
+                <div className="flex items-center gap-2 flex-1">
+                  <ListChecks className="text-current" size={16} />
+                  <span className={task.completed ? 'line-through text-muted-foreground' : 'text-current'}>{task.name}</span>
+                  {task.priority !== 'none' && (
+                    <Badge variant="secondary" className="text-xs capitalize">
+                      {task.priority}
+                    </Badge>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
+                  <Select value={task.priority} onValueChange={(value: Priority) => handlePriorityChange(task.id, value)}>
+                    <SelectTrigger className="w-20 h-8 text-xs">
+                      <SelectValue placeholder="Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                      <SelectItem value="medium">Med</SelectItem>
+                      <SelectItem value="high">High</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <button
                     onClick={() => handleToggleCompleted(task.id)}
                     className={`tap-button w-9 h-9 flex items-center justify-center ${
