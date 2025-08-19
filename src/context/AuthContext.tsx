@@ -20,6 +20,7 @@ type AuthContextType = {
   logout: () => Promise<void>;
   upgradeAccount: () => void;
   loading: boolean;
+  isDemoMode: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,6 +30,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  
+  // Check for demo mode
+  const isDemoMode = new URLSearchParams(window.location.search).get('demo') === '1';
+  
+  // Demo user for demo mode
+  const demoUser: User = {
+    id: 'demo-user',
+    email: 'demo@example.com', 
+    name: 'Demo User',
+    isPremium: true
+  };
 
   // Transform Supabase user to our User type
   const transformUser = (supabaseUser: SupabaseUser, profile?: any): User => {
@@ -61,6 +73,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    // Handle demo mode
+    if (isDemoMode) {
+      setUser(demoUser);
+      setIsAuthenticated(true);
+      setLoading(false);
+      return;
+    }
+    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -100,7 +120,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [isDemoMode]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -166,6 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         upgradeAccount,
         loading,
+        isDemoMode,
       }}
     >
       {children}

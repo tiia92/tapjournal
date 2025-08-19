@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { usePremiumAccess } from '@/hooks/usePremiumAccess';
 
 interface EmojiOption {
   id: string;
@@ -47,7 +48,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   maxCharacters = 100
 }) => {
   const { user } = useAuth();
-  const isPremium = user?.isPremium || false;
+  const { isPremium } = usePremiumAccess();
   const [isSelecting, setIsSelecting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);

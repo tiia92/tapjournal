@@ -4,13 +4,14 @@ import Layout from '@/components/Layout';
 import ScrollableCharts from '@/components/ScrollableCharts';
 import PremiumUpgrade from '@/components/PremiumUpgrade';
 import { useAuth } from '@/context/AuthContext';
+import { usePremiumAccess } from '@/hooks/usePremiumAccess';
 import SmartGoalTracker from '@/components/premium/SmartGoalTracker';
 import WellnessPrograms from '@/components/premium/WellnessPrograms';
 import { toast } from 'sonner';
 
 const Journal = () => {
   const { user } = useAuth();
-  const isPremium = user?.isPremium || false;
+  const { isPremium } = usePremiumAccess();
 
   const handleComingSoon = () => {
     toast.info("Coming soon!");

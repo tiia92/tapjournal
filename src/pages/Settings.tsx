@@ -4,6 +4,7 @@ import Layout from '@/components/Layout';
 import ThemeSelector from '@/components/premium/ThemeSelector';
 import TimeZoneSelector from '@/components/TimeZoneSelector';
 import { useAuth } from '@/context/AuthContext';
+import { usePremiumAccess } from '@/hooks/usePremiumAccess';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import CustomTrackers from '@/components/premium/CustomTrackers';
@@ -19,9 +20,9 @@ import {
 
 const Settings = () => {
   const { user, logout, upgradeAccount } = useAuth();
+  const { isPremium } = usePremiumAccess();
   const [selectedTheme, setSelectedTheme] = useState('default');
   const [currentTimezone, setCurrentTimezone] = useState('UTC');
-  const isPremium = user?.isPremium || false;
   
   useEffect(() => {
     // Load timezone from localStorage if available

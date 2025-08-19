@@ -22,9 +22,9 @@ const queryClient = new QueryClient();
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isDemoMode } = useAuth();
   
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !isDemoMode) {
     return <Navigate to="/login" replace />;
   }
   
@@ -33,9 +33,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Public route component that redirects to dashboard if authenticated
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isDemoMode } = useAuth();
   
-  if (isAuthenticated) {
+  if (isAuthenticated && !isDemoMode) {
     return <Navigate to="/dashboard" replace />;
   }
   

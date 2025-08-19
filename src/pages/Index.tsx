@@ -19,13 +19,14 @@ import { getTodayDate, exerciseOptions, selfCareOptions, moodOptions } from '@/u
 import { Droplets, Moon, Home, Briefcase, Plus, Save, Edit, BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
+import { usePremiumAccess } from '@/hooks/usePremiumAccess';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const isPremium = user?.isPremium || false;
+  const { isPremium } = usePremiumAccess();
   
   const { 
     todayEntry, 
