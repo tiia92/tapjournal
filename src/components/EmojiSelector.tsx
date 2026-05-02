@@ -130,12 +130,12 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
           <p className="text-sm text-muted-foreground">Tap to select</p>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2 mb-3 justify-items-center mx-auto">
           {isSelecting && options.map(option => (
             <button
               key={option.id}
               onClick={() => handleToggleEmoji(option.id)}
-              className={`relative text-2xl p-2 rounded-lg hover:bg-muted/50 transition-colors ${
+              className={`relative text-2xl p-2 rounded-lg hover:bg-muted/50 transition-colors w-full aspect-square flex items-center justify-center min-w-[44px] ${
                 selectedIds.includes(option.id) ? 'bg-primary/10 border border-primary' : 'bg-muted/30'
               }`}
               title={option.label}
@@ -152,7 +152,7 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
           {isPremium && isSelecting && label !== "Today's Mood" && (
             <button 
               onClick={() => setShowEmojiDialog(true)}
-              className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+              className="text-2xl p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors w-full aspect-square flex items-center justify-center min-w-[44px]"
               title="More emojis"
             >
               +

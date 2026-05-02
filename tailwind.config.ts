@@ -73,6 +73,10 @@ export default {
 					'medium-foreground': 'hsl(var(--priority-medium-foreground))',
 					low: 'hsl(var(--priority-low))',
 					'low-foreground': 'hsl(var(--priority-low-foreground))'
+				},
+				gold: {
+					DEFAULT: 'hsl(var(--gold))',
+					foreground: 'hsl(var(--gold-foreground))'
 				}
 			},
 			borderRadius: {
@@ -146,7 +150,8 @@ export default {
 			},
 			boxShadow: {
 				'glass': '0 4px 30px rgba(0, 0, 0, 0.1)',
-				'neo': '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff'
+				'neo': '5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff',
+				'soft': '0 1px 2px hsl(222 30% 15% / 0.04), 0 8px 24px hsl(222 30% 15% / 0.06)'
 			},
 			backdropBlur: {
 				'glass': 'blur(10px)'

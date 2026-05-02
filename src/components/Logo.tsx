@@ -16,7 +16,7 @@ const Logo: React.FC<LogoProps> = ({ size = 'small' }) => {
   
   return (
     <div className="flex items-center">
-      <div className={`${sizeClasses[size]} mr-3 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shadow-lg`}>
+      <div className={`${sizeClasses[size]} mr-3 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center text-primary-foreground font-bold shadow-soft`}>
         <BookOpen className="w-2/3 h-2/3" />
       </div>
     </div>
