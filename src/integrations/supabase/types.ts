@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -67,6 +67,36 @@ export type Database = {
           id?: string
           is_super_admin?: boolean | null
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      application_responses: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          question: string
+          response: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          question: string
+          response: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          question?: string
+          response?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -167,6 +197,95 @@ export type Database = {
           email?: string
           id?: string
           name?: string
+        }
+        Relationships: []
+      }
+      candidate_search_requests: {
+        Row: {
+          created_at: string
+          employer_id: string
+          error_message: string | null
+          experience_level: string | null
+          id: string
+          job_title: string
+          location: string | null
+          raw_response: Json | null
+          requested_by: string
+          required_skills: string[]
+          result_count: number | null
+          results: Json | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          employer_id: string
+          error_message?: string | null
+          experience_level?: string | null
+          id?: string
+          job_title: string
+          location?: string | null
+          raw_response?: Json | null
+          requested_by: string
+          required_skills?: string[]
+          result_count?: number | null
+          results?: Json | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          employer_id?: string
+          error_message?: string | null
+          experience_level?: string | null
+          id?: string
+          job_title?: string
+          location?: string | null
+          raw_response?: Json | null
+          requested_by?: string
+          required_skills?: string[]
+          result_count?: number | null
+          results?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_search_requests_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demo_usage_tracking: {
+        Row: {
+          created_at: string
+          demo_type: string
+          id: string
+          minutes_used: number
+          monthly_limit_minutes: number
+          reset_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          demo_type?: string
+          id?: string
+          minutes_used?: number
+          monthly_limit_minutes?: number
+          reset_date: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          demo_type?: string
+          id?: string
+          minutes_used?: number
+          monthly_limit_minutes?: number
+          reset_date?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -391,7 +510,7 @@ export type Database = {
           device_type: string | null
           event_type: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           job_submission_id: string
           referrer: string | null
           timezone: string | null
@@ -403,7 +522,7 @@ export type Database = {
           device_type?: string | null
           event_type: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           job_submission_id: string
           referrer?: string | null
           timezone?: string | null
@@ -415,7 +534,7 @@ export type Database = {
           device_type?: string | null
           event_type?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           job_submission_id?: string
           referrer?: string | null
           timezone?: string | null
@@ -431,6 +550,135 @@ export type Database = {
           },
         ]
       }
+      job_applications: {
+        Row: {
+          application_url: string | null
+          company_name: string | null
+          created_at: string
+          id: string
+          job_id: number
+          job_title: string | null
+          user_id: string
+        }
+        Insert: {
+          application_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id: number
+          job_title?: string | null
+          user_id: string
+        }
+        Update: {
+          application_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id?: number
+          job_title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      job_applications_tracker: {
+        Row: {
+          application_url: string | null
+          company_name: string
+          created_at: string
+          date_applied: string
+          follow_ups: Json
+          id: string
+          job_title: string
+          notes: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          application_url?: string | null
+          company_name: string
+          created_at?: string
+          date_applied?: string
+          follow_ups?: Json
+          id?: string
+          job_title: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          application_url?: string | null
+          company_name?: string
+          created_at?: string
+          date_applied?: string
+          follow_ups?: Json
+          id?: string
+          job_title?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      job_cause_categories: {
+        Row: {
+          category_name: string
+          created_at: string | null
+          description: string | null
+          id: string
+        }
+        Insert: {
+          category_name: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+        }
+        Update: {
+          category_name?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      job_events: {
+        Row: {
+          anonymous_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          job_id: number
+          metadata: Json | null
+          organization: string | null
+          source: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anonymous_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          job_id: number
+          metadata?: Json | null
+          organization?: string | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anonymous_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          job_id?: number
+          metadata?: Json | null
+          organization?: string | null
+          source?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       job_submissions: {
         Row: {
           application_email: string | null
@@ -438,7 +686,7 @@ export type Database = {
           application_method: string
           approved_at: string | null
           approved_by: string | null
-          cause_area: string | null
+          cause_area: string[] | null
           created_at: string
           employer_id: string
           featured_until: string | null
@@ -462,7 +710,7 @@ export type Database = {
           application_method: string
           approved_at?: string | null
           approved_by?: string | null
-          cause_area?: string | null
+          cause_area?: string[] | null
           created_at?: string
           employer_id: string
           featured_until?: string | null
@@ -486,7 +734,7 @@ export type Database = {
           application_method?: string
           approved_at?: string | null
           approved_by?: string | null
-          cause_area?: string | null
+          cause_area?: string[] | null
           created_at?: string
           employer_id?: string
           featured_until?: string | null
@@ -507,6 +755,74 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "job_submissions_employer_id_fkey"
+            columns: ["employer_id"]
+            isOneToOne: false
+            referencedRelation: "employer_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_templates: {
+        Row: {
+          application_email: string | null
+          application_link: string | null
+          application_method: string | null
+          cause_area: string[] | null
+          created_at: string
+          employer_id: string
+          id: string
+          job_description: string | null
+          job_level: string | null
+          job_title: string | null
+          job_type: string | null
+          location: string | null
+          salary_range: string | null
+          template_name: string
+          updated_at: string
+          wfh_location: string | null
+          wfh_option: string | null
+        }
+        Insert: {
+          application_email?: string | null
+          application_link?: string | null
+          application_method?: string | null
+          cause_area?: string[] | null
+          created_at?: string
+          employer_id: string
+          id?: string
+          job_description?: string | null
+          job_level?: string | null
+          job_title?: string | null
+          job_type?: string | null
+          location?: string | null
+          salary_range?: string | null
+          template_name: string
+          updated_at?: string
+          wfh_location?: string | null
+          wfh_option?: string | null
+        }
+        Update: {
+          application_email?: string | null
+          application_link?: string | null
+          application_method?: string | null
+          cause_area?: string[] | null
+          created_at?: string
+          employer_id?: string
+          id?: string
+          job_description?: string | null
+          job_level?: string | null
+          job_title?: string | null
+          job_type?: string | null
+          location?: string | null
+          salary_range?: string | null
+          template_name?: string
+          updated_at?: string
+          wfh_location?: string | null
+          wfh_option?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_templates_employer_id_fkey"
             columns: ["employer_id"]
             isOneToOne: false
             referencedRelation: "employer_organizations"
@@ -702,18 +1018,21 @@ export type Database = {
           created_at: string | null
           id: string
           name: string | null
+          referral_code: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id: string
           name?: string | null
+          referral_code?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           name?: string | null
+          referral_code?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -908,10 +1227,38 @@ export type Database = {
           },
         ]
       }
+      saved_jobs: {
+        Row: {
+          company_name: string | null
+          created_at: string
+          id: string
+          job_id: number
+          job_title: string | null
+          user_id: string
+        }
+        Insert: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id: number
+          job_title?: string | null
+          user_id: string
+        }
+        Update: {
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id?: number
+          job_title?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       saved_searches: {
         Row: {
           cause: string | null
           created_at: string
+          frequency: string | null
           id: string
           is_active: boolean
           job_level: string | null
@@ -919,6 +1266,7 @@ export type Database = {
           keyword: string | null
           last_sent_date: string | null
           location: string | null
+          max_results: number | null
           salary_range: string | null
           search_name: string
           updated_at: string
@@ -928,6 +1276,7 @@ export type Database = {
         Insert: {
           cause?: string | null
           created_at?: string
+          frequency?: string | null
           id?: string
           is_active?: boolean
           job_level?: string | null
@@ -935,6 +1284,7 @@ export type Database = {
           keyword?: string | null
           last_sent_date?: string | null
           location?: string | null
+          max_results?: number | null
           salary_range?: string | null
           search_name: string
           updated_at?: string
@@ -944,6 +1294,7 @@ export type Database = {
         Update: {
           cause?: string | null
           created_at?: string
+          frequency?: string | null
           id?: string
           is_active?: boolean
           job_level?: string | null
@@ -951,6 +1302,7 @@ export type Database = {
           keyword?: string | null
           last_sent_date?: string | null
           location?: string | null
+          max_results?: number | null
           salary_range?: string | null
           search_name?: string
           updated_at?: string
@@ -961,7 +1313,7 @@ export type Database = {
       }
       "scraped-hackathon": {
         Row: {
-          cause: string | null
+          cause: string[] | null
           created_at: string
           date_posted: string | null
           description: string | null
@@ -975,10 +1327,11 @@ export type Database = {
           logo: string | null
           organization: string | null
           salary_range: string | null
+          slug: string | null
           wfh_option: string | null
         }
         Insert: {
-          cause?: string | null
+          cause?: string[] | null
           created_at?: string
           date_posted?: string | null
           description?: string | null
@@ -992,10 +1345,11 @@ export type Database = {
           logo?: string | null
           organization?: string | null
           salary_range?: string | null
+          slug?: string | null
           wfh_option?: string | null
         }
         Update: {
-          cause?: string | null
+          cause?: string[] | null
           created_at?: string
           date_posted?: string | null
           description?: string | null
@@ -1009,6 +1363,7 @@ export type Database = {
           logo?: string | null
           organization?: string | null
           salary_range?: string | null
+          slug?: string | null
           wfh_option?: string | null
         }
         Relationships: []
@@ -1075,6 +1430,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+          reward_granted: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+          reward_granted?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+          reward_granted?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_referrals_referred_id_fkey"
+            columns: ["referred_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_subscriptions: {
         Row: {
           created_at: string
@@ -1082,6 +1476,8 @@ export type Database = {
           id: string
           is_active: boolean
           start_date: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           subscription_type: string
           updated_at: string
           user_id: string
@@ -1092,6 +1488,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           start_date?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_type?: string
           updated_at?: string
           user_id: string
@@ -1102,8 +1500,76 @@ export type Database = {
           id?: string
           is_active?: boolean
           start_date?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           subscription_type?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vetted_candidates: {
+        Row: {
+          action_type: string
+          company_name: string | null
+          created_at: string
+          id: string
+          job_id: number
+          job_title: string | null
+          research_data: Json | null
+          research_status: string | null
+          updated_at: string
+          user_email: string | null
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          action_type: string
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id: number
+          job_title?: string | null
+          research_data?: Json | null
+          research_status?: string | null
+          updated_at?: string
+          user_email?: string | null
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          action_type?: string
+          company_name?: string | null
+          created_at?: string
+          id?: string
+          job_id?: number
+          job_title?: string | null
+          research_data?: Json | null
+          research_status?: string | null
+          updated_at?: string
+          user_email?: string | null
+          user_id?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      welcome_email_sends: {
+        Row: {
+          email: string
+          send_type: string
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          email: string
+          send_type?: string
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          email?: string
+          send_type?: string
+          sent_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1113,20 +1579,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      check_premium_status: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
-      is_premium_email: {
-        Args: { email: string }
-        Returns: boolean
-      }
-      redeem_beta_access: {
-        Args: { code_text: string }
+      check_premium_status: { Args: { user_id: string }; Returns: boolean }
+      generate_referral_code: { Args: never; Returns: string }
+      is_admin: { Args: { check_user_id: string }; Returns: boolean }
+      is_premium_email: { Args: { email: string }; Returns: boolean }
+      process_referral: {
+        Args: { new_user_id: string; referral_code_input: string }
         Returns: Json
       }
+      redeem_beta_access: { Args: { code_text: string }; Returns: Json }
       redeem_promo_code: {
-        Args: { user_id: string; code: string }
+        Args: { code: string; user_id: string }
         Returns: Json
       }
       update_anthropic_api_key: {
