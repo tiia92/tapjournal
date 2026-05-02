@@ -40,7 +40,7 @@ const plans = [
       'Save 37% compared to monthly billing',
       'Priority support',
     ],
-    badge: <Badge className="bg-green-500 text-white">Best Value</Badge>,
+    badge: <Badge className="bg-gold text-gold-foreground">Best Value</Badge>,
   }
 ];
 
@@ -58,7 +58,7 @@ const Pricing = () => {
         <p className="text-muted-foreground mb-7">Flexible plans for any wellness journey—upgrade any time.</p>
         <div className="grid md:grid-cols-3 gap-6">
           {plans.map(plan => (
-            <div key={plan.name} className="rounded-lg border bg-card p-6 shadow-sm flex flex-col">
+            <div key={plan.name} className="rounded-2xl border border-border/60 bg-card p-6 shadow-soft flex flex-col">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-semibold text-lg">{plan.name}</span>
                 {plan.badge}
@@ -77,7 +77,7 @@ const Pricing = () => {
               ) : (
                 <Button
                   onClick={() => handlePremiumClick(plan.name)}
-                  className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 mt-auto"
+                  className="mt-auto"
                 >
                   {plan.name.includes("Monthly") ? "Go Premium Monthly" : "Go Premium Yearly"}
                 </Button>

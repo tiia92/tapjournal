@@ -99,27 +99,27 @@ const EmojiSelector: React.FC<EmojiSelectorProps> = ({
   };
 
   return (
-    <div className="tap-card">
-      <div className="flex justify-between items-center mb-3">
-        <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <div className="flex gap-2">
-          {onNoteChange && (
-            <button
-              onClick={() => setShowNote(!showNote)}
-              className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {showNote ? "Hide Note" : "Add Note"}
-            </button>
-          )}
-          {label !== "Today's Mood" && (
-            <button
-              onClick={handleToggleExpand}
-              className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isExpanded ? "Less" : "More"}
-            </button>
-          )}
-        </div>
+    <div className="tap-card relative">
+      <div className="absolute top-4 right-4 flex gap-2 z-10">
+        {onNoteChange && (
+          <button
+            onClick={() => setShowNote(!showNote)}
+            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showNote ? "Hide Note" : "Add Note"}
+          </button>
+        )}
+        {label !== "Today's Mood" && (
+          <button
+            onClick={handleToggleExpand}
+            className="text-xs px-2 py-1 rounded-full bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {isExpanded ? "Less" : "More"}
+          </button>
+        )}
+      </div>
+      <div className="text-center mb-4">
+        <span className="text-sm font-medium tracking-wide uppercase text-muted-foreground">{label}</span>
       </div>
 
       {!isSelecting && selectedIds.length === 0 ? (
