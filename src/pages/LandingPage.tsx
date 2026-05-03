@@ -135,7 +135,6 @@ const LandingPage = () => {
               )}
             </div>
           </div>
-        </div>
       </div>
 
       <main className="container mx-auto px-4">
