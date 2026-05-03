@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight, LogOut } from 'lucide-react';
+import heroBg from '@/assets/hero-bg.png';
 import Logo from '@/components/Logo';
 import MobileNav from '@/components/MobileNav';
 import { Button } from '@/components/ui/button';
