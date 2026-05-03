@@ -92,16 +92,15 @@ const LandingPage = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4">
-        {/* Hero Section */}
-        <div
-          className="relative rounded-3xl overflow-hidden my-8 md:my-12 border border-border/60 shadow-soft"
-          style={{
-            backgroundImage: `url(${heroBg})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
+      {/* Hero Section - full bleed */}
+      <div
+        className="relative w-full"
+        style={{
+          backgroundImage: `url(${heroBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
           <div data-reveal className="relative z-10 flex flex-col items-center text-center py-16 md:py-24 lg:py-32 px-4 opacity-0 translate-y-4">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
               Track your{' '}
