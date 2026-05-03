@@ -114,7 +114,7 @@ const LandingPage = () => {
               one tap at a time
             </p>
             <p className="text-lg md:text-xl text-white/95 mb-6 md:mb-8 max-w-2xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
-              TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
+              TapJournal helps you monitor your daily habits, goals, and<br />wellness to help you grow day to day.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
               {isAuthenticated ? (
