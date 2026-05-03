@@ -14,9 +14,9 @@ const LandingPage = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   const words = [
-    { text: 'day', color: 'from-primary to-accent' },
-    { text: 'wellness', color: 'from-primary to-gold' },
-    { text: 'growth', color: 'from-gold to-accent' }
+    { text: 'day', color: 'from-blue-500 to-purple-500' },
+    { text: 'wellness', color: 'from-green-500 to-teal-500' },
+    { text: 'growth', color: 'from-orange-500 to-pink-500' }
   ];
   
   useEffect(() => {
@@ -145,8 +145,8 @@ const LandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center mb-4">
-                <BookText className="text-primary" size={24} />
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                <BookText className="text-blue-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Personal Journal</h3>
               <p className="text-muted-foreground">
@@ -156,8 +156,8 @@ const LandingPage = () => {
 
             {/* Habit Tracking */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-gold/15 rounded-xl flex items-center justify-center mb-4">
-                <Droplets className="text-gold" size={24} />
+              <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+                <Droplets className="text-teal-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Habit Tracking</h3>
               <p className="text-muted-foreground">
@@ -168,8 +168,8 @@ const LandingPage = () => {
 
             {/* Symptom Tracking */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <Heart className="text-primary" size={24} />
+              <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-4">
+                <Heart className="text-rose-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Symptom Tracking</h3>
               <p className="text-muted-foreground">
@@ -179,8 +179,8 @@ const LandingPage = () => {
             
             {/* Medication Management */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center mb-4">
-                <Pill className="text-primary" size={24} />
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                <Pill className="text-purple-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Medication Management</h3>
               <p className="text-muted-foreground">
@@ -190,8 +190,8 @@ const LandingPage = () => {
             
             {/* Wellness Insights */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-gold/15 rounded-xl flex items-center justify-center mb-4">
-                <BookOpen className="text-gold" size={24} />
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+                <BookOpen className="text-amber-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">Wellness Insights</h3>
               <p className="text-muted-foreground">
@@ -201,8 +201,8 @@ const LandingPage = () => {
 
             {/* AI-powered Recommendations */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
-              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <BookOpen className="text-primary" size={24} />
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                <BookOpen className="text-emerald-600" size={24} />
               </div>
               <h3 className="text-xl font-semibold mb-2">AI-Powered Recommendations</h3>
               <p className="text-muted-foreground">
