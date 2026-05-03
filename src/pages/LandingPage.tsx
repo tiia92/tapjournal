@@ -102,9 +102,8 @@ const LandingPage = () => {
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-background/55 backdrop-blur-[2px]" />
           <div data-reveal className="relative z-10 flex flex-col items-center text-center py-16 md:py-24 lg:py-32 px-4 opacity-0 translate-y-4">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-foreground">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
               Track your{' '}
               <span
                 className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
@@ -112,10 +111,10 @@ const LandingPage = () => {
                 {words[activeWord].text}
               </span>
             </h2>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-foreground">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]">
               one tap at a time
             </p>
-            <p className="text-lg md:text-xl text-foreground/80 mb-6 md:mb-8 max-w-2xl">
+            <p className="text-lg md:text-xl text-white/95 mb-6 md:mb-8 max-w-2xl drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
               TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
