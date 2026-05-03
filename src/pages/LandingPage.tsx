@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Droplets, BookText, Pill, Heart, ArrowRight, LogOut } from 'lucide-react';
+import heroBg from '@/assets/hero-bg.png';
 import Logo from '@/components/Logo';
 import MobileNav from '@/components/MobileNav';
 import { Button } from '@/components/ui/button';
@@ -93,23 +94,31 @@ const LandingPage = () => {
 
       <main className="container mx-auto px-4">
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between py-12 md:py-16 lg:py-24">
-          <div data-reveal className="w-full md:w-1/2 mb-8 md:mb-0 opacity-0 translate-y-4">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2">
+        <div
+          className="relative rounded-3xl overflow-hidden my-8 md:my-12 border border-border/60 shadow-soft"
+          style={{
+            backgroundImage: `url(${heroBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-background/55 backdrop-blur-[2px]" />
+          <div data-reveal className="relative z-10 flex flex-col items-center text-center py-16 md:py-24 lg:py-32 px-4 opacity-0 translate-y-4">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 text-foreground">
               Track your{' '}
-              <span 
+              <span
                 className={`bg-gradient-to-r ${words[activeWord].color} bg-clip-text text-transparent transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
               >
                 {words[activeWord].text}
               </span>
             </h2>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 text-foreground">
               one tap at a time
             </p>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8">
+            <p className="text-lg md:text-xl text-foreground/80 mb-6 md:mb-8 max-w-2xl">
               TapJournal helps you monitor your daily habits, goals, and wellness to help you grow day to day.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
               {isAuthenticated ? (
                 <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/dashboard')}>
                   Go to Journal
@@ -126,15 +135,6 @@ const LandingPage = () => {
                   </Button>
                 </>
               )}
-            </div>
-          </div>
-          <div data-reveal className="w-full md:w-1/2 flex justify-center opacity-0 translate-y-4">
-            <div className="rounded-2xl overflow-hidden shadow-soft max-w-md md:max-w-none border border-border/60">
-              <img 
-                src="/lovable-uploads/9367920c-5252-4e6a-8580-7837623b79f2.png" 
-                alt="Journal with phone and laptop" 
-                className="w-full h-auto object-cover"
-              />
             </div>
           </div>
         </div>
