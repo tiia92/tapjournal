@@ -101,7 +101,7 @@ const LandingPage = () => {
           backgroundPosition: 'center',
         }}
       >
-          <div data-reveal className="relative z-10 flex flex-col items-center text-center py-16 md:py-24 lg:py-32 px-4 opacity-0 translate-y-4">
+          <div data-reveal className="relative z-10 flex flex-col items-center text-center py-24 md:py-40 lg:py-56 px-4 opacity-0 translate-y-4">
             <h2 className="text-3xl lg:text-5xl font-bold mb-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] md:text-6xl">
               Track your{' '}
               <span
