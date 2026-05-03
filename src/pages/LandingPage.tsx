@@ -136,9 +136,11 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
+      </div>
 
+      <main className="container mx-auto px-4">
         {/* Features Section */}
-        <div className="py-12 md:py-16 border-t border-border">
+        <div className="py-12 md:py-16">
           <h2 data-reveal className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center opacity-0 translate-y-4">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
