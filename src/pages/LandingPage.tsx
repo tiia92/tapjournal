@@ -94,11 +94,10 @@ const LandingPage = () => {
 
       {/* Hero Section - full bleed */}
       <div
-        className="relative w-full"
+        className="relative w-full bg-cover bg-center md:bg-contain md:bg-no-repeat md:bg-top"
         style={{
           backgroundImage: `url(${heroBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundColor: 'hsl(214 100% 47%)',
         }}
       >
           <div data-reveal className="relative z-10 flex flex-col items-center text-center py-24 md:py-40 lg:py-56 px-4 opacity-0 translate-y-4">
