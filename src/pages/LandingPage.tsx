@@ -118,13 +118,13 @@ const LandingPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
               {isAuthenticated ? (
-                <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50" onClick={() => navigate('/dashboard')}>
+                <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50 border-2" onClick={() => navigate('/dashboard')}>
                   Go to Journal
                   <ArrowRight className="ml-2" size={18} />
                 </Button>
               ) : (
                 <>
-                  <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50" onClick={() => navigate('/signup')}>
+                  <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50 border-2" onClick={() => navigate('/signup')}>
                     Get Started
                     <ArrowRight className="ml-2" size={18} />
                   </Button>
@@ -218,12 +218,12 @@ const LandingPage = () => {
             Join thousands of users who are taking control of their health one day at a time.
           </p>
           {isAuthenticated ? (
-            <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/dashboard')}>
+            <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50 border-2" onClick={() => navigate('/dashboard')}>
               Go to Journal
               <ArrowRight className="ml-2" size={18} />
             </Button>
           ) : (
-            <Button size="lg" className="w-full sm:w-auto min-h-[48px]" onClick={() => navigate('/signup')}>
+            <Button size="lg" className="w-full sm:w-auto min-h-[48px] border-slate-50 border-2" onClick={() => navigate('/signup')}>
               Sign Up for Free
               <ArrowRight className="ml-2" size={18} />
             </Button>
