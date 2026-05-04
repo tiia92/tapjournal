@@ -143,68 +143,68 @@ const LandingPage = () => {
           <h2 data-reveal className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center opacity-0 translate-y-4 text-slate-50">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                 <BookText className="text-blue-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Personal Journal</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">Personal Journal</h3>
+              <p className="text-slate-50/90">
                 Record your thoughts and reflections with our easy-to-use journaling tool with text, audio, images, emojis, and more.
               </p>
             </div>
 
             {/* Habit Tracking */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
                 <Droplets className="text-teal-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Habit Tracking</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">Habit Tracking</h3>
+              <p className="text-slate-50/90">
                 Monitor daily habits like water intake, sleep hours, and completed tasks 
                 with our simple tap interface.
               </p>
             </div>
 
             {/* Symptom Tracking */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center mb-4">
                 <Heart className="text-rose-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Symptom Tracking</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">Symptom Tracking</h3>
+              <p className="text-slate-50/90">
                 Record pain levels, energy, mood, and symptoms to understand patterns and share with healthcare providers.
               </p>
             </div>
             
             {/* Medication Management */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
                 <Pill className="text-purple-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Medication Management</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">Medication Management</h3>
+              <p className="text-slate-50/90">
                 Track your medications with a personalized list that remembers your past prescriptions.
               </p>
             </div>
             
             {/* Wellness Insights */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
                 <BookOpen className="text-amber-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Wellness Insights</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">Wellness Insights</h3>
+              <p className="text-slate-50/90">
                 Gain valuable insights into your habits and health patterns with premium analytics.
               </p>
             </div>
 
             {/* AI-powered Recommendations */}
-            <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
+            <div data-reveal className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-white/20 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
                 <BookOpen className="text-emerald-600" size={24} />
               </div>
-              <h3 className="text-xl font-semibold mb-2">AI-Powered Recommendations</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-slate-50">AI-Powered Recommendations</h3>
+              <p className="text-slate-50/90">
                 Get personalized wellness programs and actionable suggestions powered by AI (included with Premium).
               </p>
             </div>
