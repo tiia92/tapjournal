@@ -140,7 +140,7 @@ const LandingPage = () => {
       <main className="container mx-auto px-4">
         {/* Features Section */}
         <div className="py-12 md:py-16">
-          <h2 data-reveal className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center opacity-0 translate-y-4">Key Features</h2>
+          <h2 data-reveal className="text-2xl md:text-3xl font-bold mb-8 md:mb-12 text-center opacity-0 translate-y-4 text-slate-50">Key Features</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {/* Personal Journal */}
             <div data-reveal className="bg-card p-6 rounded-2xl shadow-soft border border-border/60 transition-all duration-300 hover:-translate-y-0.5 opacity-0 translate-y-4">
@@ -213,8 +213,8 @@ const LandingPage = () => {
 
         {/* CTA Section */}
         <div data-reveal className="py-12 md:py-16 border-t border-border mb-12 md:mb-16 text-center opacity-0 translate-y-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Start your wellness journey today</h2>
-          <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-slate-50">Start your wellness journey today</h2>
+          <p className="text-lg md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto text-slate-50">
             Join thousands of users who are taking control of their health one day at a time.
           </p>
           {isAuthenticated ? (
