@@ -57,7 +57,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background hero-gradient">
+    <div className="min-h-screen" style={{ backgroundColor: 'hsl(214 100% 47%)' }}>
       <header className="border-b border-border bg-card/80 backdrop-blur-md safe-top">
         <div className="container mx-auto px-4 py-3 md:py-4 flex items-center justify-between">
           <div className="flex items-center">
