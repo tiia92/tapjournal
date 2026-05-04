@@ -94,13 +94,13 @@ const LandingPage = () => {
 
       {/* Hero Section - full bleed */}
       <div
-        className="relative w-full bg-cover bg-center md:bg-top md:aspect-[3/2]"
+        className="relative w-full bg-cover bg-center md:bg-top md:aspect-[3/2] flex items-center justify-center"
         style={{
           backgroundImage: `url(${heroBg})`,
           backgroundColor: 'hsl(214 100% 47%)',
         }}
       >
-          <div data-reveal className="relative z-10 flex flex-col items-center text-center py-24 md:py-16 lg:py-20 px-4 opacity-0 translate-y-4">
+          <div data-reveal className="relative z-10 flex flex-col items-center text-center py-24 md:py-0 px-4 opacity-0 translate-y-4">
             <h2 className="text-3xl lg:text-5xl font-bold mb-2 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] md:text-6xl">
               Track your{' '}
               <span
