@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import ForgotPassword from '@/components/ForgotPassword';
+import PublicNav from '@/components/PublicNav';
+import PublicFooter from '@/components/PublicFooter';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
