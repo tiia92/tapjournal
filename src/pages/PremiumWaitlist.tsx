@@ -1,79 +1,35 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { ArrowLeft, Check, CreditCard, Clock, Shield } from 'lucide-react';
+import { ArrowLeft, Check, CreditCard, Shield } from 'lucide-react';
 import Layout from '@/components/Layout';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
 
-const PremiumWaitlist = () => {
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [name, setName] = useState('');
+const PremiumCheckout = () => {
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cardNumber || !expiryDate || !cvv || !name) {
-      toast.error('Please fill in all payment details');
-      return;
-    }
+  const handleCheckout = async () => {
     setIsSubmitting(true);
-
-    // Save user info to Supabase (DO NOT save card info!)
-    const { error } = await supabase
-      .from('premium_waitlist')
-      .insert([
-        {
-          user_id: user?.id,
-          name,
-          email: user?.email || '',
-          phone: null,
-          payment_attempted: true,
-          stripe_customer_id: null,
-        }
-      ]);
-    if (error) {
-      toast.error('Failed to join waitlist. Please try again.');
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { plan: selectedPlan },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err?.message || 'Could not start checkout');
       setIsSubmitting(false);
-      return;
     }
-
-    toast.success('Successfully joined the premium waitlist!');
-    navigate('/dashboard');
-    setIsSubmitting(false);
-  };
-
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
-    const parts = [];
-    for (let i = 0, len = match.length; i < len; i += 4) {
-      parts.push(match.substring(i, i + 4));
-    }
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return v;
-    }
-  };
-
-  const formatExpiryDate = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return v.substring(0, 2) + '/' + v.substring(2, 4);
-    }
-    return v;
   };
 
   const premiumFeatures = [
@@ -83,43 +39,36 @@ const PremiumWaitlist = () => {
     'Custom Tracking Metrics',
     'Guided Wellness Programs',
     'Smart Goal Suggestions',
-    'Accountability Partner Mode'
+    'Accountability Partner Mode',
   ];
 
   return (
     <Layout>
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/journal')}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Insights
+            Back
           </Button>
-          <h1 className="text-3xl font-bold mb-2">Join Premium Waitlist</h1>
+          <h1 className="text-3xl font-bold mb-2">Upgrade to Premium</h1>
           <p className="text-muted-foreground">
-            Be the first to access premium features when they launch
+            Unlock the full TapJournal experience. Cancel anytime.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Features Card */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Check className="w-5 h-5 text-green-500" />
                 Premium Features
               </CardTitle>
-              <CardDescription>
-                Everything you'll get with Premium
-              </CardDescription>
+              <CardDescription>Everything included with Premium</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {premiumFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-3">
+                {premiumFeatures.map((feature) => (
+                  <li key={feature} className="flex items-center gap-3">
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                     <span className="text-sm">{feature}</span>
                   </li>
@@ -128,19 +77,15 @@ const PremiumWaitlist = () => {
             </CardContent>
           </Card>
 
-          {/* Payment Card */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
-                Secure Your Spot
+                Choose your plan
               </CardTitle>
-              <CardDescription>
-                Reserve your premium access with payment details
-              </CardDescription>
+              <CardDescription>You'll be redirected to Stripe to complete payment</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Pricing Options */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <Button
                   variant={selectedPlan === 'monthly' ? 'default' : 'outline'}
@@ -163,82 +108,17 @@ const PremiumWaitlist = () => {
                 </Button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Cardholder Name
-                  </label>
-                  <Input
-                    placeholder="John Doe"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Card Number
-                  </label>
-                  <Input
-                    placeholder="1234 5678 9012 3456"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                    maxLength={19}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      Expiry Date
-                    </label>
-                    <Input
-                      placeholder="MM/YY"
-                      value={expiryDate}
-                      onChange={(e) => setExpiryDate(formatExpiryDate(e.target.value))}
-                      maxLength={5}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">
-                      CVV
-                    </label>
-                    <Input
-                      placeholder="123"
-                      value={cvv}
-                      onChange={(e) => setCvv(e.target.value.replace(/\D/g, ''))}
-                      maxLength={4}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center">
-                      <span className="animate-spin mr-2">⏳</span>
-                      Joining Waitlist...
-                    </span>
-                  ) : (
-                    'Join Premium Waitlist'
-                  )}
-                </Button>
-              </form>
+              <Button
+                onClick={handleCheckout}
+                className="w-full bg-primary hover:bg-primary/90"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Redirecting to Stripe…' : `Subscribe ${selectedPlan === 'yearly' ? 'Yearly' : 'Monthly'}`}
+              </Button>
 
-              {/* Important Info */}
-              <div className="mt-6 space-y-3 text-sm text-muted-foreground">
-                <div className="flex items-start gap-2">
-                  <Clock className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>You will not be charged until premium features launch</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  <span>7-day refund policy once premium launches if you change your mind</span>
-                </div>
+              <div className="mt-6 flex items-start gap-2 text-sm text-muted-foreground">
+                <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <span>Secure checkout via Stripe. Cancel anytime from your account.</span>
               </div>
             </CardContent>
           </Card>
@@ -248,4 +128,4 @@ const PremiumWaitlist = () => {
   );
 };
 
-export default PremiumWaitlist;
+export default PremiumCheckout;
