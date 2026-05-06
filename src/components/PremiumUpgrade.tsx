@@ -25,7 +25,7 @@ const PremiumUpgrade: React.FC = () => {
   const navigate = useNavigate();
 
   const handleUpgrade = () => {
-    navigate('/premium-waitlist');
+    navigate('/upgrade');
   };
 
   const premiumFeatures: PremiumFeature[] = [
