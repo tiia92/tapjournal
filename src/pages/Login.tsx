@@ -132,6 +132,8 @@ const Login = () => {
           </form>
         </div>
       </div>
+      </main>
+      <PublicFooter />
     </div>
   );
 };
