@@ -86,7 +86,7 @@ const Pricing = () => {
           ))}
         </div>
         <div className="text-center text-muted-foreground mt-5 text-xs">
-          You won't be charged until premium features officially launch. Cancel any time.
+          Secure checkout via Stripe. Cancel any time.
         </div>
       </div>
     </Layout>
