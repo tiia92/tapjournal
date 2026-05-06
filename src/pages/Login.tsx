@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import ForgotPassword from '@/components/ForgotPassword';
+import PublicNav from '@/components/PublicNav';
+import PublicFooter from '@/components/PublicFooter';
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -50,7 +53,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
+      <PublicNav />
+      <main className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold">TapJournal</h1>
@@ -127,6 +132,8 @@ const Login = () => {
           </form>
         </div>
       </div>
+      </main>
+      <PublicFooter />
     </div>
   );
 };
