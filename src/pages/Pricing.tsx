@@ -48,7 +48,7 @@ const Pricing = () => {
   const navigate = useNavigate();
 
   const handlePremiumClick = (planName: string) => {
-    navigate('/premium-waitlist');
+    navigate('/upgrade');
   };
 
   return (
