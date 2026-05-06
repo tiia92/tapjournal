@@ -89,6 +89,14 @@ const AppRoutes = () => {
         } 
       />
       <Route 
+        path="/upgrade" 
+        element={
+          <ProtectedRoute>
+            <PremiumWaitlist />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
         path="/premium-waitlist" 
         element={
           <ProtectedRoute>
