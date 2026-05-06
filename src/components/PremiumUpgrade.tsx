@@ -25,7 +25,7 @@ const PremiumUpgrade: React.FC = () => {
   const navigate = useNavigate();
 
   const handleUpgrade = () => {
-    navigate('/premium-waitlist');
+    navigate('/upgrade');
   };
 
   const premiumFeatures: PremiumFeature[] = [
@@ -95,7 +95,7 @@ const PremiumUpgrade: React.FC = () => {
         onClick={handleUpgrade}
         className="w-full bg-primary hover:bg-primary/90"
       >
-        Join Premium Waitlist
+        Upgrade to Premium
       </Button>
     </div>
   );
