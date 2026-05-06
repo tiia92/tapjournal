@@ -95,7 +95,7 @@ const PremiumUpgrade: React.FC = () => {
         onClick={handleUpgrade}
         className="w-full bg-primary hover:bg-primary/90"
       >
-        Join Premium Waitlist
+        Upgrade to Premium
       </Button>
     </div>
   );
