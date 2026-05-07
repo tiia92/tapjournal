@@ -62,8 +62,8 @@ const Login = () => {
       <main className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">TapJournal</h1>
-          <p className="text-muted-foreground mt-2">Sign in to your wellness tracker</p>
+          <h1 className="text-3xl font-bold text-slate-50">TapJournal</h1>
+          <p className="text-muted-foreground mt-2 text-slate-200">Sign in to your wellness tracker</p>
         </div>
         
         <div className="bg-card border rounded-xl shadow-sm p-6">
