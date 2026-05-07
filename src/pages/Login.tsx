@@ -54,12 +54,12 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="min-h-screen flex flex-col bg-cover bg-center"
-      style={{ backgroundImage: `url(${heroBg})`, backgroundColor: 'hsl(214 100% 47%)' }}
-    >
+    <div className="min-h-screen flex flex-col bg-background">
       <PublicNav />
-      <main className="flex-1 flex items-center justify-center p-4">
+      <main
+        className="flex-1 flex items-center justify-center p-4 bg-cover bg-center"
+        style={{ backgroundImage: `url(${heroBg})`, backgroundColor: 'hsl(214 100% 47%)', minHeight: 'calc(100vh - 4rem)' }}
+      >
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-50">TapJournal</h1>
