@@ -467,6 +467,36 @@ export type Database = {
         }
         Relationships: []
       }
+      employer_waitlist_duplicate: {
+        Row: {
+          contact_email: string
+          contact_name: string
+          created_at: string
+          id: string
+          organization_name: string
+          organization_website: string | null
+          status: string | null
+        }
+        Insert: {
+          contact_email: string
+          contact_name: string
+          created_at?: string
+          id?: string
+          organization_name: string
+          organization_website?: string | null
+          status?: string | null
+        }
+        Update: {
+          contact_email?: string
+          contact_name?: string
+          created_at?: string
+          id?: string
+          organization_name?: string
+          organization_website?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       "idealist old": {
         Row: {
           "Date Posted": string | null

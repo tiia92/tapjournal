@@ -9,6 +9,7 @@ import { LogIn, Mail, Lock } from 'lucide-react';
 import ForgotPassword from '@/components/ForgotPassword';
 import PublicNav from '@/components/PublicNav';
 import PublicFooter from '@/components/PublicFooter';
+import heroBg from '@/assets/hero-bg.png';
 
 
 const Login = () => {
@@ -53,7 +54,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div
+      className="min-h-screen flex flex-col bg-cover bg-center"
+      style={{ backgroundImage: `url(${heroBg})`, backgroundColor: 'hsl(214 100% 47%)' }}
+    >
       <PublicNav />
       <main className="flex-1 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
