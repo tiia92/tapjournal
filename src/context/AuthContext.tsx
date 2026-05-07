@@ -19,6 +19,7 @@ type AuthContextType = {
   signup: (name: string, email: string, password: string) => Promise<{ error?: string }>;
   logout: () => Promise<void>;
   upgradeAccount: () => void;
+  refreshPremiumStatus: () => Promise<void>;
   loading: boolean;
   isDemoMode: boolean;
 };
@@ -43,16 +44,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Transform Supabase user to our User type
-  const transformUser = (supabaseUser: SupabaseUser, profile?: any): User => {
+  const transformUser = (supabaseUser: SupabaseUser, profile?: any, isPremium = false): User => {
     return {
       id: supabaseUser.id,
       email: supabaseUser.email || '',
       name: profile?.name || supabaseUser.user_metadata?.name || 'User',
-      isPremium: false, // Will be determined by subscription logic later
+      isPremium,
     };
   };
 
-  // Fetch user profile from profiles table
   const fetchUserProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
@@ -60,16 +60,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .select('*')
         .eq('id', userId)
         .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+      if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
       }
-      
       return data;
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       return null;
     }
+  };
+
+  // Check premium status from user_subscriptions
+  const fetchPremiumStatus = async (userId: string): Promise<boolean> => {
+    try {
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select('end_date')
+        .eq('user_id', userId)
+        .eq('subscription_type', 'premium')
+        .eq('is_active', true)
+        .maybeSingle();
+      if (error) {
+        console.error('Error fetching premium status:', error);
+        return false;
+      }
+      if (!data) return false;
+      if (data.end_date && new Date(data.end_date) < new Date()) return false;
+      return true;
+    } catch (error) {
+      console.error('Error in fetchPremiumStatus:', error);
+      return false;
+    }
+  };
+
+  const refreshPremiumStatus = async () => {
+    if (!user || isDemoMode) return;
+    const isPremium = await fetchPremiumStatus(user.id);
+    setUser((prev) => (prev ? { ...prev, isPremium } : prev));
   };
 
   useEffect(() => {
