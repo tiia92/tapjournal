@@ -115,11 +115,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         
         if (session?.user) {
-          // Defer profile fetching to avoid deadlock
           setTimeout(async () => {
-            const profile = await fetchUserProfile(session.user.id);
-            const transformedUser = transformUser(session.user, profile);
-            setUser(transformedUser);
+            const [profile, isPremium] = await Promise.all([
+              fetchUserProfile(session.user.id),
+              fetchPremiumStatus(session.user.id),
+            ]);
+            setUser(transformUser(session.user, profile, isPremium));
             setIsAuthenticated(true);
             setLoading(false);
           }, 0);
@@ -131,16 +132,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     );
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        fetchUserProfile(session.user.id).then((profile) => {
-          const transformedUser = transformUser(session.user, profile);
-          setUser(transformedUser);
-          setSession(session);
-          setIsAuthenticated(true);
-          setLoading(false);
-        });
+        const [profile, isPremium] = await Promise.all([
+          fetchUserProfile(session.user.id),
+          fetchPremiumStatus(session.user.id),
+        ]);
+        setUser(transformUser(session.user, profile, isPremium));
+        setSession(session);
+        setIsAuthenticated(true);
+        setLoading(false);
       } else {
         setLoading(false);
       }
@@ -212,6 +213,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signup,
         logout,
         upgradeAccount,
+        refreshPremiumStatus,
         loading,
         isDemoMode,
       }}
