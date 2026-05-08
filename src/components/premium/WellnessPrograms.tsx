@@ -548,6 +548,28 @@ const WellnessPrograms: React.FC = () => {
   const [responses, setResponses] = useState<Record<string, any>>({});
   const [allowDaySkipping, setAllowDaySkipping] = useState(false);
 
+  // Mindfulness program state
+  const [showMindfulnessProgram, setShowMindfulnessProgram] = useState(false);
+  const [mindfulnessStarted, setMindfulnessStarted] = useState(false);
+  const [mindfulnessProgress, setMindfulnessProgress] = useState<ProgramProgress | null>(null);
+  const [mindfulnessDay, setMindfulnessDay] = useState(1);
+  const [mindfulnessResponses, setMindfulnessResponses] = useState<Record<string, any>>({});
+  const [mindfulnessAllowSkip, setMindfulnessAllowSkip] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('mindfulnessProgress');
+    if (saved) {
+      const progress = JSON.parse(saved) as ProgramProgress;
+      setMindfulnessProgress(progress);
+      setMindfulnessStarted(true);
+      const day = Math.min(calculateProgramDay(progress.startDate), 30);
+      setMindfulnessDay(day);
+      if (progress.dayData[day]?.responses) {
+        setMindfulnessResponses(progress.dayData[day].responses);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     const savedProgress = localStorage.getItem('sleepResetProgress');
     if (savedProgress) {
