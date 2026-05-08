@@ -596,6 +596,10 @@ const WellnessPrograms: React.FC = () => {
         setShowComingSoon(false);
         setShowSleepResetProgram(true);
       }
+    } else if (program.id === 'mindfulness') {
+      setSelectedProgram(program);
+      setShowComingSoon(false);
+      setShowMindfulnessProgram(true);
     } else {
       setSelectedProgram(program);
       setShowComingSoon(true);
