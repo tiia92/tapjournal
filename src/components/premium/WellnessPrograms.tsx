@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/accordion';
 import { Progress } from '@/components/ui/progress';
 import { calculateProgramDay, isDayAccessible, getTodayDate } from '@/utils/trackerUtils';
+import { mindfulnessProgram } from '@/data/mindfulnessProgram';
 
 interface Program {
   id: string;
