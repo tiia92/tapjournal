@@ -737,6 +737,210 @@ const WellnessPrograms: React.FC = () => {
     );
   }
 
+  // ===== Mindfulness program handlers =====
+  const startMindfulness = () => {
+    const today = getTodayDate();
+    const newProgress: ProgramProgress = {
+      programId: 'mindfulness',
+      startDate: today,
+      currentDay: 1,
+      completed: false,
+      dayData: { 1: { completed: false, responses: {} } },
+    };
+    setMindfulnessProgress(newProgress);
+    setMindfulnessStarted(true);
+    setMindfulnessDay(1);
+    setActiveProgramId('mindfulness');
+    localStorage.setItem('mindfulnessProgress', JSON.stringify(newProgress));
+    toast.success('30-Day Mindfulness program started!');
+  };
+
+  const handleMindfulnessResponse = (id: string, value: any) => {
+    setMindfulnessResponses(prev => {
+      const updated = { ...prev, [id]: value };
+      if (mindfulnessProgress) {
+        const up = { ...mindfulnessProgress };
+        if (!up.dayData[mindfulnessDay]) up.dayData[mindfulnessDay] = { completed: false, responses: {} };
+        up.dayData[mindfulnessDay].responses = updated;
+        setMindfulnessProgress(up);
+        localStorage.setItem('mindfulnessProgress', JSON.stringify(up));
+      }
+      return updated;
+    });
+  };
+
+  const goToMindfulnessDay = (newDay: number) => {
+    if (newDay < 1 || newDay > 30 || !mindfulnessProgress) return;
+    const canAccess = mindfulnessAllowSkip || isDayAccessible(mindfulnessProgress.startDate, newDay);
+    if (!canAccess) {
+      toast.info("This day will be available later. Enable 'Skip Days' to access it now.");
+      return;
+    }
+    const up = { ...mindfulnessProgress };
+    if (!up.dayData[newDay]) {
+      up.dayData[newDay] = { completed: false, responses: {} };
+      setMindfulnessProgress(up);
+      localStorage.setItem('mindfulnessProgress', JSON.stringify(up));
+    }
+    setMindfulnessDay(newDay);
+    setMindfulnessResponses(up.dayData[newDay].responses || {});
+  };
+
+  const completeMindfulnessDay = () => {
+    if (!mindfulnessProgress) return;
+    const up = { ...mindfulnessProgress };
+    if (!up.dayData[mindfulnessDay]) up.dayData[mindfulnessDay] = { completed: false, responses: {} };
+    up.dayData[mindfulnessDay].completed = true;
+    if (mindfulnessDay === 30) {
+      up.completed = true;
+      toast.success("Congratulations! You've completed the 30-Day Mindfulness Program!");
+    } else {
+      toast.success(`Day ${mindfulnessDay} completed!`);
+    }
+    setMindfulnessProgress(up);
+    localStorage.setItem('mindfulnessProgress', JSON.stringify(up));
+  };
+
+  if (showMindfulnessProgram) {
+    const dayData = mindfulnessProgram.days[mindfulnessDay - 1];
+    const isAccessible = mindfulnessAllowSkip || (mindfulnessProgress
+      ? isDayAccessible(mindfulnessProgress.startDate, mindfulnessDay)
+      : mindfulnessDay === 1);
+    const completedCount = mindfulnessProgress
+      ? Object.keys(mindfulnessProgress.dayData).filter(d => mindfulnessProgress.dayData[parseInt(d)].completed).length
+      : 0;
+    const progressPct = (completedCount / 30) * 100;
+    const dayCompleted = mindfulnessProgress?.dayData[mindfulnessDay]?.completed || false;
+
+    return (
+      <div className="tap-card">
+        <div className="flex items-center justify-between mb-4">
+          <button onClick={() => setShowMindfulnessProgram(false)} className="flex items-center text-sm text-primary">
+            <ChevronLeft size={16} className="mr-1" /> Back to Programs
+          </button>
+          <div className="flex items-center">
+            <div className="text-sm text-muted-foreground mr-4">
+              {mindfulnessStarted ? `Day ${mindfulnessDay} of 30` : 'Program Overview'}
+            </div>
+            {mindfulnessStarted && (
+              <Button variant="outline" size="sm" onClick={() => setMindfulnessAllowSkip(!mindfulnessAllowSkip)} className="text-xs h-8">
+                {mindfulnessAllowSkip ? 'Disable Skip' : 'Enable Skip'}
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {mindfulnessStarted && (
+          <div className="mb-6">
+            <div className="flex justify-between text-xs text-muted-foreground mb-2">
+              <span>Day 1</span>
+              <span>Day 30</span>
+            </div>
+            <Progress value={progressPct} className="h-2" />
+          </div>
+        )}
+
+        <h2 className="text-2xl font-bold mb-2">{mindfulnessProgram.overview.title}</h2>
+
+        {!mindfulnessStarted ? (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">{mindfulnessProgram.overview.description}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <Card><CardHeader className="p-4"><CardTitle className="text-lg">Duration</CardTitle></CardHeader>
+                <CardContent className="p-4 pt-0"><p>{mindfulnessProgram.overview.duration}</p></CardContent></Card>
+              <Card><CardHeader className="p-4"><CardTitle className="text-lg">Level</CardTitle></CardHeader>
+                <CardContent className="p-4 pt-0"><p>{mindfulnessProgram.overview.level}</p></CardContent></Card>
+            </div>
+            <Card><CardHeader className="p-4"><CardTitle className="text-lg">Goal</CardTitle></CardHeader>
+              <CardContent className="p-4 pt-0"><p>{mindfulnessProgram.overview.goal}</p></CardContent></Card>
+            <div className="pt-4">
+              <Button onClick={startMindfulness} className="w-full">Start 30-Day Program</Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold mb-2">Day {mindfulnessDay}: {dayData.title}</h3>
+              <p className="text-muted-foreground">{dayData.description}</p>
+            </div>
+
+            {isAccessible ? (
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Practice ({dayData.practice.duration})</CardTitle>
+                    <CardDescription>{dayData.practice.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {dayData.practice.steps.map(step => (
+                        <div key={step.id} className="flex items-start space-x-2">
+                          <button
+                            onClick={() => handleMindfulnessResponse(`step-${step.id}`, !mindfulnessResponses[`step-${step.id}`])}
+                            className={`w-6 h-6 mt-0.5 rounded flex items-center justify-center ${mindfulnessResponses[`step-${step.id}`] ? 'bg-primary' : 'border border-input'}`}
+                          >
+                            {mindfulnessResponses[`step-${step.id}`] && <Check size={14} className="text-primary-foreground" />}
+                          </button>
+                          <span>{step.task}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Reflection</CardTitle>
+                    <CardDescription>Take a moment to journal your experience.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {dayData.reflection.questions.map(q => (
+                        <div key={q.id} className="space-y-2">
+                          <label className="block text-sm font-medium">{q.question}</label>
+                          <Textarea
+                            value={mindfulnessResponses[q.id] || ''}
+                            onChange={(e) => handleMindfulnessResponse(q.id, e.target.value)}
+                            placeholder="Your reflection..."
+                            className="w-full"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <div className="flex justify-between pt-4">
+                  <Button variant="outline" onClick={() => goToMindfulnessDay(mindfulnessDay - 1)} disabled={mindfulnessDay === 1}>
+                    <ChevronLeft size={16} className="mr-1" /> Previous Day
+                  </Button>
+                  <Button onClick={completeMindfulnessDay} disabled={dayCompleted}>
+                    {dayCompleted ? 'Day Completed' : 'Complete Day'}
+                  </Button>
+                  <Button variant="outline" onClick={() => goToMindfulnessDay(mindfulnessDay + 1)} disabled={mindfulnessDay === 30}>
+                    Next Day <ChevronRight size={16} className="ml-1" />
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-10 flex flex-col items-center justify-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-muted-foreground" />
+                </div>
+                <h3 className="text-xl font-semibold">Content Locked</h3>
+                <p className="text-center text-muted-foreground">This day's content will be available at 8 AM on its scheduled date.</p>
+                <div className="flex items-center text-sm text-muted-foreground mb-4">
+                  <Clock size={16} className="mr-1" /> Check back later
+                </div>
+                <Button variant="outline" onClick={() => setMindfulnessAllowSkip(true)}>Skip Time Restrictions</Button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (showSleepResetProgram) {
     const dayData = sleepResetProgram.days[currentProgramDay - 1];
     const isAccessible = allowDaySkipping || (programProgress ? 
