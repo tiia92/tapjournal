@@ -256,6 +256,69 @@ export type Database = {
           },
         ]
       }
+      coaching_call_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          email: string
+          id: string
+          notes: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          email: string
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          email?: string
+          id?: string
+          notes?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      curated_articles: {
+        Row: {
+          created_at: string
+          id: string
+          publication: string
+          published: string
+          summary: string
+          title: string
+          topic: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          publication?: string
+          published?: string
+          summary?: string
+          title: string
+          topic?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          publication?: string
+          published?: string
+          summary?: string
+          title?: string
+          topic?: string
+          url?: string
+        }
+        Relationships: []
+      }
       demo_usage_tracking: {
         Row: {
           created_at: string
@@ -286,6 +349,30 @@ export type Database = {
           reset_date?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      email_outreach_sends: {
+        Row: {
+          email: string
+          message_id: string | null
+          provider: string | null
+          send_type: string
+          sent_at: string
+        }
+        Insert: {
+          email: string
+          message_id?: string | null
+          provider?: string | null
+          send_type: string
+          sent_at?: string
+        }
+        Update: {
+          email?: string
+          message_id?: string | null
+          provider?: string | null
+          send_type?: string
+          sent_at?: string
         }
         Relationships: []
       }
@@ -971,38 +1058,101 @@ export type Database = {
           },
         ]
       }
-      premium_plus_waitlist: {
+      organization_research: {
+        Row: {
+          cause_mismatch: boolean | null
+          created_at: string
+          description: string | null
+          id: string
+          last_verified_at: string
+          mismatch_notes: string | null
+          org_name: string
+          raw_evidence: Json | null
+          researched_at: string
+          source_url: string | null
+          updated_at: string
+          verified_causes: string[] | null
+        }
+        Insert: {
+          cause_mismatch?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_verified_at?: string
+          mismatch_notes?: string | null
+          org_name: string
+          raw_evidence?: Json | null
+          researched_at?: string
+          source_url?: string | null
+          updated_at?: string
+          verified_causes?: string[] | null
+        }
+        Update: {
+          cause_mismatch?: boolean | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          last_verified_at?: string
+          mismatch_notes?: string | null
+          org_name?: string
+          raw_evidence?: Json | null
+          researched_at?: string
+          source_url?: string | null
+          updated_at?: string
+          verified_causes?: string[] | null
+        }
+        Relationships: []
+      }
+      perk_leads: {
         Row: {
           created_at: string
           email: string
           id: string
           name: string
-          payment_status: string | null
-          phone: string | null
-          stripe_session_id: string | null
-          updated_at: string
-          user_id: string | null
+          perk_name: string
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
           name: string
-          payment_status?: string | null
-          phone?: string | null
-          stripe_session_id?: string | null
-          updated_at?: string
-          user_id?: string | null
+          perk_name: string
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           name?: string
-          payment_status?: string | null
-          phone?: string | null
-          stripe_session_id?: string | null
-          updated_at?: string
+          perk_name?: string
+        }
+        Relationships: []
+      }
+      premium_plus_upsell_sends: {
+        Row: {
+          email: string
+          error: string | null
+          id: string
+          message_id: string | null
+          sent_at: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          email: string
+          error?: string | null
+          id?: string
+          message_id?: string | null
+          sent_at?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          email?: string
+          error?: string | null
+          id?: string
+          message_id?: string | null
+          sent_at?: string
+          status?: string
           user_id?: string | null
         }
         Relationships: []
@@ -1427,6 +1577,162 @@ export type Database = {
           },
         ]
       }
+      stripe_data_room_cache: {
+        Row: {
+          generated_at: string
+          id: number
+          payload: Json
+        }
+        Insert: {
+          generated_at?: string
+          id?: number
+          payload: Json
+        }
+        Update: {
+          generated_at?: string
+          id?: number
+          payload?: Json
+        }
+        Relationships: []
+      }
+      substack_suscribers_to_convert: {
+        Row: {
+          Activity: number | null
+          Bestseller: string | null
+          "Cancel date": string | null
+          Comments: number | null
+          "Comments (30d)": number | null
+          "Comments (7d)": number | null
+          Country: string | null
+          "Days active (30d)": number | null
+          Email: string | null
+          "Emails dropped (6mo)": number | null
+          "Emails opened (30d)": number | null
+          "Emails opened (6mo)": number | null
+          "Emails opened (7d)": number | null
+          "Emails received (6mo)": number | null
+          "Expiration date": string | null
+          "First paid date": string | null
+          "Last clicked at": string | null
+          "Last email open": string | null
+          "Links clicked": number | null
+          Name: string | null
+          num_emails_opened: number | null
+          "Paid upgrade date": string | null
+          "Post views": number | null
+          "Post views (30d)": number | null
+          "Post views (7d)": number | null
+          Revenue: string | null
+          Sections: string | null
+          Shares: number | null
+          "Shares (30d)": number | null
+          "Shares (7d)": number | null
+          "Start date": string | null
+          "State/Province": string | null
+          "Stripe plan": string | null
+          "Subscription source (free)": string | null
+          "Subscription source (paid)": string | null
+          "Subscriptions gifted": number | null
+          Type: string | null
+          "Unique emails seen (30d)": number | null
+          "Unique emails seen (6mo)": number | null
+          "Unique emails seen (7d)": number | null
+          "Unique posts seen": number | null
+          "Unique posts seen (30d)": number | null
+          "Unique posts seen (7d)": number | null
+        }
+        Insert: {
+          Activity?: number | null
+          Bestseller?: string | null
+          "Cancel date"?: string | null
+          Comments?: number | null
+          "Comments (30d)"?: number | null
+          "Comments (7d)"?: number | null
+          Country?: string | null
+          "Days active (30d)"?: number | null
+          Email?: string | null
+          "Emails dropped (6mo)"?: number | null
+          "Emails opened (30d)"?: number | null
+          "Emails opened (6mo)"?: number | null
+          "Emails opened (7d)"?: number | null
+          "Emails received (6mo)"?: number | null
+          "Expiration date"?: string | null
+          "First paid date"?: string | null
+          "Last clicked at"?: string | null
+          "Last email open"?: string | null
+          "Links clicked"?: number | null
+          Name?: string | null
+          num_emails_opened?: number | null
+          "Paid upgrade date"?: string | null
+          "Post views"?: number | null
+          "Post views (30d)"?: number | null
+          "Post views (7d)"?: number | null
+          Revenue?: string | null
+          Sections?: string | null
+          Shares?: number | null
+          "Shares (30d)"?: number | null
+          "Shares (7d)"?: number | null
+          "Start date"?: string | null
+          "State/Province"?: string | null
+          "Stripe plan"?: string | null
+          "Subscription source (free)"?: string | null
+          "Subscription source (paid)"?: string | null
+          "Subscriptions gifted"?: number | null
+          Type?: string | null
+          "Unique emails seen (30d)"?: number | null
+          "Unique emails seen (6mo)"?: number | null
+          "Unique emails seen (7d)"?: number | null
+          "Unique posts seen"?: number | null
+          "Unique posts seen (30d)"?: number | null
+          "Unique posts seen (7d)"?: number | null
+        }
+        Update: {
+          Activity?: number | null
+          Bestseller?: string | null
+          "Cancel date"?: string | null
+          Comments?: number | null
+          "Comments (30d)"?: number | null
+          "Comments (7d)"?: number | null
+          Country?: string | null
+          "Days active (30d)"?: number | null
+          Email?: string | null
+          "Emails dropped (6mo)"?: number | null
+          "Emails opened (30d)"?: number | null
+          "Emails opened (6mo)"?: number | null
+          "Emails opened (7d)"?: number | null
+          "Emails received (6mo)"?: number | null
+          "Expiration date"?: string | null
+          "First paid date"?: string | null
+          "Last clicked at"?: string | null
+          "Last email open"?: string | null
+          "Links clicked"?: number | null
+          Name?: string | null
+          num_emails_opened?: number | null
+          "Paid upgrade date"?: string | null
+          "Post views"?: number | null
+          "Post views (30d)"?: number | null
+          "Post views (7d)"?: number | null
+          Revenue?: string | null
+          Sections?: string | null
+          Shares?: number | null
+          "Shares (30d)"?: number | null
+          "Shares (7d)"?: number | null
+          "Start date"?: string | null
+          "State/Province"?: string | null
+          "Stripe plan"?: string | null
+          "Subscription source (free)"?: string | null
+          "Subscription source (paid)"?: string | null
+          "Subscriptions gifted"?: number | null
+          Type?: string | null
+          "Unique emails seen (30d)"?: number | null
+          "Unique emails seen (6mo)"?: number | null
+          "Unique emails seen (7d)"?: number | null
+          "Unique posts seen"?: number | null
+          "Unique posts seen (30d)"?: number | null
+          "Unique posts seen (7d)"?: number | null
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           causes: string[] | null
@@ -1613,6 +1919,12 @@ export type Database = {
       generate_referral_code: { Args: never; Returns: string }
       is_admin: { Args: { check_user_id: string }; Returns: boolean }
       is_premium_email: { Args: { email: string }; Returns: boolean }
+      orgs_missing_research: {
+        Args: { _limit?: number }
+        Returns: {
+          organization: string
+        }[]
+      }
       process_referral: {
         Args: { new_user_id: string; referral_code_input: string }
         Returns: Json
@@ -1644,12 +1956,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1673,11 +1985,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1698,11 +2010,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1723,11 +2035,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1740,11 +2052,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
