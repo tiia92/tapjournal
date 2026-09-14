@@ -29,6 +29,8 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { calculateProgramDay, isDayAccessible, getTodayDate } from '@/utils/trackerUtils';
 import { mindfulnessProgram } from '@/data/mindfulnessProgram';
+import { digitalDetoxProgram } from '@/data/digitalDetoxProgram';
+import { hydrationProgram } from '@/data/hydrationProgram';
 
 interface Program {
   id: string;
