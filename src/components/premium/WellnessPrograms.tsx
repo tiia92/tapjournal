@@ -956,6 +956,30 @@ const WellnessPrograms: React.FC = () => {
     );
   }
 
+  if (showDetoxProgram) {
+    return (
+      <HabitProgramView
+        programId="digital-detox"
+        program={digitalDetoxProgram}
+        storageKey="digitalDetoxProgress"
+        onBack={() => setShowDetoxProgram(false)}
+        onStart={() => setActiveProgramId('digital-detox')}
+      />
+    );
+  }
+
+  if (showHydrationProgram) {
+    return (
+      <HabitProgramView
+        programId="hydration"
+        program={hydrationProgram}
+        storageKey="hydrationProgress"
+        onBack={() => setShowHydrationProgram(false)}
+        onStart={() => setActiveProgramId('hydration')}
+      />
+    );
+  }
+
   if (showSleepResetProgram) {
     const dayData = sleepResetProgram.days[currentProgramDay - 1];
     const isAccessible = allowDaySkipping || (programProgress ? 
