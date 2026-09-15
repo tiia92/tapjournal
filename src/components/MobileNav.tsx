@@ -68,8 +68,7 @@ const MobileNav = () => {
                   >
                     Go to Journal
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
                     className="w-full min-h-[44px]"
                     onClick={handleLogout}
                   >
@@ -79,8 +78,7 @@ const MobileNav = () => {
                 </>
               ) : (
                 <>
-                  <Button 
-                    variant="outline" 
+                  <Button
                     className="w-full min-h-[44px]"
                     onClick={() => handleNavigation('/login')}
                   >
