@@ -72,7 +72,7 @@ const LandingPage = () => {
                 <Button onClick={() => navigate('/dashboard')}>Go to Journal</Button>
                 <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
                 <Button variant="ghost" onClick={() => navigate('/pricing')}>Pricing</Button>
-                <Button variant="outline" onClick={handleLogout}>
+                <Button onClick={handleLogout}>
                   <LogOut size={18} className="mr-2" />
                   Sign Out
                 </Button>
@@ -81,7 +81,7 @@ const LandingPage = () => {
               <>
                 <Button variant="ghost" onClick={() => navigate('/about')}>About Us</Button>
                 <Button variant="ghost" onClick={() => navigate('/pricing')}>Pricing</Button>
-                <Button variant="outline" onClick={() => navigate('/login')}>Log In</Button>
+                <Button onClick={() => navigate('/login')}>Log In</Button>
                 <Button onClick={() => navigate('/signup')}>Sign Up</Button>
               </>
             )}
