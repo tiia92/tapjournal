@@ -1,6 +1,6 @@
 # Roadmap
 
 - [x] Digital Detox data file (src/data/digitalDetoxProgram.ts)
-- [ ] Wire Digital Detox into WellnessPrograms.tsx
-- [ ] Hydration Challenge data file (src/data/hydrationProgram.ts)
-- [ ] Wire Hydration Challenge into WellnessPrograms.tsx
+- [x] Wire Digital Detox into WellnessPrograms.tsx
+- [x] Hydration Challenge data file (src/data/hydrationProgram.ts)
+- [x] Wire Hydration Challenge into WellnessPrograms.tsx

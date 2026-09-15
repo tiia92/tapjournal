@@ -29,6 +29,9 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { calculateProgramDay, isDayAccessible, getTodayDate } from '@/utils/trackerUtils';
 import { mindfulnessProgram } from '@/data/mindfulnessProgram';
+import { digitalDetoxProgram } from '@/data/digitalDetoxProgram';
+import { hydrationProgram } from '@/data/hydrationProgram';
+import HabitProgramView from '@/components/premium/HabitProgramView';
 
 interface Program {
   id: string;
@@ -556,6 +559,10 @@ const WellnessPrograms: React.FC = () => {
   const [mindfulnessResponses, setMindfulnessResponses] = useState<Record<string, any>>({});
   const [mindfulnessAllowSkip, setMindfulnessAllowSkip] = useState(false);
 
+  // Digital Detox & Hydration program state
+  const [showDetoxProgram, setShowDetoxProgram] = useState(false);
+  const [showHydrationProgram, setShowHydrationProgram] = useState(false);
+
   useEffect(() => {
     const saved = localStorage.getItem('mindfulnessProgress');
     if (saved) {
@@ -600,6 +607,14 @@ const WellnessPrograms: React.FC = () => {
       setSelectedProgram(program);
       setShowComingSoon(false);
       setShowMindfulnessProgram(true);
+    } else if (program.id === 'digital-detox') {
+      setSelectedProgram(program);
+      setShowComingSoon(false);
+      setShowDetoxProgram(true);
+    } else if (program.id === 'hydration') {
+      setSelectedProgram(program);
+      setShowComingSoon(false);
+      setShowHydrationProgram(true);
     } else {
       setSelectedProgram(program);
       setShowComingSoon(true);
@@ -938,6 +953,30 @@ const WellnessPrograms: React.FC = () => {
           </div>
         )}
       </div>
+    );
+  }
+
+  if (showDetoxProgram) {
+    return (
+      <HabitProgramView
+        programId="digital-detox"
+        program={digitalDetoxProgram}
+        storageKey="digitalDetoxProgress"
+        onBack={() => setShowDetoxProgram(false)}
+        onStart={() => setActiveProgramId('digital-detox')}
+      />
+    );
+  }
+
+  if (showHydrationProgram) {
+    return (
+      <HabitProgramView
+        programId="hydration"
+        program={hydrationProgram}
+        storageKey="hydrationProgress"
+        onBack={() => setShowHydrationProgram(false)}
+        onStart={() => setActiveProgramId('hydration')}
+      />
     );
   }
 
