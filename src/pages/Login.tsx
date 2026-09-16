@@ -70,8 +70,8 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center">
-                <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
-                <label htmlFor="email" className="text-sm font-medium">
+                <Mail className="w-4 h-4 mr-2 text-slate-100" />
+                <label htmlFor="email" className="text-sm font-medium text-slate-100">
                   Email
                 </label>
               </div>
@@ -81,6 +81,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                className="border-white/30 bg-white/15 text-slate-50 placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-0"
                 disabled={isLoading}
                 required
               />
