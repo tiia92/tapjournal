@@ -66,12 +66,12 @@ const Login = () => {
           <p className="text-muted-foreground mt-2 text-slate-200">Sign in to your wellness tracker</p>
         </div>
         
-        <div className="bg-card border rounded-xl shadow-sm p-6">
+        <div className="rounded-2xl border border-white/25 bg-white/15 p-6 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.55)] backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center">
-                <Mail className="w-4 h-4 mr-2 text-muted-foreground" />
-                <label htmlFor="email" className="text-sm font-medium">
+                <Mail className="w-4 h-4 mr-2 text-slate-100" />
+                <label htmlFor="email" className="text-sm font-medium text-slate-100">
                   Email
                 </label>
               </div>
@@ -81,6 +81,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
+                className="border-white/30 bg-white/15 text-slate-50 placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-0"
                 disabled={isLoading}
                 required
               />
@@ -89,8 +90,8 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Lock className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <label htmlFor="password" className="text-sm font-medium">
+                  <Lock className="w-4 h-4 mr-2 text-slate-100" />
+                  <label htmlFor="password" className="text-sm font-medium text-slate-100">
                     Password
                   </label>
                 </div>
@@ -102,6 +103,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                className="border-white/30 bg-white/15 text-slate-50 placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-0"
                 disabled={isLoading}
                 required
               />
@@ -126,9 +128,9 @@ const Login = () => {
             </Button>
             
             <div className="text-center mt-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-slate-200">
                 Don't have an account? 
-                <Link to="/signup" className="text-primary ml-1 hover:underline">
+                <Link to="/signup" className="text-gold ml-1 font-medium hover:underline">
                   Sign up
                 </Link>
               </p>

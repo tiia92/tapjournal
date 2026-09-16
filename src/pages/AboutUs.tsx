@@ -87,8 +87,12 @@ const AboutUs = () => {
               <Logo size="small" />
               <span className="text-lg font-bold ml-2">TapJournal</span>
             </div>
-            <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} TapJournal. All rights reserved.
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-sm text-muted-foreground">
+              <a href="/privacy" className="hover:text-primary transition-colors">Privacy</a>
+              <a href="/terms" className="hover:text-primary transition-colors">Terms</a>
+              <span>
+                © {new Date().getFullYear()} TapJournal. All rights reserved.
+              </span>
             </div>
           </div>
         </div>
