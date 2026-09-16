@@ -128,9 +128,9 @@ const Login = () => {
             </Button>
             
             <div className="text-center mt-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-slate-200">
                 Don't have an account? 
-                <Link to="/signup" className="text-primary ml-1 hover:underline">
+                <Link to="/signup" className="text-gold ml-1 font-medium hover:underline">
                   Sign up
                 </Link>
               </p>
