@@ -52,6 +52,8 @@ const AppRoutes = () => {
       <Route path="/about" element={<AboutUs />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/recovery" element={<DataRecovery />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       
       {/* Login/signup routes */}
       <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
