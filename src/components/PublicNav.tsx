@@ -24,7 +24,7 @@ const PublicNav: React.FC = () => {
           aria-label="TapJournal home"
         >
           <Logo size="medium" />
-          <h1 className="text-xl md:text-2xl font-bold ml-2">TapJournal</h1>
+          <span className="text-xl md:text-2xl font-bold ml-2">TapJournal</span>
         </button>
 
         <div className="hidden md:flex space-x-4">
