@@ -17,6 +17,8 @@ import AboutUs from "./pages/AboutUs";
 import PremiumWaitlist from "./pages/PremiumWaitlist";
 import Pricing from "./pages/Pricing";
 import DataRecovery from "./pages/DataRecovery";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 const queryClient = new QueryClient();
 
