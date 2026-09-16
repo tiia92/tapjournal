@@ -244,6 +244,12 @@ const LandingPage = () => {
               <a href="/pricing" className="text-sm hover:text-primary transition-colors">
                 Pricing
               </a>
+              <a href="/privacy" className="text-sm hover:text-primary transition-colors">
+                Privacy
+              </a>
+              <a href="/terms" className="text-sm hover:text-primary transition-colors">
+                Terms
+              </a>
               <span className="text-sm text-muted-foreground">
                 © {new Date().getFullYear()} TapJournal. All rights reserved.
               </span>
