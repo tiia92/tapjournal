@@ -66,7 +66,7 @@ const Login = () => {
           <p className="text-muted-foreground mt-2 text-slate-200">Sign in to your wellness tracker</p>
         </div>
         
-        <div className="bg-card border rounded-xl shadow-sm p-6">
+        <div className="rounded-2xl border border-white/25 bg-white/15 p-6 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.55)] backdrop-blur-xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="flex items-center">
