@@ -46,7 +46,7 @@ const ForgotPassword = () => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="text-sm text-primary hover:underline">
+        <button className="text-sm font-medium text-gold hover:underline">
           Forgot your password?
         </button>
       </DialogTrigger>
