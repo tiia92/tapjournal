@@ -90,8 +90,8 @@ const Login = () => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <Lock className="w-4 h-4 mr-2 text-muted-foreground" />
-                  <label htmlFor="password" className="text-sm font-medium">
+                  <Lock className="w-4 h-4 mr-2 text-slate-100" />
+                  <label htmlFor="password" className="text-sm font-medium text-slate-100">
                     Password
                   </label>
                 </div>
@@ -103,6 +103,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
+                className="border-white/30 bg-white/15 text-slate-50 placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-0"
                 disabled={isLoading}
                 required
               />
